@@ -9,9 +9,33 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    env:
+      NX_NON_NATIVE_HASHER: true
     steps:
-      - uses: actions/checkout@v4
-      - run: npm ci && npm run build
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v3
+
+      - name: 'Install Node'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: 'Yarn Install'
+        uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: install
+
+      - name: 'Yarn Test and Build'
+        uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: build
+
+      - name: 'chmod node modules'
+        run: sudo chmod 777 -R /home/runner/work/moofyadmin/moofyadmin/node_modules
+
+      - name: 'chmod node dist/apps/'
+        run: sudo chmod 777 -R /home/runner/work/moofyadmin/moofyadmin/dist/
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
