@@ -31,10 +31,10 @@ jobs:
           cmd: build
 
       - name: 'chmod node modules'
-        run: sudo chmod 777 -R /home/runner/work/moofyadmin/moofyadmin/node_modules
+        run: sudo chmod 777 -R /home/runner/work/moofy/moofy/node_modules
 
       - name: 'chmod node dist/apps/'
-        run: sudo chmod 777 -R /home/runner/work/moofyadmin/moofyadmin/dist/
+        run: sudo chmod 777 -R /home/runner/work/moofy/moofy/dist/
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
