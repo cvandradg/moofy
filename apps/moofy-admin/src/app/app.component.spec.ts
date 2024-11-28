@@ -12,7 +12,7 @@ describe('AppComponent', () => {
         RouterModule.forRoot([]),
         RouterModule,
         MatSidenavModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
       ],
     }).compileComponents();
   });
