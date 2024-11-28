@@ -25,6 +25,7 @@
     "@angular/platform-server": "~18.2.0",
     "@angular/router": "~18.2.0",
     "@angular/ssr": "~18.2.0",
+    "@ngrx/component": "^18.1.1",
     "express": "~4.18.2",
     "firebase": "^11.0.2",
     "firebase-tools": "^13.27.0",
