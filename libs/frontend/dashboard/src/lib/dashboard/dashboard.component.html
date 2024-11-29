@@ -1,17 +1,52 @@
 <mat-sidenav-container
-  class="example-container"
   (backdropClick)="close('backdrop')"
+  (keydown.escape)="settingsNavbar.close()"
+  class="main-navbar-animation main-navbar-container"
 >
-  <mat-sidenav class="settings-navbar" #sidenav position=end (keydown.escape)="close('escape')" disableClose>
-    <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
+  <mat-sidenav
+    #settingsNavbar
+    position="end"
+    mode="push"
+    class="settings-navbar"
+    [style.width]="sidenavWidth()"
+  >
+    <moofy-main-sidenav [collapsed]="collapsed()"></moofy-main-sidenav>
   </mat-sidenav>
-<!-- 
-  <mat-sidenav class="settings-navbar" #sidenav position=end (keydown.escape)="close('escape')" disableClose>
+
+  <mat-sidenav
+    opened
+    #sidenav
+    #mainSidenav
+    mode="side"
+    class="main-navbar-animation"
+    [style.width]="sidenavWidth()"
+  >
+    <div>hola</div>
+    <p>
+      <button mat-button (click)="collapsed.set(!collapsed())">Toggle</button>
+    </p>
+    <moofy-main-sidenav [collapsed]="collapsed()"></moofy-main-sidenav>
+  </mat-sidenav>
+
+  <!-- <mat-sidenav
+    class="settings-navbar"
+    #sidenav
+    position="end"
+    (keydown.escape)="close('escape')"
+    disableClose
+  >
     <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
   </mat-sidenav> -->
 
-  <mat-sidenav-content>
-    <p><button mat-button (click)="sidenav.open()">Open</button></p>
+  <mat-sidenav-content
+    class="content"
+    [style.margin-left]="sidenavWidth()"
+    (keydown.escape)="settingsNavbar.close()"
+  >
+    <p>
+      <button mat-button (click)="collapsed.set(!collapsed())">Open</button>
+    </p>
+    <p><button mat-button (click)="settingsNavbar.open()">Open2</button></p>
     <p>Closed due to: {{ reason }}</p>
   </mat-sidenav-content>
 </mat-sidenav-container>
