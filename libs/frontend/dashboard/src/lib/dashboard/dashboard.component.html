@@ -17,6 +17,7 @@
     </p>
     <moofy-main-sidenav [collapsed]="collapsed()"></moofy-main-sidenav>
   </mat-sidenav>
+
   <mat-sidenav
     #settingsNavbar
     position="end"
@@ -32,6 +33,7 @@
     [style.margin-left]="sidenavWidth()"
     (keydown.escape)="settingsNavbar.close()"
   >
+    <moofy-header-component />
     <p>
       <button mat-button (click)="collapsed.set(!collapsed())">Open</button>
     </p>

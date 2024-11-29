@@ -8,11 +8,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MainSidenavComponent } from '../main-sidenav/main-sidenav.component';
+import { HeaderComponentComponent } from '../header/header.component';
 
 @Component({
   selector: 'moofy-dashboard',
   standalone: true,
-  imports: [MODULES, MainSidenavComponent],
+  imports: [MODULES, MainSidenavComponent, HeaderComponentComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
