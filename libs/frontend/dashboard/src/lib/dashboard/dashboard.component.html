@@ -4,16 +4,6 @@
   class="main-navbar-animation main-navbar-container"
 >
   <mat-sidenav
-    #settingsNavbar
-    position="end"
-    mode="push"
-    class="settings-navbar"
-    [style.width]="sidenavWidth()"
-  >
-    <moofy-main-sidenav [collapsed]="collapsed()"></moofy-main-sidenav>
-  </mat-sidenav>
-
-  <mat-sidenav
     opened
     #sidenav
     #mainSidenav
@@ -25,6 +15,15 @@
     <p>
       <button mat-button (click)="collapsed.set(!collapsed())">Toggle</button>
     </p>
+    <moofy-main-sidenav [collapsed]="collapsed()"></moofy-main-sidenav>
+  </mat-sidenav>
+  <mat-sidenav
+    #settingsNavbar
+    position="end"
+    mode="push"
+    class="settings-navbar"
+    [style.width]="sidenavWidth()"
+  >
     <moofy-main-sidenav [collapsed]="collapsed()"></moofy-main-sidenav>
   </mat-sidenav>
 

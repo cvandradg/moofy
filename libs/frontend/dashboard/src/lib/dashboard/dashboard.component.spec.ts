@@ -1,12 +1,12 @@
+import {
+  NoopAnimationsModule,
+  BrowserAnimationsModule,
+} from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  BrowserAnimationsModule,
-  NoopAnimationsModule,
-} from '@angular/platform-browser/animations';
 import { MainSidenavComponent } from '../main-sidenav/main-sidenav.component';
-import { provideRouter } from '@angular/router';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -16,9 +16,9 @@ describe('DashboardComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         MatSidenavModule,
+        NoopAnimationsModule,
         MainSidenavComponent,
         BrowserAnimationsModule,
-        NoopAnimationsModule,
       ],
       providers: [provideRouter([])],
     }).compileComponents();
