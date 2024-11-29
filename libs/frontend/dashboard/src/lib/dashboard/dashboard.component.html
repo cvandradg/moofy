@@ -28,18 +28,8 @@
     <moofy-main-sidenav [collapsed]="collapsed()"></moofy-main-sidenav>
   </mat-sidenav>
 
-  <!-- <mat-sidenav
-    class="settings-navbar"
-    #sidenav
-    position="end"
-    (keydown.escape)="close('escape')"
-    disableClose
-  >
-    <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
-  </mat-sidenav> -->
-
   <mat-sidenav-content
-    class="content"
+    class="sidenav-content"
     [style.margin-left]="sidenavWidth()"
     (keydown.escape)="settingsNavbar.close()"
   >

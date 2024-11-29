@@ -1,11 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardComponent } from './dashboard.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
-  MatSidenav,
-  MatSidenavContainer,
-  MatSidenavContent,
-} from '@angular/material/sidenav';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
+import { MainSidenavComponent } from '../main-sidenav/main-sidenav.component';
+import { provideRouter } from '@angular/router';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -14,16 +15,17 @@ describe('DashboardComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        MatSidenav,
-        MatSidenavContent,
-        DashboardComponent,
-        MatSidenavContainer,
+        MatSidenavModule,
+        MainSidenavComponent,
         BrowserAnimationsModule,
+        NoopAnimationsModule,
       ],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
+
     fixture.detectChanges();
   });
 

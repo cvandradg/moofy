@@ -1,15 +1,4 @@
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-.example-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-.content {
+.sidenav-content {
   padding: 24px;
 }
 
@@ -17,14 +6,12 @@
   height: 100vh;
 }
 
-.main-navbar-animation {
-  transition: all 500ms ease-in-out;
+.main-navbar-animation,
+.sidenav-content {
+  transition: all 600ms ease-in-out;
 }
 
 
-// mat-sidenav-container {
-//   height: 100vh;
-// }
 
 // mat-sidenav, mat-sidenav-content {
 //   transition: all 500ms ease-in-out;
