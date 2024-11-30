@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@moofy-admin/dashboard": ["libs/frontend/dashboard/src/index.ts"],
       "@moofy-admin/shared": ["libs/frontend/shared/src/index.ts"]
     }
   },

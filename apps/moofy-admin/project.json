@@ -20,6 +20,11 @@
           {
             "glob": "**/*",
             "input": "apps/moofy-admin/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/frontend/shared/src/lib/assets",
+            "output": "/assets/"
           }
         ],
         "styles": ["apps/moofy-admin/src/styles.scss"],
