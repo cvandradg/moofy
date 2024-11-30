@@ -2,11 +2,16 @@ import {
   NoopAnimationsModule,
   BrowserAnimationsModule,
 } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MainSidenavComponent } from '../main-sidenav/main-sidenav.component';
+import { CustomSidenavComponent } from '../custom-sidenav/custom-sidenav.component';
+import { CommonModule } from '@angular/common';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -17,8 +22,15 @@ describe('DashboardComponent', () => {
       imports: [
         MatSidenavModule,
         NoopAnimationsModule,
-        MainSidenavComponent,
-        BrowserAnimationsModule,
+        CommonModule,
+        RouterModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatIconModule,
+        MatButtonModule,
+        MatListModule,
+        RouterModule,
+        CustomSidenavComponent,
       ],
       providers: [provideRouter([])],
     }).compileComponents();
