@@ -1,9 +1,3 @@
-<mat-toolbar class="mat-elevation-z3">
-  <button mat-icon-button (click)="collapsed.set(!collapsed())">
-    <mat-icon>menu</mat-icon>
-  </button>
-</mat-toolbar>
-
 <mat-sidenav-container class="mat-sidenav-container">
   <mat-sidenav
     class="main-mat-sidenav"
@@ -14,11 +8,7 @@
     <app-custom-sidenav [collapsed]="collapsed()" />
   </mat-sidenav>
 
-  <mat-sidenav
-    position="end"
-    #sidenav
-    (keydown.escape)="close('escape')"
-  >
+  <mat-sidenav position="end" #sidenav (keydown.escape)="close('escape')">
     <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
   </mat-sidenav>
 
@@ -27,7 +17,24 @@
     class="content"
     [style.margin-left]="sidenavWidth()"
   >
+  <mat-toolbar>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>My App</span>
+    <span class="example-spacer"></span>
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+      <mat-icon>favorite</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+      <mat-icon>share</mat-icon>
+    </button>
+  </mat-toolbar>
+
     <p><button mat-button (click)="sidenav.open()">Open</button></p>
+    <p>
+      <button mat-button (click)="collapsed.set(!collapsed())">Open2</button>
+    </p>
     <p>Closed due to: {{ reason }}</p>
     <router-outlet></router-outlet>
   </mat-sidenav-content>

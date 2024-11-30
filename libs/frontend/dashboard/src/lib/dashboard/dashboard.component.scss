@@ -3,14 +3,11 @@
 mat-toolbar {
   position: relative;
   z-index: 5;
-}
-
-.content {
-  padding: 24px;
+  background-color: white;
 }
 
 .mat-sidenav-container {
-  height: calc(100vh - 64px);
+  height: calc(100vh);
 
   .main-mat-sidenav {
     transition: all 500ms ease-in-out;
@@ -19,6 +16,10 @@ mat-toolbar {
 
 .mat-sidenav-content {
   transition: all 500ms ease-in-out;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
 }
 
 .mat-sidenav {
