@@ -9,16 +9,19 @@ mat-toolbar {
   padding: 24px;
 }
 
-mat-sidenav-container {
+.mat-sidenav-container {
   height: calc(100vh - 64px);
+
+  .main-mat-sidenav {
+    transition: all 500ms ease-in-out;
+  }
 }
 
-mat-sidenav-content,
-mat-sidenav {
+.mat-sidenav-content {
   transition: all 500ms ease-in-out;
 }
 
-mat-sidenav {
+.mat-sidenav {
   @include mat.sidenav-overrides(
     (
       container-divider-color: rgba(0, 0, 0, 0.1),

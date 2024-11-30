@@ -3,11 +3,32 @@
     <mat-icon>menu</mat-icon>
   </button>
 </mat-toolbar>
-<mat-sidenav-container>
-  <mat-sidenav opened mode="side" [style.width]="sidenavWidth()">
+
+<mat-sidenav-container class="mat-sidenav-container">
+  <mat-sidenav
+    class="main-mat-sidenav"
+    opened
+    mode="side"
+    [style.width]="sidenavWidth()"
+  >
     <app-custom-sidenav [collapsed]="collapsed()" />
   </mat-sidenav>
-  <mat-sidenav-content class="content" [style.margin-left]="sidenavWidth()">
+
+  <mat-sidenav
+    position="end"
+    #sidenav
+    (keydown.escape)="close('escape')"
+  >
+    <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
+  </mat-sidenav>
+
+  <mat-sidenav-content
+    #sidenav
+    class="content"
+    [style.margin-left]="sidenavWidth()"
+  >
+    <p><button mat-button (click)="sidenav.open()">Open</button></p>
+    <p>Closed due to: {{ reason }}</p>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
