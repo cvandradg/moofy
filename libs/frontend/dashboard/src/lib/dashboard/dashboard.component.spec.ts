@@ -1,7 +1,4 @@
-import {
-  NoopAnimationsModule,
-  BrowserAnimationsModule,
-} from '@angular/platform-browser/animations';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
