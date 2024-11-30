@@ -1,8 +1,29 @@
-.main-navbar-container {
-  height: 100vh;
+@use '@angular/material' as mat;
+
+mat-toolbar {
+  position: relative;
+  z-index: 5;
 }
 
-.main-navbar-animation,
-.sidenav-content {
-  transition: all 600ms ease-in-out;
+.content {
+  padding: 24px;
+}
+
+mat-sidenav-container {
+  height: calc(100vh - 64px);
+}
+
+mat-sidenav-content,
+mat-sidenav {
+  transition: all 500ms ease-in-out;
+}
+
+mat-sidenav {
+  @include mat.sidenav-overrides(
+    (
+      container-divider-color: rgba(0, 0, 0, 0.1),
+      container-shape: 0px,
+      container-background-color: white,
+    )
+  );
 }
