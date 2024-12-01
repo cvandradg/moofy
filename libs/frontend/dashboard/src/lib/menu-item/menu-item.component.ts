@@ -42,7 +42,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   @use '@angular/material' as mat;
   
   :host * {
-        transition: all 200ms ease-in-out;
+        transition: all 300ms ease-in-out;
       }
 
   .menu-item {

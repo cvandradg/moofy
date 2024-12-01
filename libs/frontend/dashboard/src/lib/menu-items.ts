@@ -32,13 +32,13 @@ export const menuItems: MenuItem[] = [
     component: AnalyticsComponent,
   },
   {
-    icon: 'folder-arrow-up',
+    icon: 'crystal-ball',
     label: 'Predicciones',
     route: 'predicciones',
     component: CommentsComponent,
   },
   {
-    icon: 'folder-arrow-up',
+    icon: 'book-sparkles',
     label: 'Documentación',
     route: 'documentacion',
     component: CommentsComponent,
