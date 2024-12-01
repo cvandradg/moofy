@@ -1,15 +1,21 @@
-<mat-sidenav-container class="mat-sidenav-container">
+<mat-sidenav-container>
   <mat-sidenav
-    class="main-mat-sidenav"
     opened
     mode="side"
+    class="main-mat-sidenav"
     [style.width]="sidenavWidth()"
   >
-    <app-custom-sidenav [collapsed]="collapsed()" />
+    <moofy-main-sidenav-content [collapsed]="collapsed()" />
   </mat-sidenav>
 
-  <mat-sidenav position="end" #sidenav (keydown.escape)="close('escape')">
-    <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
+  <mat-sidenav
+    mode="over"
+    position="end"
+    #settingsSidenav
+    class="settings-mat-sidenav"
+    (keydown.escape)="close()"
+  >
+    <button mat-button (click)="close()">Toggle</button>
   </mat-sidenav>
 
   <mat-sidenav-content
@@ -19,27 +25,17 @@
   >
     <mat-toolbar>
       <span class="example-spacer"></span>
-      <button
-        mat-icon-button
-        class="example-icon favorite-icon"
-        aria-label="Example icon-button with heart icon"
-      >
-        <mat-icon>favorite</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        class="example-icon"
-        aria-label="Example icon-button with share icon"
-      >
-        <mat-icon>share</mat-icon>
+
+      <button mat-icon-button (click)="settingsSidenav.open()">
+        <fa-icon
+          [icon]="[settingsSidenav.openedChange ? 'fal' : 'fas', 'sliders']"
+        />
       </button>
     </mat-toolbar>
 
-    <p><button mat-button (click)="sidenav.open()">Open</button></p>
+    <button mat-button (click)="settingsSidenav.open()">Open</button>
 
-    <p>
-      <button mat-button (click)="collapsed.set(!collapsed())">Open2</button>
-    </p>
+    <button mat-button (click)="collapsed.set(!collapsed())">Open2</button>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

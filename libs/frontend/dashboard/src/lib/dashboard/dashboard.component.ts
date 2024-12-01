@@ -1,19 +1,19 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
   signal,
+  computed,
+  Component,
   ViewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { Fontawesome } from '@moofy-admin/shared';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { CustomSidenavComponent } from '../custom-sidenav/custom-sidenav.component';
-import { Fontawesome } from '@moofy-admin/shared';
+import { MainSidenavContentComponent } from '../main-sidenav-content/main-sidenav-content.component';
 
 @Component({
   selector: 'moofy-dashboard',
@@ -27,21 +27,18 @@ import { Fontawesome } from '@moofy-admin/shared';
     MatButtonModule,
     MatListModule,
     RouterModule,
-    CustomSidenavComponent,
     Fontawesome,
+    MainSidenavContentComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
-  @ViewChild('sidenav') sidenav!: MatSidenav;
+  @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
 
-  reason = '';
-
-  close(reason: string) {
-    this.reason = reason;
-    this.sidenav.close();
+  close() {
+    this.settingsSidenav.close();
   }
   collapsed = signal(false);
   sidenavWidth = computed(() => (this.collapsed() ? '65px' : '250px'));

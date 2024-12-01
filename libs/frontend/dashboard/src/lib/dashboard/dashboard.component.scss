@@ -6,38 +6,24 @@ mat-toolbar {
   background-color: white;
 }
 
-.mat-sidenav-container {
+mat-sidenav-container {
   height: calc(100vh);
 
   .main-mat-sidenav {
     transition: all 500ms ease-in-out;
   }
-}
 
-.mat-sidenav-content {
-  transition: all 500ms ease-in-out;
+  .settings-mat-sidenav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
 }
 
 .example-spacer {
   flex: 1 1 auto;
 }
 
-.mat-sidenav {
-  @include mat.sidenav-overrides(
-    (
-      container-divider-color: rgba(0, 0, 0, 0.1),
-      container-shape: 0px,
-      container-background-color: white,
-    )
-  );
-}
-
-
-
 section {
   display: table;
-}
-.example-button-row {
-  display: table-cell;
-  max-width: 600px;
 }

@@ -1,14 +1,14 @@
-import { Component, computed, input, Type } from '@angular/core';
+import { menuItems } from '../menu-items';
 import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { Component, computed, input } from '@angular/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MenuItemComponent } from '../menu-item/menu-item.component';
-import { menuItems } from '../menu-items';
 
 @Component({
-  selector: 'app-custom-sidenav',
+  selector: 'moofy-main-sidenav-content',
   standalone: true,
   template: `
     <div class="sidenav-header">
@@ -81,7 +81,7 @@ import { menuItems } from '../menu-items';
     MenuItemComponent,
   ],
 })
-export class CustomSidenavComponent {
+export class MainSidenavContentComponent {
   collapsed = input<boolean>(false);
 
   menuItems = menuItems;

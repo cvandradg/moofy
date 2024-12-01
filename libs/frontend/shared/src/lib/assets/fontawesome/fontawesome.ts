@@ -7,6 +7,7 @@ import {
 
 import {
   faFiles as faFilesLight,
+  faSliders as faSlidersLight,
   faChartColumn as faChartColumnLight,
   faCrystalBall as faCrystalBallLight,
   faBookSparkles as faBookSparklesLight,
@@ -17,6 +18,7 @@ import {
   faBars as faBarsSolid,
   faGear as faGearSolid,
   faFiles as faFilesSolid,
+  faSliders as faSlidersSolid,
   faChartColumn as faChartColumnSolid,
   faCrystalBall as faCrystalBallSolid,
   faBookSparkles as faBookSparklesSolid,
@@ -41,6 +43,8 @@ export class Fontawesome {
       faGearSolid,
       faFilesLight,
       faFilesSolid,
+      faSlidersLight,
+      faSlidersSolid,
       faGoogleBrands,
       faGripLinesThin,
       faArrowRightSolid,
