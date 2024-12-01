@@ -1,9 +1,8 @@
 import { Type } from '@angular/core';
-import { AnalyticsComponent } from './pages/analytics/analytics.component';
-import { CommentsComponent } from './pages/comments/comments.component';
 import { ContentComponent } from './pages/content/content.component';
+import { CommentsComponent } from './pages/comments/comments.component';
+import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { UploadOrdersComponent } from './pages/dashboard/dashboard.component';
-
 
 export type MenuItem = {
   icon: string;
@@ -15,33 +14,33 @@ export type MenuItem = {
 
 export const menuItems: MenuItem[] = [
   {
-    icon: 'dashboard',
+    icon: 'folder-arrow-up',
     label: 'Subir Órdenes',
-    route: 'dashboard',
+    route: 'subir-ordenes',
     component: UploadOrdersComponent,
   },
   {
-    icon: 'video_library',
+    icon: 'files',
     label: 'Historial',
-    route: 'content',
+    route: 'historial',
     component: ContentComponent,
   },
   {
-    icon: 'analytics',
+    icon: 'chart-column',
     label: 'Estadísticas',
-    route: 'analytics',
+    route: 'estadisticas',
     component: AnalyticsComponent,
   },
   {
-    icon: 'comment',
+    icon: 'folder-arrow-up',
     label: 'Predicciones',
-    route: 'comments',
+    route: 'predicciones',
     component: CommentsComponent,
   },
   {
-    icon: 'comment',
+    icon: 'folder-arrow-up',
     label: 'Documentación',
-    route: 'comments',
+    route: 'documentacion',
     component: CommentsComponent,
   },
 ];

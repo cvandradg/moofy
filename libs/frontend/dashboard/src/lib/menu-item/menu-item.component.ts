@@ -1,20 +1,20 @@
-import { Component, computed, input, signal } from '@angular/core';
-import { RouterLinkActive, RouterModule } from '@angular/router';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { MenuItem } from '../menu-items';
 import { Fontawesome } from '@moofy-admin/shared';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLinkActive, RouterModule } from '@angular/router';
+import { Component, computed, input, signal } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-menu-item',
   standalone: true,
   imports: [
+    Fontawesome,
     RouterModule,
-    RouterLinkActive,
     MatListModule,
     MatIconModule,
-    Fontawesome,
+    RouterLinkActive,
   ],
   template: `
     <a
@@ -27,18 +27,22 @@ import { Fontawesome } from '@moofy-admin/shared';
       #rla="routerLinkActive"
       routerLinkActive="selected-menu-item"
     >
-      <fa-icon matListItemIcon [icon]="['fal', 'folder-arrow-up']"></fa-icon>
+      <fa-icon
+        matListItemIcon
+        [icon]="rla.isActive ? ['fas', item().icon] : ['fal', item().icon]"
+      ></fa-icon>
 
       @if(!collapsed()) {
       <span matListItemTitle>{{ item().label }}</span>
-      } 
+      }
+    </a>
   `,
   styles: `
 
   @use '@angular/material' as mat;
   
   :host * {
-        transition: all 500ms ease-in-out;
+        transition: all 200ms ease-in-out;
       }
 
   .menu-item {
