@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { CustomSidenavComponent } from '../custom-sidenav/custom-sidenav.component';
+import { Fontawesome } from '@moofy-admin/shared';
 
 @Component({
   selector: 'moofy-dashboard',
@@ -27,6 +28,7 @@ import { CustomSidenavComponent } from '../custom-sidenav/custom-sidenav.compone
     MatListModule,
     RouterModule,
     CustomSidenavComponent,
+    Fontawesome,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

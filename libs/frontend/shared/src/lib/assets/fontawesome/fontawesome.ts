@@ -23,6 +23,7 @@ import {
   faClipboardQuestion,
   faRightToBracket,
   faEnvelopeCircleCheck,
+  faFolderArrowUp,
 } from '@fortawesome/pro-light-svg-icons';
 
 import { faGripLines } from '@fortawesome/pro-thin-svg-icons';
@@ -110,6 +111,7 @@ export class Fontawesome {
       faCircleNotch,
       faSpinnerThird,
       faBookOpenCover,
+      faFolderArrowUp,
       faPlateUtensils,
       faRightToBracket,
       faWhatsappSquare,

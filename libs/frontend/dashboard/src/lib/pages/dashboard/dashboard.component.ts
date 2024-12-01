@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'moofy-upload-orders',
   standalone: true,
   imports: [CommonModule],
-  template: ` <h1>Dashboard</h1> `,
+  template: ` <h1>UploadOrdersComponent</h1> `,
   styles: [],
 })
-export class DashboardComponent {}
+export class UploadOrdersComponent {}

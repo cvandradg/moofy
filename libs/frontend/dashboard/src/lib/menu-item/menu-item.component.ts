@@ -4,58 +4,34 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { MenuItem } from '../menu-items';
+import { Fontawesome } from '@moofy-admin/shared';
 
 @Component({
   selector: 'app-menu-item',
   standalone: true,
-  imports: [RouterModule, RouterLinkActive, MatListModule, MatIconModule],
+  imports: [
+    RouterModule,
+    RouterLinkActive,
+    MatListModule,
+    MatIconModule,
+    Fontawesome,
+  ],
   template: `
     <a
       mat-list-item
-      class="menu-item"
-      [style.--mat-list-list-item-leading-icon-start-space]="indentation()"
-      [routerLink]="routeHistory() + '/' + item().route"
-      (click)="nestedItemOpen.set(!nestedItemOpen())"
-      routerLinkActive="selected-menu-item"
-      #rla="routerLinkActive"
       [activated]="rla.isActive"
+      (click)="nestedItemOpen.set(!nestedItemOpen())"
+      [routerLink]="routeHistory() + '/' + item().route"
+      [style.--mat-list-list-item-leading-icon-start-space]="indentation()"
+      class="menu-item"
+      #rla="routerLinkActive"
+      routerLinkActive="selected-menu-item"
     >
-      <!-- <mat-icon
-        
-        aria-hidden="false"
-        aria-label="Example home icon"
-        fontIcon="home"
-      ></mat-icon> -->
+      <fa-icon matListItemIcon [icon]="['fal', 'folder-arrow-up']"></fa-icon>
 
-      <mat-icon
-        fontIcon="home"
-        [fontSet]="rla.isActive ? 'material-icons' : 'material-icons'"
-        matListItemIcon
-        >{{ item().icon }}</mat-icon
-      >
       @if(!collapsed()) {
       <span matListItemTitle>{{ item().label }}</span>
-      } @if(item().subItems) {
-      <span matListItemMeta>
-        @if(nestedItemOpen()) {
-        <mat-icon>expand_less</mat-icon>
-        } @else {
-        <mat-icon>expand_more</mat-icon>
-        }
-      </span>
-      }
-    </a>
-    @if (nestedItemOpen() ) {
-    <div @expandContractMenu>
-      @for(subItem of item().subItems; track subItem.route) {
-      <app-menu-item
-        [item]="subItem"
-        [routeHistory]="routeHistory() + '/' + item().route"
-        [collapsed]="collapsed()"
-      />
-      }
-    </div>
-    }
+      } 
   `,
   styles: `
 

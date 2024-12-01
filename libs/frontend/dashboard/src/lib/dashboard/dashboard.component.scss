@@ -31,3 +31,13 @@ mat-toolbar {
     )
   );
 }
+
+
+
+section {
+  display: table;
+}
+.example-button-row {
+  display: table-cell;
+  max-width: 600px;
+}
