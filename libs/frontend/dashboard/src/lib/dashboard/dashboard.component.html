@@ -15,7 +15,7 @@
     class="settings-mat-sidenav"
     (keydown.escape)="close()"
   >
-    <button mat-button (click)="close()">Toggle</button>
+    <moofy-settings-sidenav-content></moofy-settings-sidenav-content>
   </mat-sidenav>
 
   <mat-sidenav-content
@@ -25,17 +25,15 @@
   >
     <mat-toolbar>
       <span class="example-spacer"></span>
+      <button mat-icon-button (click)="collapsed.set(!collapsed())">
+        <fa-icon [icon]="['fal', 'bars']" />
+      </button>
 
       <button mat-icon-button (click)="settingsSidenav.open()">
-        <fa-icon
-          [icon]="[settingsSidenav.openedChange ? 'fal' : 'fas', 'sliders']"
-        />
+        <fa-icon [icon]="['fal', 'sliders']" />
       </button>
     </mat-toolbar>
 
-    <button mat-button (click)="settingsSidenav.open()">Open</button>
-
-    <button mat-button (click)="collapsed.set(!collapsed())">Open2</button>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

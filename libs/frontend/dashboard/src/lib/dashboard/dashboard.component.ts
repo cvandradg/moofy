@@ -5,30 +5,18 @@ import {
   ViewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { Fontawesome } from '@moofy-admin/shared';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MODULES } from '@moofy-admin/shared';
+import { MatSidenav } from '@angular/material/sidenav';
 import { MainSidenavContentComponent } from '../main-sidenav-content/main-sidenav-content.component';
+import { SettingsSidenavContentComponent } from '../settings-sidenav-content/settings-sidenav-content.component';
 
 @Component({
   selector: 'moofy-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatButtonModule,
-    MatListModule,
-    RouterModule,
-    Fontawesome,
+    MODULES,
     MainSidenavContentComponent,
+    SettingsSidenavContentComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

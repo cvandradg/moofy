@@ -6,8 +6,12 @@ import {
 } from '@fortawesome/angular-fontawesome';
 
 import {
+  faBars as faBarsLight,
   faFiles as faFilesLight,
+  faXmark as faXmarkLight,
   faSliders as faSlidersLight,
+  faSunCloud as faSunCloudLight,
+  faCloudsMoon as faCloudsMoonLight,
   faChartColumn as faChartColumnLight,
   faCrystalBall as faCrystalBallLight,
   faBookSparkles as faBookSparklesLight,
@@ -18,7 +22,10 @@ import {
   faBars as faBarsSolid,
   faGear as faGearSolid,
   faFiles as faFilesSolid,
+  faXmark as faXmarkSolid,
   faSliders as faSlidersSolid,
+  faSunCloud as faSunCloudSolid,
+  faCloudsMoon as faCloudsMoonSolid,
   faChartColumn as faChartColumnSolid,
   faCrystalBall as faCrystalBallSolid,
   faBookSparkles as faBookSparklesSolid,
@@ -39,15 +46,22 @@ import { faWhatsappSquare as faWhatsappSquareBrands } from '@fortawesome/free-br
 export class Fontawesome {
   constructor(private library: FaIconLibrary) {
     library?.addIcons(
+      faBarsLight,
       faBarsSolid,
       faGearSolid,
       faFilesLight,
       faFilesSolid,
+      faXmarkLight,
+      faXmarkSolid,
       faSlidersLight,
       faSlidersSolid,
       faGoogleBrands,
+      faSunCloudLight,
+      faSunCloudSolid,
       faGripLinesThin,
+      faCloudsMoonSolid,
       faArrowRightSolid,
+      faCloudsMoonLight,
       faCrystalBallSolid,
       faCrystalBallLight,
       faChartColumnLight,

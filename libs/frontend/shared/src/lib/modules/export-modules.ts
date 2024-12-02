@@ -24,12 +24,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LetDirective, PushPipe } from '@ngrx/component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { Fontawesome } from '../assets/fontawesome/fontawesome';
 
 export const MODULES = [
   PushPipe,
   FormsModule,
+  Fontawesome,
   CommonModule,
   LetDirective,
   RouterModule,

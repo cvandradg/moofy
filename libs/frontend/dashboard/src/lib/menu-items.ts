@@ -2,7 +2,7 @@ import { Type } from '@angular/core';
 import { ContentComponent } from './pages/content/content.component';
 import { CommentsComponent } from './pages/comments/comments.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
-import { UploadOrdersComponent } from './pages/dashboard/dashboard.component';
+import { UploadOrdersComponent } from './pages/upload-orders/upload-orders.component';
 
 export type MenuItem = {
   icon: string;

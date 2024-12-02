@@ -5,11 +5,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLinkActive, RouterModule } from '@angular/router';
 import { Component, computed, input, signal } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-menu-item',
   standalone: true,
   imports: [
+    CommonModule,
     Fontawesome,
     RouterModule,
     MatListModule,
