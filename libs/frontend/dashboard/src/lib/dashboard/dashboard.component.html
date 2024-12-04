@@ -1,3 +1,15 @@
+<mat-toolbar>
+  <div>
+    <button mat-icon-button (click)="collapsed.set(!collapsed())">
+      <fa-icon [icon]="['fal', 'bars']" />
+    </button>
+    <span>Moofy</span>
+  </div>
+
+  <button mat-icon-button (click)="settingsSidenav.open()">
+    <fa-icon [icon]="['fal', 'sliders']" />
+  </button>
+</mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav
     opened
@@ -23,17 +35,6 @@
     class="content"
     [style.margin-left]="sidenavWidth()"
   >
-    <mat-toolbar>
-      <span class="example-spacer"></span>
-      <button mat-icon-button (click)="collapsed.set(!collapsed())">
-        <fa-icon [icon]="['fal', 'bars']" />
-      </button>
-
-      <button mat-icon-button (click)="settingsSidenav.open()">
-        <fa-icon [icon]="['fal', 'sliders']" />
-      </button>
-    </mat-toolbar>
-
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

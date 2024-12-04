@@ -27,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Fontawesome } from '../assets/fontawesome/fontawesome';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 
 export const MODULES = [
   PushPipe,
@@ -54,6 +55,7 @@ export const MODULES = [
   MatSnackBarModule,
   MatCheckboxModule,
   MatFormFieldModule,
+  MatExpansionModule,
   ReactiveFormsModule,
   MatSlideToggleModule,
   MatAutocompleteModule,

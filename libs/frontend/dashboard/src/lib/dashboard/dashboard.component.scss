@@ -4,6 +4,8 @@ mat-toolbar {
   position: relative;
   z-index: 5;
   background-color: white;
+  display: flex;
+  justify-content: space-between;
 }
 
 mat-sidenav-container {
@@ -18,10 +20,6 @@ mat-sidenav-container {
     justify-content: flex-end;
     align-items: flex-end;
   }
-}
-
-.example-spacer {
-  flex: 1 1 auto;
 }
 
 section {

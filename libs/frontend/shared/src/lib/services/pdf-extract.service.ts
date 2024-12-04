@@ -56,9 +56,8 @@ export class PdfExtractService {
     moofyPO.supermarket = this.getTextItemStr(fullPdfDoc[56]);
     moofyPO.cancellationDate = this.getTextItemStr(fullPdfDoc[18]);
     moofyPO.items = this.getPurchaseOrderItems(fullPdfDoc);
-    // textContent.items.map((item: any, rdx: any) => console.log(item.str, rdx));
 
-    console.log('Order:=', moofyPO);
+    // console.log('Order:=', moofyPO);
 
     return moofyPO;
   }
@@ -66,6 +65,7 @@ export class PdfExtractService {
   getPurchaseOrderItems(content: (TextItem | TextMarkedContent)[]): any[] {
     const result = [];
     content = this.getPurchaseOrderTable(content);
+    content.map((item: any, rdx: any) => console.log(item.str, rdx));
 
     const itemsAmount = content.findIndex((item) => {
       if ('str' in item) {

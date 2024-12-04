@@ -6,11 +6,12 @@ import {
   ChangeDetectorRef,
   Component,
 } from '@angular/core';
+import { RoutesTableComponent } from '../../routes-table/routes-table.component';
 
 @Component({
   selector: 'moofy-upload-orders',
   standalone: true,
-  imports: [MODULES, Fontawesome, NgxDropzoneModule],
+  imports: [MODULES, Fontawesome, NgxDropzoneModule, RoutesTableComponent],
   templateUrl: './upload-orders.component.html',
   styleUrl: './upload-orders.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

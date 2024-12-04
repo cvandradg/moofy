@@ -1,12 +1,3 @@
-<!-- <div class="upload-order-container">
-  <div class="upload-text">
-    <fa-icon [icon]="['fal', 'up-from-line']" />
-    <h3>Drag and drop files here to upload</h3>
-    <div>or click the 'select files...' button below.</div>
-  </div>
-
-  <ng-content select="[fileInput]"></ng-content>
-</div> -->
 
 <ngx-dropzone (change)="onSelect($event)">
   <ngx-dropzone-label>
@@ -26,6 +17,8 @@
     <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
   </ngx-dropzone-preview>
 </ngx-dropzone>
+
+<!-- <moofy-routes-table></moofy-routes-table> -->
 
 <div *ngFor="let page of extractedPdfOrder; let i = index">
   <h3>Super market: {{ page.supermarket }}</h3>
