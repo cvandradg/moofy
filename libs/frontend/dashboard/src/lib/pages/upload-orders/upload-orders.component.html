@@ -1,0 +1,39 @@
+<!-- <div class="upload-order-container">
+  <div class="upload-text">
+    <fa-icon [icon]="['fal', 'up-from-line']" />
+    <h3>Drag and drop files here to upload</h3>
+    <div>or click the 'select files...' button below.</div>
+  </div>
+
+  <ng-content select="[fileInput]"></ng-content>
+</div> -->
+
+<ngx-dropzone (change)="onSelect($event)">
+  <ngx-dropzone-label>
+    <div class="upload-text">
+      <fa-icon [icon]="['fal', 'up-from-line']" />
+      <h3>Drag and drop files here to upload</h3>
+      <div>or click the 'select files...' button below.</div>
+    </div>
+
+    <ng-content select="[fileInput]"></ng-content
+  ></ngx-dropzone-label>
+  <ngx-dropzone-preview
+    *ngFor="let f of files"
+    [removable]="true"
+    (remove)="onRemove(f)"
+  >
+    <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+  </ngx-dropzone-preview>
+</ngx-dropzone>
+
+<div *ngFor="let page of extractedPdfOrder; let i = index">
+  <h3>Super market: {{ page.supermarket }}</h3>
+  <h3>cancellationDate: {{ page.cancellationDate }}</h3>
+  <h3>sendDate: {{ page.sendDate }}</h3>
+  <div *ngFor="let item of page.items">
+    <div>Article: {{ item.article }}</div>
+    <div>Cost: {{ item.cost }}</div>
+    <div>Quantity: {{ item.quantity }}</div>
+  </div>
+</div>

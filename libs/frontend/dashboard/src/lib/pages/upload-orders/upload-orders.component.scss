@@ -1,0 +1,25 @@
+ngx-dropzone {
+    height: 30%;
+    background-color: rgba(97, 97, 79, 0.027);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.upload-text {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+fa-icon {
+    font-size: 2rem;
+}
+
+////////////////////////////////////////
+/// 
+/// 
