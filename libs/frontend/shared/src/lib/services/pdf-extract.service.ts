@@ -25,7 +25,6 @@ interface MoofyPO {
 })
 export class PdfExtractService {
   extractOrderByRoute(files: File[]): Observable<Record<string, MoofyPO[]>> {
-    console.log('entra?')
     const routeMap: Record<string, MoofyPO[]> = Object.keys(routes).reduce(
       (acc, route) => ({ ...acc, [route]: [] }),
       {} as Record<string, MoofyPO[]>
@@ -51,7 +50,6 @@ export class PdfExtractService {
       })
     );
   }
-
 
   extractTextFromPDFs(files: File[]): Observable<MoofyPO[]> {
     return forkJoin(
@@ -103,6 +101,9 @@ export class PdfExtractService {
       const currentItemIndex = table.findIndex(
         (item): item is TextItem => 'str' in item && item.str === `00${i + 1}`
       );
+
+      //si no encuentra artitulo tiene que tirar un error y detener el proceso de lectura del file
+
       return {
         article: this.getTextItemStr(table[currentItemIndex + 2] as TextItem),
         quantity: this.getTextItemStr(table[currentItemIndex + 14] as TextItem),

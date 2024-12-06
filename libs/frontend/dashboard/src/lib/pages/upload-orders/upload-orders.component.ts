@@ -27,6 +27,8 @@ export class UploadOrdersComponent {
   moofyToWalmartRoutes: Record<string, { name: string; location: string }[]> = routes;
 
   // Derived signal: supermarket counts by route
+  /*Creo que se puede simplificar, no hace falta hacer algo tan complejo
+  solo para la linea 59 */
   supermarketCountByRoute = computed(() =>
     Object.entries(this.moofyToWalmartRoutes).reduce(
       (acc, [route, supermarkets]) => ({
