@@ -10,29 +10,14 @@
   ></ngx-dropzone-label>
 </ngx-dropzone>
 
-<!-- <moofy-routes-table></moofy-routes-table> -->
-
-<!-- <div *ngFor="let page of extractedPdfOrder; let i = index">
-  <h3>Super market: {{ page.supermarket }}</h3>
-  <h3>cancellationDate: {{ page.cancellationDate }}</h3>
-  <h3>sendDate: {{ page.sendDate }}</h3>
-  <div *ngFor="let item of page.items">
-    <div>Article: {{ item.article }}</div>
-    <div>Cost: {{ item.cost }}</div>
-    <div>Quantity: {{ item.quantity }}</div>
-  </div>
-</div> -->
-
 <div class="routes-preview">
-  @for (route of extractedPdfOrder | keyvalue; track route.key) { @if
+  @for (route of extractedPdfOrder() | keyvalue; track route.key) { @if
   (route.value.length) {
   <div class="demo-section">
     <div>
       <button
         mat-raised-button
-        [matBadge]="
-          route.value.length + '/' + getSupermarketAmountByRoute(route.key)
-        "
+        [matBadge]="route.value.length + '/' + getSupermarketCount(route.key)"
         color="#fff"
       >
         Ruta {{ route.key }}
@@ -42,7 +27,7 @@
   } } @empty { }
 </div>
 
-<div *ngFor="let route of extractedPdfOrder | keyvalue">
+<div *ngFor="let route of extractedPdfOrder() | keyvalue">
   <h2>{{ route.key }}</h2>
   <ul>
     <li *ngFor="let order of route.value">

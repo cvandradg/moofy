@@ -1,7 +1,9 @@
 import {
   Component,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  inject,
+  signal,
+  computed,
 } from '@angular/core';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -13,37 +15,44 @@ import { PdfExtractService, routes } from '@moofy-admin/shared';
   standalone: true,
   imports: [MODULES, Fontawesome, MatBadgeModule, NgxDropzoneModule],
   templateUrl: './upload-orders.component.html',
-  styleUrl: './upload-orders.component.scss',
+  styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadOrdersComponent {
-  files: File[] = [];
-  extractedPdfOrder: Record<string, any[]> = {};
-  moofyToWalmartRoutes = routes;
+  pdfExtractService = inject(PdfExtractService);
 
-  constructor(
-    private pdfExtractService: PdfExtractService,
-    private ref: ChangeDetectorRef
-  ) {}
+  files = signal<File[]>([]);
+  extractedPdfOrder = signal<Record<string, any[]>>({});
+  moofyToWalmartRoutes: Record<string, { name: string; location: string }[]> = routes;
 
-  async onSelect(event: any) {
-    this.files.push(...event.addedFiles);
-
-    const newOrders = await this.pdfExtractService.extractOrderByRoute(
-      event.addedFiles
+  // Computed to derive route-specific supermarket counts
+  getSupermarketAmountByRoute = computed(() => {
+    return Object.keys(this.moofyToWalmartRoutes).reduce(
+      (acc, route) => ({
+        ...acc,
+        [route]: this.moofyToWalmartRoutes[route]?.length || 0,
+      }),
+      {} as Record<string, number>
     );
+  });
 
-    this.extractedPdfOrder = { ...this.extractedPdfOrder, ...newOrders };
+  onSelect(event: any) {
+    const newFiles = [...this.files(), ...event.addedFiles];
+    this.files.set(newFiles);
 
-    this.ref.detectChanges();
-  }
-
-  getSupermarketAmountByRoute(route: any): number {
-    const a: keyof typeof this.moofyToWalmartRoutes = route;
-    return this.moofyToWalmartRoutes[a].length;
+    this.pdfExtractService.extractOrderByRoute(event.addedFiles).subscribe((newOrders) => {
+      this.extractedPdfOrder.set({
+        ...this.extractedPdfOrder(),
+        ...newOrders,
+      });
+    });
   }
 
   onRemove(event: any) {
-    this.files.splice(this.files.indexOf(event), 1);
+    this.files.update((files) => files.filter((file) => file !== event));
+  }
+
+  getSupermarketCount(route: string): number {
+    return this.getSupermarketAmountByRoute()[route] || 0;
   }
 }
