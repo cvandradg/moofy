@@ -2,55 +2,63 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { Injectable } from '@angular/core';
 import { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api';
 import { routes } from './moofy-to-walmart-routes';
+/* @vite-ignore */
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'assets/pdf.worker.min.mjs';
+
+interface item {
+  cost: string;
+  article: string;
+  quantity: string;
+}
 
 interface moofyPO {
   supermarket: string | null;
   cancellationDate: string | null;
   sendDate: string | null;
-  items: any[];
+  items: item[];
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class PdfExtractService {
-  async extractOrderByRoute(files: any[]) {
-    const routeMap: Record<string, any[]> = Object.entries(routes).reduce(
-      (acc, [route]) => {
-        acc[route] = [];
-        return acc;
-      },
-      {} as Record<string, any[]>
+  async extractOrderByRoute(files: any[]): Promise<Record<string, any[]>> {
+    const routeMap: Record<string, any[]> = Object.keys(routes).reduce(
+      (acc, route) => ({ ...acc, [route]: [] }),
+      {}
     );
-
+  
     const extractedPdfOrders = await this.extractTextFromPDFs(files);
-
+  
     extractedPdfOrders.forEach((order) => {
-      for (const [route, supermarkets] of Object.entries(routes)) {
-        const match = supermarkets.find(
-          (supermarket) => supermarket.name === order.supermarket
-        );
-        if (match) {
-          routeMap[route].push({ ...order, destination: match.location });
-          break;
-        }
-      }
+      const routeEntry = Object.entries(routes).find(([_, supermarkets]) =>
+        supermarkets.some((supermarket) => supermarket.name === order.supermarket)
+      );
+  
+      if (!routeEntry) return;
+  
+      const [route, supermarkets] = routeEntry;
+      const match = supermarkets.find(
+        (supermarket) => supermarket.name === order.supermarket
+      );
+  
+      if (!match) return;
+  
+      routeMap[route].push({ ...order, destination: match.location });
     });
+  
     return routeMap;
   }
-
-  async extractTextFromPDFs(files: any) {
-    const extractedPdfOrders: any[] = [];
-
+  
+  async extractTextFromPDFs(files: any[]): Promise<any[]> {
     return Promise.all(
-      files.map(async (file: any) => {
+      files.map(async (file) => {
         if (file) {
-          const purchaseOrder = await this.extractTextFromPdf(file);
-          extractedPdfOrders.push(purchaseOrder);
+          return this.extractTextFromPdf(file);
         }
+        return null;
       })
-    ).then(() => extractedPdfOrders);
+    ).then((results) => results.filter((result) => result !== null));
   }
 
   async extractTextFromPdf(file: File): Promise<moofyPO> {
@@ -64,74 +72,58 @@ export class PdfExtractService {
   async parsePurchaseOrder(
     pdfDoc: pdfjsLib.PDFDocumentProxy
   ): Promise<moofyPO> {
-    const moofyPO: moofyPO = {
-      supermarket: '',
-      cancellationDate: '',
-      sendDate: '',
-      items: [],
+    const extractPageItems = async (pageNumber: number) => {
+      const page = await pdfDoc.getPage(pageNumber);
+      const textContent = await page.getTextContent();
+      return textContent.items;
     };
 
+    // Extract all items from the PDF document
     const fullPdfDoc: (TextItem | TextMarkedContent)[] = [];
-
     for (let i = 1; i <= pdfDoc.numPages; i++) {
-      const page = await pdfDoc.getPage(i);
-      const textContent = await page.getTextContent();
-      fullPdfDoc.push(...textContent.items);
+      fullPdfDoc.push(...(await extractPageItems(i)));
     }
 
-    moofyPO.sendDate = this.getTextItemStr(fullPdfDoc[14]);
-    moofyPO.supermarket = this.getTextItemStr(fullPdfDoc[56]);
-    moofyPO.cancellationDate = this.getTextItemStr(fullPdfDoc[18]);
-    moofyPO.items = this.getPurchaseOrderItems(fullPdfDoc);
-
-    return moofyPO;
+    // Construct and return the purchase order object
+    return {
+      supermarket: this.getTextItemStr(fullPdfDoc[56]),
+      sendDate: this.getTextItemStr(fullPdfDoc[14]),
+      cancellationDate: this.getTextItemStr(fullPdfDoc[18]),
+      items: this.getPurchaseOrderItems(fullPdfDoc),
+    };
   }
 
-  getPurchaseOrderItems(content: (TextItem | TextMarkedContent)[]): any[] {
-    const result = [];
-    content = this.getPurchaseOrderTable(content);
+  getPurchaseOrderItems(content: (TextItem | TextMarkedContent)[]): item[] {
+    const table = this.getPurchaseOrderTable(content);
 
-    const itemsAmount = content.findIndex((item) => {
-      if ('str' in item) {
-        return item.str === 'Total artic lín';
-      }
-      return false;
-    });
+    const itemsAmountIndex = table.findIndex(
+      (item) => 'str' in item && item.str === 'Total artic lín'
+    );
 
-    for (
-      let i = 0;
-      i < parseInt(this.getTextItemStr(content[itemsAmount + 2]));
-      i++
-    ) {
-      const currentItemIndex = content.findIndex((item) => {
-        if ('str' in item) {
-          return item.str === `00${i + 1}`;
-        }
-        return false;
-      });
+    const itemsAmount = parseInt(
+      this.getTextItemStr(table[itemsAmountIndex + 2])
+    );
 
-      const item = {
-        article: this.getTextItemStr(content[currentItemIndex + 2]),
-        quantity: this.getTextItemStr(content[currentItemIndex + 14]),
-        cost: this.getTextItemStr(content[currentItemIndex + 20]),
+    return Array.from({ length: itemsAmount }, (_, i) => {
+      const currentItemIndex = table.findIndex(
+        (item): item is TextItem => 'str' in item && item.str === `00${i + 1}`
+      );
+
+      return {
+        article: this.getTextItemStr(table[currentItemIndex + 2] as TextItem),
+        quantity: this.getTextItemStr(table[currentItemIndex + 14] as TextItem),
+        cost: this.getTextItemStr(table[currentItemIndex + 20] as TextItem),
       };
-
-      result.push(item);
-    }
-
-    return [...result];
+    });
   }
 
   getPurchaseOrderTable(
     content: (TextItem | TextMarkedContent)[]
   ): (TextItem | TextMarkedContent)[] {
     const itemsIdxStart =
-      content.findIndex((item) => {
-        if ('str' in item) {
-          return item.str === 'Costo Extendí';
-        }
-        return false;
-      }) + 2;
+      content.findIndex(
+        (item) => 'str' in item && item.str === 'Costo Extendí'
+      ) + 2;
     return content.slice(itemsIdxStart);
   }
 
