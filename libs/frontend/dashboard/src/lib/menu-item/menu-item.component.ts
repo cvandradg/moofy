@@ -34,9 +34,9 @@ import { CommonModule } from '@angular/common';
         [icon]="rla.isActive ? ['fas', item().icon] : ['fal', item().icon]"
       ></fa-icon>
 
-      @if(!collapsed()) {
+      
       <span matListItemTitle>{{ item().label }}</span>
-      }
+      
     </a>
   `,
   styles: `

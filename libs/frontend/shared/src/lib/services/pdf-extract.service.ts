@@ -1,11 +1,7 @@
-import { Injectable } from '@angular/core';
 import * as pdfjsLib from 'pdfjs-dist';
-import {
-  TextContent,
-  TextItem,
-  TextMarkedContent,
-} from 'pdfjs-dist/types/src/display/api';
-
+import { Injectable } from '@angular/core';
+import { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api';
+import { routes } from './moofy-to-walmart-routes';
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'assets/pdf.worker.min.mjs';
 
 interface moofyPO {
@@ -19,19 +15,50 @@ interface moofyPO {
   providedIn: 'root',
 })
 export class PdfExtractService {
+  async extractOrderByRoute(files: any[]) {
+    const routeMap: Record<string, any[]> = Object.entries(routes).reduce(
+      (acc, [route]) => {
+        acc[route] = [];
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
+
+    const extractedPdfOrders = await this.extractTextFromPDFs(files);
+
+    extractedPdfOrders.forEach((order) => {
+      for (const [route, supermarkets] of Object.entries(routes)) {
+        const match = supermarkets.find(
+          (supermarket) => supermarket.name === order.supermarket
+        );
+        if (match) {
+          routeMap[route].push({ ...order, destination: match.location });
+          break;
+        }
+      }
+    });
+    return routeMap;
+  }
+
+  async extractTextFromPDFs(files: any) {
+    const extractedPdfOrders: any[] = [];
+
+    return Promise.all(
+      files.map(async (file: any) => {
+        if (file) {
+          const purchaseOrder = await this.extractTextFromPdf(file);
+          extractedPdfOrders.push(purchaseOrder);
+        }
+      })
+    ).then(() => extractedPdfOrders);
+  }
+
   async extractTextFromPdf(file: File): Promise<moofyPO> {
-    try {
-      const pdfData = await file.arrayBuffer();
-      const pdf = pdfjsLib.getDocument({ data: pdfData });
-      const pdfDoc = await pdf.promise;
+    const pdfData = await file.arrayBuffer();
+    const pdf = pdfjsLib.getDocument({ data: pdfData });
+    const pdfDoc = await pdf.promise;
 
-      const textPages: moofyPO = {} as moofyPO;
-
-      return this.parsePurchaseOrder(pdfDoc);
-    } catch (error) {
-      console.error('Error extracting text:', error);
-      return {} as moofyPO;
-    }
+    return this.parsePurchaseOrder(pdfDoc);
   }
 
   async parsePurchaseOrder(
@@ -57,15 +84,12 @@ export class PdfExtractService {
     moofyPO.cancellationDate = this.getTextItemStr(fullPdfDoc[18]);
     moofyPO.items = this.getPurchaseOrderItems(fullPdfDoc);
 
-    // console.log('Order:=', moofyPO);
-
     return moofyPO;
   }
 
   getPurchaseOrderItems(content: (TextItem | TextMarkedContent)[]): any[] {
     const result = [];
     content = this.getPurchaseOrderTable(content);
-    content.map((item: any, rdx: any) => console.log(item.str, rdx));
 
     const itemsAmount = content.findIndex((item) => {
       if ('str' in item) {

@@ -1,9 +1,8 @@
 <mat-toolbar>
-  <div>
+  <div class="logo">
     <button mat-icon-button (click)="collapsed.set(!collapsed())">
       <fa-icon [icon]="['fal', 'bars']" />
     </button>
-    <span>Moofy</span>
   </div>
 
   <button mat-icon-button (click)="settingsSidenav.open()">
@@ -30,11 +29,7 @@
     <moofy-settings-sidenav-content></moofy-settings-sidenav-content>
   </mat-sidenav>
 
-  <mat-sidenav-content
-    #sidenav
-    class="content"
-    [style.margin-left]="sidenavWidth()"
-  >
+  <mat-sidenav-content #sidenav class="content">
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

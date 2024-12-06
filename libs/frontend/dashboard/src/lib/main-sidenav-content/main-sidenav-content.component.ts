@@ -15,13 +15,9 @@ import { MenuItemComponent } from '../menu-item/menu-item.component';
       <img
         [width]="profilePicSize()"
         [height]="profilePicSize()"
-        src="/assets/img/logo.svg"
+        src="assets/img/moofy-logo1.jpeg"
         alt="logo"
       />
-      <div class="header-text" [class.hide-header-text]="collapsed()">
-        <h2>Your channel</h2>
-        <p>Zoaib Khan</p>
-      </div>
     </div>
     <mat-nav-list>
       @for (item of menuItems; track item.label) {
@@ -36,7 +32,6 @@ import { MenuItemComponent } from '../menu-item/menu-item.component';
       }
 
       .sidenav-header {
-        padding-top: 24px;
         display: flex;
         flex-direction: column;
         align-items: center;
