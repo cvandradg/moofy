@@ -1,0 +1,57 @@
+<ngx-dropzone (change)="onSelect($event)">
+  <ngx-dropzone-label>
+    <div class="upload-text">
+      <fa-icon [icon]="['fal', 'up-from-line']" />
+      <h3>Drag and drop files here to upload</h3>
+      <div>or click the 'select files...' button below.</div>
+    </div>
+
+    <ng-content select="[fileInput]"></ng-content
+  ></ngx-dropzone-label>
+</ngx-dropzone>
+
+<!-- <moofy-routes-table></moofy-routes-table> -->
+
+<!-- <div *ngFor="let page of extractedPdfOrder; let i = index">
+  <h3>Super market: {{ page.supermarket }}</h3>
+  <h3>cancellationDate: {{ page.cancellationDate }}</h3>
+  <h3>sendDate: {{ page.sendDate }}</h3>
+  <div *ngFor="let item of page.items">
+    <div>Article: {{ item.article }}</div>
+    <div>Cost: {{ item.cost }}</div>
+    <div>Quantity: {{ item.quantity }}</div>
+  </div>
+</div> -->
+
+<div class="routes-preview">
+  @for (route of extractedPdfOrder | keyvalue; track route.key) { @if
+  (route.value.length) {
+  <div class="demo-section">
+    <div>
+      <button
+        mat-raised-button
+        [matBadge]="
+          route.value.length + '/' + getSupermarketAmountByRoute(route.key)
+        "
+        color="#fff"
+      >
+        Ruta {{ route.key }}
+      </button>
+    </div>
+  </div>
+  } } @empty { }
+</div>
+
+<div *ngFor="let route of extractedPdfOrder | keyvalue">
+  <h2>{{ route.key }}</h2>
+  <ul>
+    <li *ngFor="let order of route.value">
+      Order ID: {{ order.id }} - Supermarket: {{ order.supermarket }}
+      <ul>
+        <li *ngFor="let items of order.items">
+          {{ items.article }} - {{ items.cost }} - {{ items.quantity }}
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

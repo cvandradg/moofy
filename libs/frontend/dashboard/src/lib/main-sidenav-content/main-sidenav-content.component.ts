@@ -1,27 +1,23 @@
-import { Component, computed, input, Type } from '@angular/core';
+import { menuItems } from '../menu-items';
 import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { Component, computed, input } from '@angular/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MenuItemComponent } from '../menu-item/menu-item.component';
-import { menuItems } from '../menu-items';
 
 @Component({
-  selector: 'app-custom-sidenav',
+  selector: 'moofy-main-sidenav-content',
   standalone: true,
   template: `
     <div class="sidenav-header">
       <img
         [width]="profilePicSize()"
         [height]="profilePicSize()"
-        src="/assets/img/logo.svg"
+        src="assets/img/moofy-logo1.jpeg"
         alt="logo"
       />
-      <div class="header-text" [class.hide-header-text]="collapsed()">
-        <h2>Your channel</h2>
-        <p>Zoaib Khan</p>
-      </div>
     </div>
     <mat-nav-list>
       @for (item of menuItems; track item.label) {
@@ -36,7 +32,6 @@ import { menuItems } from '../menu-items';
       }
 
       .sidenav-header {
-        padding-top: 24px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -81,7 +76,7 @@ import { menuItems } from '../menu-items';
     MenuItemComponent,
   ],
 })
-export class CustomSidenavComponent {
+export class MainSidenavContentComponent {
   collapsed = input<boolean>(false);
 
   menuItems = menuItems;

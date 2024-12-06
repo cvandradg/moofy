@@ -1,4 +1,4 @@
-import { Component, Directive, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import {
   FaIconLibrary,
@@ -6,118 +6,78 @@ import {
 } from '@fortawesome/angular-fontawesome';
 
 import {
-  faBookOpenCover,
-  faPlateUtensils,
-  faTurkey,
-  faLayerPlus,
-  faTrashCan,
-  faCaretRight,
-  faFilePen,
-  faXmark,
-  faPersonDress,
-  faPerson,
-  faJar,
-} from '@fortawesome/pro-duotone-svg-icons';
-
-import {
-  faClipboardQuestion,
-  faRightToBracket,
-  faEnvelopeCircleCheck,
+  faBars as faBarsLight,
+  faFiles as faFilesLight,
+  faXmark as faXmarkLight,
+  faSliders as faSlidersLight,
+  faSunCloud as faSunCloudLight,
+  faCloudsMoon as faCloudsMoonLight,
+  faUpFromLine as faUpFromLineLight,
+  faChartColumn as faChartColumnLight,
+  faCrystalBall as faCrystalBallLight,
+  faBookSparkles as faBookSparklesLight,
+  faFolderArrowUp as faFolderArrowUpLight,
 } from '@fortawesome/pro-light-svg-icons';
 
-import { faGripLines } from '@fortawesome/pro-thin-svg-icons';
-
 import {
-  faPlus,
-  faBolt,
-  faDrumstick,
-  faBowlRice,
-  faPeanuts,
-} from '@fortawesome/sharp-solid-svg-icons';
-
-import {
-  faArrowRight,
+  faBars as faBarsSolid,
+  faGear as faGearSolid,
+  faFiles as faFilesSolid,
   faXmark as faXmarkSolid,
-  faCheck,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  faGoogle,
-  faTwitter,
-  faFacebookF,
-  faInstagram,
-} from '@fortawesome/free-brands-svg-icons';
-
-import {
-  faSpinnerThird,
-  faUser,
-  faCircleNotch,
-  faMessageExclamation,
-  faBars,
-  faRotateBack,
-  faPotFood,
-  faSalad,
-  faDumbbell,
-  faCommentsQuestionCheck,
-  faShirt,
-  faTelescope,
-  faHeartPulse,
-  faPersonDollyEmpty,
-  faGear,
+  faSliders as faSlidersSolid,
+  faSunCloud as faSunCloudSolid,
+  faCloudsMoon as faCloudsMoonSolid,
+  faUpFromLine as faUpFromLineSolid,
+  faChartColumn as faChartColumnSolid,
+  faCrystalBall as faCrystalBallSolid,
+  faBookSparkles as faBookSparklesSolid,
+  faFolderArrowUp as faFolderArrowUpSolid,
 } from '@fortawesome/pro-solid-svg-icons';
-import { faHouseTree } from '@fortawesome/pro-regular-svg-icons';
-import { faWhatsappSquare } from '@fortawesome/free-brands-svg-icons';
+import { faGoogle as faGoogleBrands } from '@fortawesome/free-brands-svg-icons';
+import { faGripLines as faGripLinesThin } from '@fortawesome/pro-thin-svg-icons';
+import { faArrowRight as faArrowRightSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHouseTree as faHouseTreeRegular } from '@fortawesome/pro-regular-svg-icons';
+import { faDrumstick as faDrumstickSharpSolid } from '@fortawesome/sharp-solid-svg-icons';
+import { faBookOpenCover as faBookOpenCoverDuotone } from '@fortawesome/pro-duotone-svg-icons';
+import { faWhatsappSquare as faWhatsappSquareBrands } from '@fortawesome/free-brands-svg-icons';
 
 @NgModule({
-  imports: [FontAwesomeModule], // Import the FontAwesomeModule
-  exports: [FontAwesomeModule], // Export it for use in other modules
+  imports: [FontAwesomeModule],
+  exports: [FontAwesomeModule],
 })
 export class Fontawesome {
   constructor(private library: FaIconLibrary) {
     library?.addIcons(
-      faJar,
-      faBars,
-      faBolt,
-      faPlus,
-      faGear,
-      faUser,
-      faXmark,
-      faSalad,
-      faCheck,
-      faShirt,
-      faPerson,
-      faGoogle,
-      faTurkey,
-      faFilePen,
-      faPeanuts,
-      faPotFood,
-      faTwitter,
-      faDumbbell,
-      faTrashCan,
-      faBowlRice,
-      faGripLines,
-      faDrumstick,
-      faLayerPlus,
-      faTelescope,
-      faFacebookF,
-      faHouseTree,
-      faInstagram,
-      faCaretRight,
-      faArrowRight,
+      faBarsLight,
+      faBarsSolid,
+      faGearSolid,
+      faFilesLight,
+      faFilesSolid,
+      faXmarkLight,
       faXmarkSolid,
-      faRotateBack,
-      faHeartPulse,
-      faPersonDress,
-      faCircleNotch,
-      faSpinnerThird,
-      faBookOpenCover,
-      faPlateUtensils,
-      faRightToBracket,
-      faWhatsappSquare,
-      faPersonDollyEmpty,
-      faClipboardQuestion,
-      faMessageExclamation,
-      faEnvelopeCircleCheck,
-      faCommentsQuestionCheck
+      faSlidersLight,
+      faSlidersSolid,
+      faGoogleBrands,
+      faSunCloudLight,
+      faSunCloudSolid,
+      faGripLinesThin,
+      faArrowRightSolid,
+      faCloudsMoonSolid,
+      faCloudsMoonLight,
+      faUpFromLineLight,
+      faUpFromLineSolid,
+      faCrystalBallSolid,
+      faCrystalBallLight,
+      faChartColumnLight,
+      faChartColumnSolid,
+      faHouseTreeRegular,
+      faBookSparklesSolid,
+      faBookSparklesLight,
+      faFolderArrowUpLight,
+      faFolderArrowUpSolid,
+      faDrumstickSharpSolid,
+      faBookOpenCoverDuotone,
+      faWhatsappSquareBrands
     );
   }
 }

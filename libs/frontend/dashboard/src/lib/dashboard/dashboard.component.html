@@ -1,34 +1,35 @@
-<mat-toolbar class="mat-elevation-z3">
-  <button mat-icon-button (click)="collapsed.set(!collapsed())">
-    <mat-icon>menu</mat-icon>
+<mat-toolbar>
+  <div class="logo">
+    <button mat-icon-button (click)="collapsed.set(!collapsed())">
+      <fa-icon [icon]="['fal', 'bars']" />
+    </button>
+  </div>
+
+  <button mat-icon-button (click)="settingsSidenav.open()">
+    <fa-icon [icon]="['fal', 'sliders']" />
   </button>
 </mat-toolbar>
-
-<mat-sidenav-container class="mat-sidenav-container">
+<mat-sidenav-container>
   <mat-sidenav
-    class="main-mat-sidenav"
     opened
     mode="side"
+    class="main-mat-sidenav"
     [style.width]="sidenavWidth()"
   >
-    <app-custom-sidenav [collapsed]="collapsed()" />
+    <moofy-main-sidenav-content [collapsed]="collapsed()" />
   </mat-sidenav>
 
   <mat-sidenav
+    mode="over"
     position="end"
-    #sidenav
-    (keydown.escape)="close('escape')"
+    #settingsSidenav
+    class="settings-mat-sidenav"
+    (keydown.escape)="close()"
   >
-    <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
+    <moofy-settings-sidenav-content></moofy-settings-sidenav-content>
   </mat-sidenav>
 
-  <mat-sidenav-content
-    #sidenav
-    class="content"
-    [style.margin-left]="sidenavWidth()"
-  >
-    <p><button mat-button (click)="sidenav.open()">Open</button></p>
-    <p>Closed due to: {{ reason }}</p>
+  <mat-sidenav-content #sidenav class="content">
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
