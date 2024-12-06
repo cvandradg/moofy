@@ -1,24 +1,17 @@
-import { NgxDropzoneModule } from 'ngx-dropzone';
-import { PdfExtractService, routes } from '@moofy-admin/shared';
-import { Fontawesome, MODULES } from '@moofy-admin/shared';
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { RoutesTableComponent } from '../../routes-table/routes-table.component';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatBadgeModule } from '@angular/material/badge';
+import { Fontawesome, MODULES } from '@moofy-admin/shared';
+import { PdfExtractService, routes } from '@moofy-admin/shared';
 
 @Component({
   selector: 'moofy-upload-orders',
   standalone: true,
-  imports: [
-    MODULES,
-    Fontawesome,
-    NgxDropzoneModule,
-    RoutesTableComponent,
-    MatBadgeModule,
-  ],
+  imports: [MODULES, Fontawesome, MatBadgeModule, NgxDropzoneModule],
   templateUrl: './upload-orders.component.html',
   styleUrl: './upload-orders.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,12 +24,9 @@ export class UploadOrdersComponent {
   constructor(
     private pdfExtractService: PdfExtractService,
     private ref: ChangeDetectorRef
-  ) {
-    console.log('ROUTES,', this.moofyToWalmartRoutes);
-  }
+  ) {}
 
   async onSelect(event: any) {
-    console.log(event);
     this.files.push(...event.addedFiles);
 
     const newOrders = await this.pdfExtractService.extractOrderByRoute(
@@ -45,20 +35,7 @@ export class UploadOrdersComponent {
 
     this.extractedPdfOrder = { ...this.extractedPdfOrder, ...newOrders };
 
-    console.log(this.extractedPdfOrder);
-
     this.ref.detectChanges();
-
-    // for (let i = 0; i < event.addedFiles.length; i++) {
-    //   if (event.addedFiles[i]) {
-    //     const purchaseOrder = await this.pdfExtractService.extractTextFromPdf(
-    //       event.addedFiles[i]
-    //     );
-
-    //     this.extractedPdfOrder.push(purchaseOrder);
-    //     console.log('upload component ', this.extractedPdfOrder);
-    //   }
-    // }
   }
 
   getSupermarketAmountByRoute(route: any): number {
@@ -67,7 +44,6 @@ export class UploadOrdersComponent {
   }
 
   onRemove(event: any) {
-    console.log(event);
     this.files.splice(this.files.indexOf(event), 1);
   }
 }
