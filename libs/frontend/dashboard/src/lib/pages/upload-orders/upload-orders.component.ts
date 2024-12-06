@@ -21,30 +21,32 @@ import { PdfExtractService, routes } from '@moofy-admin/shared';
 export class UploadOrdersComponent {
   pdfExtractService = inject(PdfExtractService);
 
+  // Signals for managing state
   files = signal<File[]>([]);
   extractedPdfOrder = signal<Record<string, any[]>>({});
   moofyToWalmartRoutes: Record<string, { name: string; location: string }[]> = routes;
 
-  // Computed to derive route-specific supermarket counts
-  getSupermarketAmountByRoute = computed(() => {
-    return Object.keys(this.moofyToWalmartRoutes).reduce(
-      (acc, route) => ({
+  // Derived signal: supermarket counts by route
+  supermarketCountByRoute = computed(() =>
+    Object.entries(this.moofyToWalmartRoutes).reduce(
+      (acc, [route, supermarkets]) => ({
         ...acc,
-        [route]: this.moofyToWalmartRoutes[route]?.length || 0,
+        [route]: supermarkets.length,
       }),
       {} as Record<string, number>
-    );
-  });
+    )
+  );
 
   onSelect(event: any) {
-    const newFiles = [...this.files(), ...event.addedFiles];
-    this.files.set(newFiles);
+    // Update the files signal
+    this.files.set([...this.files(), ...event.addedFiles]);
 
+    // Call the service and update extractedPdfOrder when complete
     this.pdfExtractService.extractOrderByRoute(event.addedFiles).subscribe((newOrders) => {
-      this.extractedPdfOrder.set({
-        ...this.extractedPdfOrder(),
+      this.extractedPdfOrder.update((currentOrders) => ({
+        ...currentOrders,
         ...newOrders,
-      });
+      }));
     });
   }
 
@@ -53,6 +55,6 @@ export class UploadOrdersComponent {
   }
 
   getSupermarketCount(route: string): number {
-    return this.getSupermarketAmountByRoute()[route] || 0;
+    return this.supermarketCountByRoute()[route] || 0;
   }
 }

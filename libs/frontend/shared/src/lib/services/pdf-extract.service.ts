@@ -25,6 +25,7 @@ interface MoofyPO {
 })
 export class PdfExtractService {
   extractOrderByRoute(files: File[]): Observable<Record<string, MoofyPO[]>> {
+    console.log('entra?')
     const routeMap: Record<string, MoofyPO[]> = Object.keys(routes).reduce(
       (acc, route) => ({ ...acc, [route]: [] }),
       {} as Record<string, MoofyPO[]>
@@ -50,6 +51,7 @@ export class PdfExtractService {
       })
     );
   }
+
 
   extractTextFromPDFs(files: File[]): Observable<MoofyPO[]> {
     return forkJoin(
