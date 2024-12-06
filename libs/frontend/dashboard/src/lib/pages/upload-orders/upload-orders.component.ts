@@ -9,28 +9,27 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatBadgeModule } from '@angular/material/badge';
 import { Fontawesome, MODULES } from '@moofy-admin/shared';
 import { PdfExtractService, routes } from '@moofy-admin/shared';
+import { provideComponentStore } from '@ngrx/component-store';
+import { UploadOrdersStore } from './upload-orders.store';
 
 @Component({
   selector: 'moofy-upload-orders',
   standalone: true,
   imports: [MODULES, Fontawesome, MatBadgeModule, NgxDropzoneModule],
+  providers: [provideComponentStore(UploadOrdersStore)],
   templateUrl: './upload-orders.component.html',
   styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadOrdersComponent {
-  pdfExtractService = inject(PdfExtractService);
-
-  // Signals for managing state
-  files = signal<File[]>([]);
-  extractedPdfOrder = signal<Record<string, any[]>>({});
-  moofyToWalmartRoutes: Record<string, { name: string; location: string }[]> = routes;
+  readonly pdfExtractService = inject(PdfExtractService);
+  readonly uploadOrdersStore = inject(UploadOrdersStore);
 
   // Derived signal: supermarket counts by route
   /*Creo que se puede simplificar, no hace falta hacer algo tan complejo
   solo para la linea 59 */
   supermarketCountByRoute = computed(() =>
-    Object.entries(this.moofyToWalmartRoutes).reduce(
+    Object.entries(routes).reduce(
       (acc, [route, supermarkets]) => ({
         ...acc,
         [route]: supermarkets.length,
@@ -38,23 +37,6 @@ export class UploadOrdersComponent {
       {} as Record<string, number>
     )
   );
-
-  onSelect(event: any) {
-    // Update the files signal
-    this.files.set([...this.files(), ...event.addedFiles]);
-
-    // Call the service and update extractedPdfOrder when complete
-    this.pdfExtractService.extractOrderByRoute(event.addedFiles).subscribe((newOrders) => {
-      this.extractedPdfOrder.update((currentOrders) => ({
-        ...currentOrders,
-        ...newOrders,
-      }));
-    });
-  }
-
-  onRemove(event: any) {
-    this.files.update((files) => files.filter((file) => file !== event));
-  }
 
   getSupermarketCount(route: string): number {
     return this.supermarketCountByRoute()[route] || 0;

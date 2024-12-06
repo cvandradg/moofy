@@ -344,4 +344,6 @@ export const routes = {
     { name: 'SUPERCENTER 3079', location: 'PALI COLIMA' },
     { name: 'SUPERCENTER 1052', location: 'PALI CINCO ESQUINAS' },
   ],
+
+  unProcessed: [],
 };

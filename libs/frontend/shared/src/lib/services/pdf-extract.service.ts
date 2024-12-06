@@ -31,20 +31,28 @@ export class PdfExtractService {
     );
 
     return this.extractTextFromPDFs(files).pipe(
-      map((orders) => {
-        orders.forEach((order) => {
+      map((purchaseOrders) => {
+        purchaseOrders.forEach((purchaseOrder) => {
           const routeEntry = Object.entries(routes).find(([_, supermarkets]) =>
-            supermarkets.some((s) => s.name === order.supermarket)
+            supermarkets.some((s) => s.name === purchaseOrder.supermarket)
           );
 
-          if (!routeEntry) return;
+          if (!routeEntry) {
+            routeMap['unProcessed'].push(purchaseOrder);
+            return;
+          }
 
           const [route, supermarkets] = routeEntry;
-          const match = supermarkets.find((s) => s.name === order.supermarket);
+          const match = supermarkets.find(
+            (s) => s.name === purchaseOrder.supermarket
+          );
 
-          if (!match) return;
+          if (!match) {
+            routeMap['unProcessed'].push(purchaseOrder);
+            return;
+          }
 
-          routeMap[route].push(order);
+          routeMap[route].push(purchaseOrder);
         });
         return routeMap;
       })

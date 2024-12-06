@@ -1,42 +1,52 @@
-<ngx-dropzone (change)="onSelect($event)">
-  <ngx-dropzone-label>
-    <div class="upload-text">
-      <fa-icon [icon]="['fal', 'up-from-line']" />
-      <h3>Drag and drop files here to upload</h3>
-      <div>or click the 'select files...' button below.</div>
-    </div>
+<ng-container
+  *ngrxLet="{
+  error: uploadOrdersStore.error$ | ngrxPush,
+  purchaseOrders: uploadOrdersStore.purchaseOrders$ | ngrxPush,
+  loading: uploadOrdersStore.loading$ | ngrxPush,
+} as vm"
+>
+  <ngx-dropzone (change)="uploadOrdersStore.extractOrders$($event.addedFiles)">
+    <ngx-dropzone-label>
+      <div class="upload-text">
+        <fa-icon [icon]="['fal', 'up-from-line']" />
+        <h3>Drag and drop files here to upload</h3>
+        <div>or click the 'select files...' button below.</div>
+      </div>
 
-    <ng-content select="[fileInput]"></ng-content
-  ></ngx-dropzone-label>
-</ngx-dropzone>
+      <ng-content select="[fileInput]"></ng-content
+    ></ngx-dropzone-label>
+  </ngx-dropzone>
 
-<div class="routes-preview">
-  @for (route of extractedPdfOrder() | keyvalue; track route.key) { @if
-  (route.value.length) {
-  <div class="demo-section">
-    <div>
-      <button
-        mat-raised-button
-        [matBadge]="route.value.length + '/' + getSupermarketCount(route.key)"
-        color="#fff"
-      >
-        Ruta {{ route.key }}
-      </button>
+  <div class="routes-preview">
+    @for (route of vm.purchaseOrders | keyvalue; track route.key) { @if
+    (route.value.length) {
+    <div class="demo-section">
+      <div>
+        <button
+          mat-raised-button
+          [matBadge]="route.value.length + '/' + getSupermarketCount(route.key)"
+          color="#fff"
+        >
+          {{
+            route.key === 'unProcessed' ? 'No Procesado' : 'Ruta ' + route.key
+          }}
+        </button>
+      </div>
     </div>
+    } } @empty { }
   </div>
-  } } @empty { }
-</div>
 
-<div *ngFor="let route of extractedPdfOrder() | keyvalue">
-  <h2>{{ route.key }}</h2>
-  <ul>
-    <li *ngFor="let order of route.value">
-      Order ID: {{ order.id }} - Supermarket: {{ order.supermarket }}
-      <ul>
-        <li *ngFor="let items of order.items">
-          {{ items.article }} - {{ items.cost }} - {{ items.quantity }}
-        </li>
-      </ul>
-    </li>
-  </ul>
-</div>
+  <div *ngFor="let route of vm.purchaseOrders | keyvalue">
+    <h2>{{ route.key }}</h2>
+    <ul>
+      <li *ngFor="let order of route.value">
+        Supermarket: {{ order.supermarket }}
+        <ul>
+          <li *ngFor="let items of order.items">
+            {{ items }} - {{ items['cost'] }} - {{ items['quantity'] }}
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</ng-container>
