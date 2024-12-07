@@ -18,6 +18,7 @@ interface MoofyPO {
   cancellationDate: string | null;
   sendDate: string | null;
   items: Item[];
+  fileName: string;
 }
 
 @Injectable({
@@ -70,11 +71,14 @@ export class PdfExtractService {
       switchMap((pdfData) =>
         from(pdfjsLib.getDocument({ data: pdfData }).promise)
       ),
-      switchMap((pdfDoc) => this.parsePurchaseOrder(pdfDoc))
+      switchMap((pdfDoc) => this.parsePurchaseOrder(pdfDoc, file.name))
     );
   }
 
-  parsePurchaseOrder(pdfDoc: pdfjsLib.PDFDocumentProxy): Observable<MoofyPO> {
+  parsePurchaseOrder(
+    pdfDoc: pdfjsLib.PDFDocumentProxy,
+    fileName: string
+  ): Observable<MoofyPO> {
     return forkJoin(
       Array.from({ length: pdfDoc.numPages }, (_, i) =>
         from(pdfDoc.getPage(i + 1)).pipe(
@@ -86,6 +90,7 @@ export class PdfExtractService {
       map((pages) => {
         const fullPdfDoc = pages.flat();
         return {
+          fileName,
           supermarket: this.getTextItemStr(fullPdfDoc[56]),
           sendDate: this.getTextItemStr(fullPdfDoc[14]),
           cancellationDate: this.getTextItemStr(fullPdfDoc[18]),

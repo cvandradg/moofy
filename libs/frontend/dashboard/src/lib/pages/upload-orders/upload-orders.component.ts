@@ -51,8 +51,11 @@ export class UploadOrdersComponent {
     )
   );
 
-  openBottomSheet(): void {
-    this._bottomSheet.open(PurchaseOrdersBreakdownComponent);
+  openBottomSheet(routePurchaseOrders: any): void {
+    console.log('purchaseOrders', routePurchaseOrders);
+    this._bottomSheet.open(PurchaseOrdersBreakdownComponent, {
+      data: { routePurchaseOrders },
+    });
   }
 
   getSupermarketCount(route: string): number {

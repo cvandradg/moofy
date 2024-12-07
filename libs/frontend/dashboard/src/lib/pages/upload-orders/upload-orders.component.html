@@ -26,7 +26,7 @@
           mat-raised-button
           [matBadge]="route.value.length + '/' + getSupermarketCount(route.key)"
           color="#fff"
-          (click)="openBottomSheet()"
+          (click)="openBottomSheet(route.value)"
         >
           {{
             route.key === 'unProcessed' ? 'No Procesado' : 'Ruta ' + route.key

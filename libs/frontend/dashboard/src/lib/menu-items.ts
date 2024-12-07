@@ -32,7 +32,7 @@ export const menuItems: MenuItem[] = [
     component: AnalyticsComponent,
   },
   {
-    icon: 'crystal-ball',
+    icon: 'chart-mixed-up-circle-dollar',
     label: 'Predicciones',
     route: 'predicciones',
     component: CommentsComponent,
@@ -41,6 +41,12 @@ export const menuItems: MenuItem[] = [
     icon: 'book-sparkles',
     label: 'Documentación',
     route: 'documentacion',
+    component: CommentsComponent,
+  },
+  {
+    icon: 'screwdriver-wrench',
+    label: 'Configuración',
+    route: 'configuracion',
     component: CommentsComponent,
   },
 ];

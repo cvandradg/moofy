@@ -17,6 +17,8 @@ import {
   faCrystalBall as faCrystalBallLight,
   faBookSparkles as faBookSparklesLight,
   faFolderArrowUp as faFolderArrowUpLight,
+  faScrewdriverWrench as faScrewdriverWrenchLight,
+  faChartMixedUpCircleDollar as faChartMixedUpCircleDollarLight,
 } from '@fortawesome/pro-light-svg-icons';
 
 import {
@@ -32,6 +34,8 @@ import {
   faCrystalBall as faCrystalBallSolid,
   faBookSparkles as faBookSparklesSolid,
   faFolderArrowUp as faFolderArrowUpSolid,
+  faScrewdriverWrench as faScrewdriverWrenchSolid,
+  faChartMixedUpCircleDollar as faChartMixedUpCircleDollarSolid,
 } from '@fortawesome/pro-solid-svg-icons';
 import { faGoogle as faGoogleBrands } from '@fortawesome/free-brands-svg-icons';
 import { faGripLines as faGripLinesThin } from '@fortawesome/pro-thin-svg-icons';
@@ -66,18 +70,22 @@ export class Fontawesome {
       faCloudsMoonLight,
       faUpFromLineLight,
       faUpFromLineSolid,
-      faCrystalBallSolid,
-      faCrystalBallLight,
       faChartColumnLight,
       faChartColumnSolid,
+      faCrystalBallSolid,
+      faCrystalBallLight,
       faHouseTreeRegular,
+      faScrewdriverWrenchSolid,
+      faScrewdriverWrenchLight,
       faBookSparklesSolid,
       faBookSparklesLight,
       faFolderArrowUpLight,
       faFolderArrowUpSolid,
       faDrumstickSharpSolid,
       faBookOpenCoverDuotone,
-      faWhatsappSquareBrands
+      faWhatsappSquareBrands,
+      faChartMixedUpCircleDollarLight,
+      faChartMixedUpCircleDollarSolid
     );
   }
 }
