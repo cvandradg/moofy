@@ -26,6 +26,7 @@
           mat-raised-button
           [matBadge]="route.value.length + '/' + getSupermarketCount(route.key)"
           color="#fff"
+          (click)="openBottomSheet()"
         >
           {{
             route.key === 'unProcessed' ? 'No Procesado' : 'Ruta ' + route.key
@@ -34,19 +35,5 @@
       </div>
     </div>
     } } @empty { }
-  </div>
-
-  <div *ngFor="let route of vm.purchaseOrders | keyvalue">
-    <h2>{{ route.key }}</h2>
-    <ul>
-      <li *ngFor="let order of route.value">
-        Supermarket: {{ order.supermarket }}
-        <ul>
-          <li *ngFor="let items of order.items">
-            {{ items }} - {{ items['cost'] }} - {{ items['quantity'] }}
-          </li>
-        </ul>
-      </li>
-    </ul>
   </div>
 </ng-container>

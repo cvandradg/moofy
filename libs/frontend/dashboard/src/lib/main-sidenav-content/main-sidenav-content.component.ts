@@ -11,24 +11,34 @@ import { MenuItemComponent } from '../menu-item/menu-item.component';
   selector: 'moofy-main-sidenav-content',
   standalone: true,
   template: `
-    <div class="sidenav-header">
-      <img
+    <div class="main-sidenav-container">
+      <div class="sidenav-header">
+        <!-- <img
         [width]="profilePicSize()"
         [height]="profilePicSize()"
         src="assets/img/moofy-logo1.jpeg"
         alt="logo"
-      />
+      /> -->
+      </div>
+      <mat-nav-list>
+        @for (item of menuItems; track item.label) {
+        <app-menu-item [item]="item" [collapsed]="collapsed()" />
+        }
+      </mat-nav-list>
     </div>
-    <mat-nav-list>
-      @for (item of menuItems; track item.label) {
-      <app-menu-item [item]="item" [collapsed]="collapsed()" />
-      }
-    </mat-nav-list>
   `,
   styles: [
     `
       :host * {
         transition: all 500ms ease-in-out;
+      }
+
+      mat-nav-list {
+        padding: 0;
+      }
+
+      .main-sidenav-container {
+        padding: 7rem 0;
       }
 
       .sidenav-header {
