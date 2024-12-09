@@ -13,8 +13,17 @@
     mode="side"
     class="main-mat-sidenav"
     [style.width]="sidenavWidth() + 'px'"
+    (mouseenter)="openState === 0 && collapsed.set(false)"
+    (mouseleave)="openState === 0 && collapsed.set(true)"
   >
-    <moofy-main-sidenav-content [collapsed]="collapsed()" />
+    <moofy-main-sidenav-content
+      (toggleOpenStatus)="
+        openState = $event;
+        openState === 1 && collapsed.set(false);
+        openState === 2 && collapsed.set(true)
+      "
+      [collapsed]="collapsed()"
+    />
   </mat-sidenav>
 
   <mat-sidenav

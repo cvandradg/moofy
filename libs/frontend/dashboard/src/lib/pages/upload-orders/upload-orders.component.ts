@@ -7,7 +7,7 @@ import {
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatBadgeModule } from '@angular/material/badge';
 import { UploadOrdersStore } from './upload-orders.store';
-import { Fontawesome, MODULES } from '@moofy-admin/shared';
+import { Fontawesome, MODULES, moofyPO } from '@moofy-admin/shared';
 import { provideComponentStore } from '@ngrx/component-store';
 import { PdfExtractService, routes } from '@moofy-admin/shared';
 import {
@@ -60,5 +60,17 @@ export class UploadOrdersComponent {
 
   getSupermarketCount(route: string): number {
     return this.supermarketCountByRoute()[route] || 0;
+  }
+
+  hasProcessedOrders(
+    purchaseOrders: Record<string, (typeof moofyPO)[]> | undefined
+  ): boolean {
+    if (!purchaseOrders) {
+      return false; // Handle undefined or null
+    }
+
+    return Object.entries(purchaseOrders)
+      .filter(([key]) => key !== 'unProcessed') // Exclude 'unProcessed'
+      .some(([_, items]) => Array.isArray(items) && items.length); // Check for non-empty arrays
   }
 }

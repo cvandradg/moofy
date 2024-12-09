@@ -25,6 +25,8 @@ import { SettingsSidenavContentComponent } from '../settings-sidenav-content/set
 export class DashboardComponent {
   @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
 
+  openState = 0;
+
   close() {
     this.settingsSidenav.close();
   }

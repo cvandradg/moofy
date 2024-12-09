@@ -4,14 +4,16 @@
 
 ngx-dropzone {
   height: 30%;
-  max-width: 60%;
+  // max-width: 60%;
+  width: 100%;
   background-color: rgba(97, 97, 79, 0.027);
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
-  margin: 7rem auto 2rem auto;
+  margin: 7rem 0 2rem 0;
   align-items: center;
   border: none;
+  padding: 2rem;
 }
 
 .upload-text {
@@ -34,7 +36,7 @@ fa-icon {
   align-items: center;
   //   width: 10rem;
   margin: 0 auto;
-  max-width: 60%;
+  // max-width: 60%;
   width: 100%;
   padding: 1rem 0 4rem 0;
 
@@ -51,5 +53,25 @@ fa-icon {
     --mat-badge-text-color: rgba(0, 0, 0, 0.493);
     // --mat-badge-background-color: green;
     // --mat-badge-background-color: orange;
+  }
+}
+
+.container {
+  max-width: 50%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.submit-button-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+
+  fa-icon {
+    font-size: 1rem;
   }
 }

@@ -8,7 +8,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-menu-item',
+  selector: 'moofy-main-sidenav-item',
   standalone: true,
   imports: [
     CommonModule,
@@ -34,9 +34,7 @@ import { CommonModule } from '@angular/common';
         [icon]="rla.isActive ? ['fas', item().icon] : ['fal', item().icon]"
       ></fa-icon>
 
-      
       <span matListItemTitle>{{ item().label }}</span>
-      
     </a>
   `,
   styles: `
