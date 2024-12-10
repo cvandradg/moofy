@@ -1,0 +1,44 @@
+:host {
+  --mat-table-header-container-height: 5rem;
+}
+
+.processed-order-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  width: 65%;
+  margin: calc(2rem) auto;
+  flex-wrap: wrap;
+
+  gap: 1rem;
+  padding: 0 0 4rem 0;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 1rem;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.363);
+  min-width: 7rem;
+}
+
+.header {
+  width: 100%;
+  padding: 0 2rem;
+}
+
+table {
+  width: 100%;
+  padding: 2rem 2rem;
+}
+
+td {
+  border-bottom-color: rgba(37, 25, 25, 0.164);
+}
+
+th {
+  border-bottom-style: hidden;
+}

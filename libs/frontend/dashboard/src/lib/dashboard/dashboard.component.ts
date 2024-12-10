@@ -25,10 +25,13 @@ import { SettingsSidenavContentComponent } from '../settings-sidenav-content/set
 export class DashboardComponent {
   @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
 
+  openState = 0;
+
   close() {
     this.settingsSidenav.close();
   }
   collapsed = signal(false);
   // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '250px'));
-  sidenavWidth = computed(() => (this.collapsed() ? '65px' : '250px'));
+  // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '165px'));
+  sidenavWidth = computed(() => (this.collapsed() ? 65 : 225));
 }

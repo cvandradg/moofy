@@ -3,6 +3,7 @@ import { ContentComponent } from './pages/content/content.component';
 import { CommentsComponent } from './pages/comments/comments.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { UploadOrdersComponent } from './pages/upload-orders/upload-orders.component';
+import { ProcessedOrdersComponent } from './pages/processed-orders/processed-orders.component';
 
 export type MenuItem = {
   icon: string;
@@ -18,6 +19,14 @@ export const menuItems: MenuItem[] = [
     label: 'Subir Órdenes',
     route: 'subir-ordenes',
     component: UploadOrdersComponent,
+    subItems: [
+      {
+        icon: 'folder-arrow-up',
+        label: 'Ordenes Procesadas',
+        route: 'ordenes-procesadas',
+        component: ProcessedOrdersComponent,
+      },
+    ],
   },
   {
     icon: 'files',
@@ -32,7 +41,7 @@ export const menuItems: MenuItem[] = [
     component: AnalyticsComponent,
   },
   {
-    icon: 'crystal-ball',
+    icon: 'chart-mixed-up-circle-dollar',
     label: 'Predicciones',
     route: 'predicciones',
     component: CommentsComponent,
@@ -41,6 +50,12 @@ export const menuItems: MenuItem[] = [
     icon: 'book-sparkles',
     label: 'Documentación',
     route: 'documentacion',
+    component: CommentsComponent,
+  },
+  {
+    icon: 'screwdriver-wrench',
+    label: 'Configuración',
+    route: 'configuracion',
     component: CommentsComponent,
   },
 ];

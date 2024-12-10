@@ -27,8 +27,7 @@ describe('DashboardComponent', () => {
         MatSidenavModule,
         MatToolbarModule,
         NoopAnimationsModule,
-        NoopAnimationsModule,
-        MainSidenavContentComponent,
+        MainSidenavContentComponent
       ],
       providers: [provideRouter([])],
     }).compileComponents();

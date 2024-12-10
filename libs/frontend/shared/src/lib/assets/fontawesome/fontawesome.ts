@@ -11,12 +11,18 @@ import {
   faXmark as faXmarkLight,
   faSliders as faSlidersLight,
   faSunCloud as faSunCloudLight,
+  faLockOpen as faLockOpenLight,
+  faArrowRight as faArrowRightLight,
   faCloudsMoon as faCloudsMoonLight,
   faUpFromLine as faUpFromLineLight,
   faChartColumn as faChartColumnLight,
   faCrystalBall as faCrystalBallLight,
+  faLockKeyhole as faLockKeyholeLight,
   faBookSparkles as faBookSparklesLight,
   faFolderArrowUp as faFolderArrowUpLight,
+  faLockKeyholeOpen as faLockKeyholeOpenLight,
+  faScrewdriverWrench as faScrewdriverWrenchLight,
+  faChartMixedUpCircleDollar as faChartMixedUpCircleDollarLight,
 } from '@fortawesome/pro-light-svg-icons';
 
 import {
@@ -26,16 +32,21 @@ import {
   faXmark as faXmarkSolid,
   faSliders as faSlidersSolid,
   faSunCloud as faSunCloudSolid,
+  faLockOpen as faLockOpenSolid,
   faCloudsMoon as faCloudsMoonSolid,
   faUpFromLine as faUpFromLineSolid,
+  faArrowRight as faArrowRightSolid,
   faChartColumn as faChartColumnSolid,
   faCrystalBall as faCrystalBallSolid,
+  faLockKeyhole as faLockKeyholeSolid,
   faBookSparkles as faBookSparklesSolid,
   faFolderArrowUp as faFolderArrowUpSolid,
+  faLockKeyholeOpen as faLockKeyholeOpenSolid,
+  faScrewdriverWrench as faScrewdriverWrenchSolid,
+  faChartMixedUpCircleDollar as faChartMixedUpCircleDollarSolid,
 } from '@fortawesome/pro-solid-svg-icons';
 import { faGoogle as faGoogleBrands } from '@fortawesome/free-brands-svg-icons';
 import { faGripLines as faGripLinesThin } from '@fortawesome/pro-thin-svg-icons';
-import { faArrowRight as faArrowRightSolid } from '@fortawesome/free-solid-svg-icons';
 import { faHouseTree as faHouseTreeRegular } from '@fortawesome/pro-regular-svg-icons';
 import { faDrumstick as faDrumstickSharpSolid } from '@fortawesome/sharp-solid-svg-icons';
 import { faBookOpenCover as faBookOpenCoverDuotone } from '@fortawesome/pro-duotone-svg-icons';
@@ -60,24 +71,35 @@ export class Fontawesome {
       faGoogleBrands,
       faSunCloudLight,
       faSunCloudSolid,
+      faLockOpenLight,
+      faLockOpenSolid,
       faGripLinesThin,
+      faArrowRightLight,
       faArrowRightSolid,
       faCloudsMoonSolid,
       faCloudsMoonLight,
       faUpFromLineLight,
       faUpFromLineSolid,
-      faCrystalBallSolid,
-      faCrystalBallLight,
       faChartColumnLight,
       faChartColumnSolid,
+      faCrystalBallSolid,
+      faLockKeyholeSolid,
+      faCrystalBallLight,
+      faLockKeyholeLight,
       faHouseTreeRegular,
       faBookSparklesSolid,
       faBookSparklesLight,
       faFolderArrowUpLight,
       faFolderArrowUpSolid,
       faDrumstickSharpSolid,
+      faLockKeyholeOpenSolid,
+      faLockKeyholeOpenLight,
       faBookOpenCoverDuotone,
-      faWhatsappSquareBrands
+      faWhatsappSquareBrands,
+      faScrewdriverWrenchSolid,
+      faScrewdriverWrenchLight,
+      faChartMixedUpCircleDollarLight,
+      faChartMixedUpCircleDollarSolid
     );
   }
 }

@@ -5451,6 +5451,8 @@ __metadata:
     "@fortawesome/pro-thin-svg-icons": "npm:^6.7.1"
     "@fortawesome/sharp-solid-svg-icons": "npm:^6.7.1"
     "@ngrx/component": "npm:^18.1.1"
+    "@ngrx/component-store": "npm:^18.1.1"
+    "@ngrx/operators": "npm:^18.1.1"
     "@nx/angular": "npm:20.1.3"
     "@nx/cypress": "npm:20.1.3"
     "@nx/eslint": "npm:20.1.3"
@@ -5828,6 +5830,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ngrx/component-store@npm:^18.1.1":
+  version: 18.1.1
+  resolution: "@ngrx/component-store@npm:18.1.1"
+  dependencies:
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    "@angular/core": ^18.0.0
+    rxjs: ^6.5.3 || ^7.5.0
+  checksum: 708b5169493bcb64d12f2cafa23772f97975b52a619d315065398cfa203e10920c573a2f78720a32eff807d78685cda8c2bbabd424c041cfa5f83d285e143777
+  languageName: node
+  linkType: hard
+
 "@ngrx/component@npm:^18.1.1":
   version: 18.1.1
   resolution: "@ngrx/component@npm:18.1.1"
@@ -5838,6 +5852,17 @@ __metadata:
     "@angular/core": ^18.0.0
     rxjs: ^6.5.3 || ^7.5.0
   checksum: 440b235ef5c99fabf520fef81360f1b7c0c381c72b3c875817b0ae021b5975d7b5696090aab9a1801c8b25297134beda6518526034cb81a0c34480a46ef99b94
+  languageName: node
+  linkType: hard
+
+"@ngrx/operators@npm:^18.1.1":
+  version: 18.1.1
+  resolution: "@ngrx/operators@npm:18.1.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    rxjs: ^6.5.3 || ^7.4.0
+  checksum: 9a88dc585037d175a36e40943965b2d85bb911c387e9882355b1b1fd44392a03b4b0ce86a31d9c6dd8b8a31a824002eb0f099ed51431d8e73aeb8924775be8e0
   languageName: node
   linkType: hard
 
