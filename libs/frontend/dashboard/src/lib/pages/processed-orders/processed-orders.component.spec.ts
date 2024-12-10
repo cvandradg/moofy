@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProcessedOrdersComponent } from './processed-orders.component';
+import { MODULES } from '@moofy-admin/shared';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
 
 describe('ProcessedOrdersComponent', () => {
   let component: ProcessedOrdersComponent;
@@ -7,7 +10,13 @@ describe('ProcessedOrdersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProcessedOrdersComponent],
+      imports: [
+        ProcessedOrdersComponent,
+        CommonModule,
+        MatTableModule,
+        CurrencyPipe,
+        MODULES,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProcessedOrdersComponent);
