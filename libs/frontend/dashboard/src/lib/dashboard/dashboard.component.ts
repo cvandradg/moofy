@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { MODULES } from '@moofy-admin/shared';
 import { MatSidenav } from '@angular/material/sidenav';
-import { MainSidenavContentComponent } from '../main-sidenav-content/main-sidenav-content.component';
-import { SettingsSidenavContentComponent } from '../settings-sidenav-content/settings-sidenav-content.component';
+import { MainSidenavContentComponent } from './main-sidenav-content/main-sidenav-content.component';
+import { SettingsSidenavContentComponent } from './settings-sidenav-content/settings-sidenav-content.component';
 
 @Component({
   selector: 'moofy-dashboard',

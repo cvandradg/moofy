@@ -15,8 +15,8 @@ import {
   MatBottomSheet,
   MatBottomSheetModule,
 } from '@angular/material/bottom-sheet';
-import { PurchaseOrdersBreakdownComponent } from '../../purchase-orders-breakdown/purchase-orders-breakdown.component';
 import { RouterModule } from '@angular/router';
+import { PurchaseOrdersBreakdownComponent } from './purchase-orders-breakdown/purchase-orders-breakdown.component';
 
 @Component({
   selector: 'moofy-upload-orders',

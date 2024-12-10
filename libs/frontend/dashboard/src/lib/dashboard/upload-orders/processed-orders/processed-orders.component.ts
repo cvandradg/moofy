@@ -1,7 +1,6 @@
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { provideComponentStore } from '@ngrx/component-store';
-import { UploadOrdersStore } from '../upload-orders/upload-orders.store';
 import {
   inject,
   Component,
@@ -9,6 +8,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { MODULES } from '@moofy-admin/shared';
+import { UploadOrdersStore } from '../upload-orders.store';
 
 export interface PeriodicElement {
   name: string;
@@ -26,7 +26,7 @@ export interface PeriodicElement {
 export class ProcessedOrdersComponent implements OnInit {
   uploadOrdersStore = inject(UploadOrdersStore);
   displayedColumns: string[] = ['name', 'quantity'];
-  
+
   ngOnInit(): void {
     this.uploadOrdersStore.totalOfArticlesRequested$.subscribe(
       (articlesByRoute) => {
@@ -41,7 +41,9 @@ export class ProcessedOrdersComponent implements OnInit {
     );
   }
 
-  getRouteTotal(routeValue: { article: string; totalQuantity: number; totalCost: number }[]): number {
+  getRouteTotal(
+    routeValue: { article: string; totalQuantity: number; totalCost: number }[]
+  ): number {
     return routeValue.reduce((sum, item) => sum + item.totalQuantity, 0);
   }
 }
