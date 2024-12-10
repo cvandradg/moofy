@@ -5,6 +5,9 @@
   loading: uploadOrdersStore.loading$ | ngrxPush,
 } as vm"
 >
+  @if (router.url.includes('/ordenes-procesadas')) {
+  <router-outlet></router-outlet>
+  } @else {
   <div class="container">
     <ngx-dropzone
       (change)="uploadOrdersStore.extractOrders$($event.addedFiles)"
@@ -43,7 +46,7 @@
     </div>
 
     @if (hasProcessedOrders(vm.purchaseOrders)) {
-    <button mat-button>
+    <button mat-button [routerLink]="['ordenes-procesadas']">
       <div class="submit-button-content">
         <span>Siguiente</span>
         <fa-icon [icon]="['fal', 'arrow-right']"></fa-icon>
@@ -51,4 +54,5 @@
     </button>
     }
   </div>
+  }
 </ng-container>

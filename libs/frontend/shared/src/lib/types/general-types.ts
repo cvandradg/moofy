@@ -37,9 +37,19 @@ export const emptyCallback: () => void = () => {
   return;
 };
 
-export const moofyPO = {
-  supermarket: '',
-  cancellationDate: '',
-  sendDate: '',
-  items: [],
+
+interface moofyPOItems{
+  article: string;
+  quantity: string;
+  cost: string;
+}
+
+export interface moofyPO {
+  supermarket: string;
+  cancellationDate: string;
+  sendDate: string;
+  items: moofyPOItems[],
 };
+
+
+

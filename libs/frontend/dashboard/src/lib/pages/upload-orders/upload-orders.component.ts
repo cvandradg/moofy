@@ -4,6 +4,7 @@ import {
   Component,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatBadgeModule } from '@angular/material/badge';
 import { UploadOrdersStore } from './upload-orders.store';
@@ -13,9 +14,9 @@ import { PdfExtractService, routes } from '@moofy-admin/shared';
 import {
   MatBottomSheet,
   MatBottomSheetModule,
-  MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
 import { PurchaseOrdersBreakdownComponent } from '../../purchase-orders-breakdown/purchase-orders-breakdown.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'moofy-upload-orders',
@@ -23,16 +24,17 @@ import { PurchaseOrdersBreakdownComponent } from '../../purchase-orders-breakdow
   imports: [
     MODULES,
     Fontawesome,
+    RouterModule,
     MatBadgeModule,
     NgxDropzoneModule,
     MatBottomSheetModule,
   ],
-  providers: [provideComponentStore(UploadOrdersStore)],
   templateUrl: './upload-orders.component.html',
   styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadOrdersComponent {
+  router = inject(Router);
   readonly pdfExtractService = inject(PdfExtractService);
   readonly uploadOrdersStore = inject(UploadOrdersStore);
 
@@ -63,7 +65,7 @@ export class UploadOrdersComponent {
   }
 
   hasProcessedOrders(
-    purchaseOrders: Record<string, (typeof moofyPO)[]> | undefined
+    purchaseOrders: Record<string, moofyPO[]> | undefined
   ): boolean {
     if (!purchaseOrders) {
       return false; // Handle undefined or null
