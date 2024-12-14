@@ -25,6 +25,14 @@ module.exports = [
         },
       ],
     },
+    devServer: {
+      proxy: [
+        {
+          context: ['/api'],
+          target: 'https://retaillink.login.wal-mart.com',
+        },
+      ],
+    },
   },
   {
     files: ['**/*.html'],

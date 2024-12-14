@@ -3,6 +3,7 @@ import {
   computed,
   Component,
   ChangeDetectionStrategy,
+  OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxDropzoneModule } from 'ngx-dropzone';
@@ -33,7 +34,7 @@ import { PurchaseOrdersBreakdownComponent } from './purchase-orders-breakdown/pu
   styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadOrdersComponent {
+export class UploadOrdersComponent implements OnInit {
   router = inject(Router);
   readonly pdfExtractService = inject(PdfExtractService);
   readonly uploadOrdersStore = inject(UploadOrdersStore);
@@ -52,6 +53,12 @@ export class UploadOrdersComponent {
       {} as Record<string, number>
     )
   );
+
+  ngOnInit(): void {
+    this.pdfExtractService
+      .sendRequest()
+      .subscribe((a: any) => console.log('login,', a));
+  }
 
   openBottomSheet(routePurchaseOrders: any): void {
     console.log('purchaseOrders', routePurchaseOrders);

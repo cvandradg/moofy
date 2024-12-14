@@ -29,16 +29,20 @@ export class ProcessedOrdersComponent implements OnInit {
 
   ngOnInit(): void {
     this.uploadOrdersStore.totalOfArticlesRequested$.subscribe(
-      (articlesByRoute) => {
-        console.log('articlesByRoute', articlesByRoute);
+      (totalOfArticlesRequested) => {
+        console.log('totalOfArticlesRequested', totalOfArticlesRequested);
       }
     );
 
     this.uploadOrdersStore.aggregateArticlesPerRoute$.subscribe(
       (aggregateArticlesPerRoute) => {
-        console.log('articlesByRoute', aggregateArticlesPerRoute);
+        console.log('aggregateArticlesPerRoute', aggregateArticlesPerRoute);
       }
     );
+
+    this.uploadOrdersStore.purchaseOrders$.subscribe((purchaseOrders) => {
+      console.log('purchaseOrders In processed orders', purchaseOrders);
+    });
   }
 
   getRouteTotal(

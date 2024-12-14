@@ -1,9 +1,10 @@
 import * as pdfjsLib from 'pdfjs-dist';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable, from, forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api';
 import { routes } from './moofy-to-walmart-routes';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 /* @vite-ignore */
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'assets/pdf.worker.min.mjs';
 
@@ -25,6 +26,26 @@ interface MoofyPO {
   providedIn: 'root',
 })
 export class PdfExtractService {
+  http = inject(HttpClient);
+
+  sendRequest() {
+    const url = '/api/';
+    const body = {
+      username: 'candradeg9182@gmail.com',
+      password: 'PastryFactory2024',
+      language: 'en',
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'User-Agent': 'AngularApp',
+      'X-Bot-Token':
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3MzkyMTU0MDksImlhdCI6MTczNDAzMTQwOSwianRpIjoiYTJhNGIxMWYtNjZmMi00YzdlLTk2MTctZjQwOTU4MjFmOTMyIn0.EvVZVyUbeAD540h3zmwNKPi6dDhnjxTneYxKdQULdDlgRoCYfcSWi1og5-3b66kVKL-KNTmSOeeXLu20T1P4ZwwXEAV3nYj7N7V12mlPhHO_3SMdMcMMk_y_ZdpQAdlYKE7zidcTbrYeCvcB0m1mGIyELE_ZnmNrIyB1HbOtHurb8idRXy10D3S5SynXKgztzWDWlyZTnLM-JASAalzab8rvbNDTa3_10qgIzLTgBOsQBzsJyHgpGmtIGRo3rq6RtAs4_mlK-jFG1--QfoXaNxZHx36wToGNIj7s96z2zCMBIK8PRV1ThnfzkEvYl5h3xG3Z8Jy4tvjIzKKJcd7n3w',
+    });
+
+    return this.http.post(url, body, { headers });
+  }
+
   extractOrderByRoute(files: File[]): Observable<Record<string, MoofyPO[]>> {
     const routeMap: Record<string, MoofyPO[]> = Object.keys(routes).reduce(
       (acc, route) => ({ ...acc, [route]: [] }),
@@ -89,6 +110,7 @@ export class PdfExtractService {
     ).pipe(
       map((pages) => {
         const fullPdfDoc = pages.flat();
+        console.log('ITEMS', this.getPurchaseOrderItems(fullPdfDoc));
         return {
           fileName,
           supermarket: this.getTextItemStr(fullPdfDoc[56]),
@@ -103,12 +125,22 @@ export class PdfExtractService {
   getPurchaseOrderItems(content: (TextItem | TextMarkedContent)[]): Item[] {
     const table = this.getPurchaseOrderTable(content);
 
-    const itemsAmountIndex = table.findIndex(
-      (item) => 'str' in item && item.str === 'Total artic lín'
+    console.log(
+      'table',
+      table.map((x: any) => x.str)
     );
+
+    const itemsAmountIndex = table.findIndex(
+      (item) =>
+        ('str' in item && item.str === 'Total artic lín') ||
+        ('str' in item && item.str === 'Total Line Items')
+    );
+
     const itemsAmount = parseInt(
       this.getTextItemStr(table[itemsAmountIndex + 2])
     );
+
+    console.log('itemsAmount', itemsAmountIndex);
 
     return Array.from({ length: itemsAmount }, (_, i) => {
       const currentItemIndex = table.findIndex(
@@ -130,7 +162,9 @@ export class PdfExtractService {
   ): (TextItem | TextMarkedContent)[] {
     const itemsIdxStart =
       content.findIndex(
-        (item) => 'str' in item && item.str === 'Costo Extendí'
+        (item) =>
+          ('str' in item && item.str === 'Costo Extendí') ||
+          ('str' in item && item.str === 'Extended Cost')
       ) + 2;
     return content.slice(itemsIdxStart);
   }

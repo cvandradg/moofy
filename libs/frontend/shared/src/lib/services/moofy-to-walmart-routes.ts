@@ -319,7 +319,7 @@ export const routes = {
     { name: 'SUPERCENTER 3066', location: 'PALI CASTELLANA' },
     { name: 'SUPERCENTER 3060', location: 'PALI CARTAGO' },
     { name: 'SUPERCENTER 3114', location: 'PALI CARTAGO CENTRO' },
-    { name: 'SUPERCENTER 3071', location: 'PALI CALLE BLANCOS' },
+    { name: 'WAL-MART STORE 3071', location: 'PALI CALLE BLANCOS' },
     { name: 'SUPERCENTER 1016', location: 'PALI BETANIA' },
     { name: 'SUPERCENTER 4244', location: 'PALI BARRIO MEXICO' },
     { name: 'SUPERCENTER 4229', location: 'PALI BARRIO LA SOLEDAD' },
@@ -367,6 +367,8 @@ export const routes = {
     { name: 'SUPERCENTER 4283', location: 'MP ALAJUELITA' },
     { name: 'SUPERCENTER 4469', location: 'MP AGUACALIENTE' },
     { name: 'SUPERCENTER 1064', location: 'MAXI CURRIDABAT (PLAZA CRISTAL)' },
+    {name: 'SUPERCENTER 738', location: 'PALI TOBOSI' },
+    {name: 'SUPERCENTER 4432', location: 'MAXI OREAMUNO' },
   ],
 
   23: [
