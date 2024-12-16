@@ -3,10 +3,13 @@
 mat-toolbar {
   position: relative;
   z-index: 5;
-  background-color: rgba(250, 249, 253, 1);
+  background-color: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 1rem 0;
+  margin: 2rem 1rem 0 1rem;
 }
 
 mat-sidenav-container {
