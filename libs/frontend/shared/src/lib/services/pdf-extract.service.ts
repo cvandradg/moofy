@@ -4,7 +4,7 @@ import { Observable, from, forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api';
 import { routes } from './moofy-to-walmart-routes';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 /* @vite-ignore */
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'assets/pdf.worker.min.mjs';
 
@@ -28,8 +28,8 @@ interface MoofyPO {
 export class PdfExtractService {
   http = inject(HttpClient);
 
-  sendRequest() {
-    const url = '/api/';
+  walmartBotLogin() {
+    const url = 'http://localhost:3000/walmart-bot-login/';
     const body = {
       username: 'candradeg9182@gmail.com',
       password: 'PastryFactory2024',
@@ -44,6 +44,28 @@ export class PdfExtractService {
     });
 
     return this.http.post(url, body, { headers });
+  }
+
+  fetchInboundDocuments() {
+    const url = 'http://localhost:3000/inbound-documents'; // Proxy endpoint
+  
+    const headers = new HttpHeaders({
+      accept: 'application/json', // Explicitly request JSON
+      'accept-language': 'en-US,en;q=0.9,es;q=0.8',
+      priority: 'u=1, i',
+      referer: 'https://retaillink2.wal-mart.com/Webedi2/inbound/51619',
+      'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"Windows"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      'x-requested-with': 'XMLHttpRequest',
+      'x-bot-token': '<your-bot-token>', // Replace with your actual bot token
+    });
+  
+    return this.http.get(url, { headers });
   }
 
   extractOrderByRoute(files: File[]): Observable<Record<string, MoofyPO[]>> {

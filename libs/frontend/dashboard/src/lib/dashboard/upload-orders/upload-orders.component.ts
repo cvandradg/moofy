@@ -56,8 +56,12 @@ export class UploadOrdersComponent implements OnInit {
 
   ngOnInit(): void {
     this.pdfExtractService
-      .sendRequest()
+      .walmartBotLogin()
       .subscribe((a: any) => console.log('login,', a));
+
+    this.pdfExtractService
+      .fetchInboundDocuments()
+      .subscribe((a: any) => console.log('holaaaa,', a));
   }
 
   openBottomSheet(routePurchaseOrders: any): void {
