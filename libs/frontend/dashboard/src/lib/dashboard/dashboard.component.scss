@@ -3,10 +3,14 @@
 mat-toolbar {
   position: relative;
   z-index: 5;
-  background-color: rgba(250, 249, 253, 1);
+  background-color: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 1rem 0;
+  width: 98%;
+  margin: 0 auto;
 }
 
 mat-sidenav-container {
@@ -14,13 +18,30 @@ mat-sidenav-container {
 
   .main-mat-sidenav {
     transition: all 500ms ease-in-out;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 0;
   }
 
   .settings-mat-sidenav {
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
+}
+
+mat-sidenav-content,
+mat-sidenav {
+  transition: all 500ms ease-in-out;
+}
+
+mat-sidenav {
+  @include mat.sidenav-overrides(
+    (
+      container-divider-color: rgba(0, 0, 0, 0.1),
+      container-shape: 0px,
+      container-background-color: white,
+    )
+  );
 }
 
 section {
@@ -40,6 +61,23 @@ section {
   height: auto;
 }
 
-.mat-sidenav-content {
-  margin: 0 auto !important;
+mat-sidenav-content {
+  width: 100%;
+  display: flex;
+  // justify-content: center;
+  align-items: center;
+
+  .content-container {
+    width: 100%;
+  }
 }
+
+.content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  height: 100%;
+}
+

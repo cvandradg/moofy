@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { MODULES } from '@moofy-admin/shared';
 import { MatSidenav } from '@angular/material/sidenav';
-import { MainSidenavContentComponent } from '../main-sidenav-content/main-sidenav-content.component';
-import { SettingsSidenavContentComponent } from '../settings-sidenav-content/settings-sidenav-content.component';
+import { MainSidenavContentComponent } from './main-sidenav-content/main-sidenav-content.component';
+import { SettingsSidenavContentComponent } from './settings-sidenav-content/settings-sidenav-content.component';
 
 @Component({
   selector: 'moofy-dashboard',
@@ -33,5 +33,6 @@ export class DashboardComponent {
   collapsed = signal(false);
   // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '250px'));
   // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '165px'));
-  sidenavWidth = computed(() => (this.collapsed() ? 65 : 225));
+  // sidenavWidth = computed(() => (this.collapsed() ? 82 : 165));
+  sidenavWidth = computed(() => (this.collapsed() ? '82px' : '225px'));
 }

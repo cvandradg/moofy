@@ -1,4 +1,3 @@
-import { MenuItem } from '../menu-items';
 import { Fontawesome } from '@moofy-admin/shared';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,6 +5,7 @@ import { RouterLinkActive, RouterModule } from '@angular/router';
 import { Component, computed, input, signal } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
+import { MenuItem } from '../../../menu-items';
 
 @Component({
   selector: 'moofy-main-sidenav-item',
