@@ -4,13 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-posts',
   standalone: true,
   imports: [],
-  template: `
-    <p>
-      posts works!
-    </p>
-  `,
-  styles: ``
+  template: ` <p>posts works!</p> `,
+  styles: ``,
 })
-export class PostsComponent {
-
-}
+export class PostsComponent {}

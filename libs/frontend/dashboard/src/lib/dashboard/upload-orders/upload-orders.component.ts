@@ -44,8 +44,12 @@ export class UploadOrdersComponent implements OnInit {
 
   readonly panelOpenState = signal(false);
   favoriteSeason!: string;
-  seasons: string[] = ['SUPERCENTER 100', 'SUPERCENTER 1354', 'SUPERCENTER 1334', 'SUPERCENTER 200'];
-  
+  seasons: string[] = [
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+  ];
 
   // Derived signal: supermarket counts by route
   /*Creo que se puede simplificar, no hace falta hacer algo tan complejo

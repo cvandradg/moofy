@@ -37,8 +37,7 @@ export const emptyCallback: () => void = () => {
   return;
 };
 
-
-interface moofyPOItems{
+interface moofyPOItems {
   article: string;
   quantity: string;
   cost: string;
@@ -48,8 +47,5 @@ export interface moofyPO {
   supermarket: string;
   cancellationDate: string;
   sendDate: string;
-  items: moofyPOItems[],
-};
-
-
-
+  items: moofyPOItems[];
+}

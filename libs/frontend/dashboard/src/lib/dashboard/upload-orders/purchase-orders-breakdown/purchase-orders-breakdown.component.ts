@@ -17,7 +17,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 
-
 @Component({
   selector: 'moofy-purchase-orders-breakdown',
   standalone: true,
@@ -37,7 +36,6 @@ import { MatIconModule } from '@angular/material/icon';
 export class PurchaseOrdersBreakdownComponent {
   readonly panelOpenState = signal(false);
   displayedColumns: string[] = ['item', 'cost'];
-
 
   private _bottomSheetRef =
     inject<MatBottomSheetRef<PurchaseOrdersBreakdownComponent>>(
