@@ -33,5 +33,6 @@ export class DashboardComponent {
   collapsed = signal(false);
   // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '250px'));
   // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '165px'));
-  sidenavWidth = computed(() => (this.collapsed() ? 65 : 225));
+  // sidenavWidth = computed(() => (this.collapsed() ? 82 : 165));
+  sidenavWidth = computed(() => (this.collapsed() ? '82px' : '225px'));
 }

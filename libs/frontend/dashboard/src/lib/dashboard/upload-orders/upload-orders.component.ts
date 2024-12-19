@@ -4,6 +4,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   OnInit,
+  signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxDropzoneModule } from 'ngx-dropzone';
@@ -40,6 +41,11 @@ export class UploadOrdersComponent implements OnInit {
   readonly uploadOrdersStore = inject(UploadOrdersStore);
 
   private _bottomSheet = inject(MatBottomSheet);
+
+  readonly panelOpenState = signal(false);
+  favoriteSeason!: string;
+  seasons: string[] = ['SUPERCENTER 100', 'SUPERCENTER 1354', 'SUPERCENTER 1334', 'SUPERCENTER 200'];
+  
 
   // Derived signal: supermarket counts by route
   /*Creo que se puede simplificar, no hace falta hacer algo tan complejo

@@ -9,22 +9,33 @@
   <router-outlet></router-outlet>
   } @else {
   <div class="container">
-    <ngx-dropzone
-      (change)="uploadOrdersStore.extractOrders$($event.addedFiles)"
-    >
-      <ngx-dropzone-label>
-        <div class="upload-text">
-          <fa-icon [icon]="['fal', 'up-from-line']" />
-          <h3>Drag and drop files here to upload</h3>
-          <div>or click the 'select files...' button below.</div>
-        </div>
-
-        <ng-content select="[fileInput]"></ng-content
-      ></ngx-dropzone-label>
-    </ngx-dropzone>
-
     <div class="routes-preview">
-      @for (route of vm.purchaseOrders | keyvalue; track route.key) { @if
+      <mat-accordion>
+        @for(item of [1,2,3,4,5,6,7]; let i = $index; track item;) {
+
+        <mat-expansion-panel
+          (opened)="panelOpenState.set(true)"
+          (closed)="panelOpenState.set(false)"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title> Ruta {{ i }} </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-radio-group
+            aria-labelledby="example-radio-group-label"
+            class="example-radio-group"
+            [(ngModel)]="favoriteSeason"
+          >
+            @for (season of seasons; track season) {
+            <mat-radio-button class="example-radio-button" [value]="season">{{
+              season
+            }}</mat-radio-button>
+            }
+          </mat-radio-group>
+        </mat-expansion-panel>
+        }
+      </mat-accordion>
+      <div class="display-order-details">test</div>
+      <!-- @for (route of vm.purchaseOrders | keyvalue; track route.key) { @if
       (route.value.length) {
       <div class="demo-section">
         <div>
@@ -42,17 +53,22 @@
           </button>
         </div>
       </div>
-      } } @empty { }
+      } } @empty { } -->
     </div>
 
-    @if (hasProcessedOrders(vm.purchaseOrders)) {
-    <button mat-button [routerLink]="['ordenes-procesadas']">
-      <div class="submit-button-content">
-        <span>Siguiente</span>
-        <fa-icon [icon]="['fal', 'arrow-right']"></fa-icon>
-      </div>
-    </button>
-    }
+    <!-- <ngx-dropzone
+      (change)="uploadOrdersStore.extractOrders$($event.addedFiles)"
+    >
+      <ngx-dropzone-label>
+        <div class="upload-text">
+          <fa-icon [icon]="['fal', 'up-from-line']" />
+          <h3>Drag and drop files here to upload</h3>
+          <div>or click the 'select files...' button below.</div>
+        </div>
+
+        <ng-content select="[fileInput]"></ng-content
+      ></ngx-dropzone-label>
+    </ngx-dropzone> -->
   </div>
   }
 </ng-container>

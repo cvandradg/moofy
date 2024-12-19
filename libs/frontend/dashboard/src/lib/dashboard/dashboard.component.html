@@ -14,7 +14,7 @@
     opened
     mode="side"
     class="main-mat-sidenav"
-    [style.width]="sidenavWidth() + 'px'"
+    [style.width]="sidenavWidth()"
     (mouseenter)="openState === 0 && collapsed.set(false)"
     (mouseleave)="openState === 0 && collapsed.set(true)"
   >
@@ -38,7 +38,14 @@
     <moofy-settings-sidenav-content></moofy-settings-sidenav-content>
   </mat-sidenav>
 
-  <mat-sidenav-content #sidenav class="content">
-    <router-outlet></router-outlet>
+  <mat-sidenav-content
+    #sidenav
+    class="content"
+    [style.margin-left]="'0px'"
+    [style.padding-left]="sidenavWidth()"
+  >
+    <div class="content-container">
+      <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

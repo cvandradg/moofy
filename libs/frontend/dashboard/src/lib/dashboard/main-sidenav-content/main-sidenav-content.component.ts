@@ -19,18 +19,6 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
         <moofy-main-sidenav-item [item]="item" [collapsed]="collapsed()" />
         }
       </mat-nav-list>
-
-      <div
-        class="toggle-main-nav-button"
-        (click)="toggleOpen()"
-        (keydown.enter)="toggleOpen()"
-        (keydown.space)="toggleOpen()"
-        tabindex="0"
-        role="button"
-        aria-label="Toggle navigation status"
-      >
-        <fa-icon [icon]="currentIcon()" />
-      </div>
     </div>
   `,
   styles: [
@@ -44,20 +32,19 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
       }
 
       .main-sidenav-container {
-        padding: 7rem 0;
+        padding: 0 0 0 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        // align-items: center;
+        // height: calc(100% - 3.5rem);
+        height: calc(100% - 3.5rem);
       }
 
       .sidenav-header {
         display: flex;
         flex-direction: column;
         align-items: center;
-
-        > img {
-          object-fit: cover;
-          object-position: center;
-          border-radius: 100%;
-          margin-bottom: 10px;
-        }
 
         .header-text {
           text-align: center;
@@ -118,14 +105,4 @@ export class MainSidenavContentComponent {
     this.state.set(state);
     this.toggleOpenStatus.emit(state);
   }
-
-  currentIcon = computed<IconProp>(() => {
-    const icons: IconProp[] = [
-      ['fal', 'lock-keyhole-open'],
-      ['fal', 'lock-open'],
-      ['fal', 'lock-keyhole'],
-    ];
-
-    return icons[this.state()];
-  });
 }
