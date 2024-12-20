@@ -34,8 +34,8 @@ export class LabService {
       bottomRight: 'BOOTES 0',
     },
     'ATLAS A 3': {
-      topLeft: 'AQUILA 1',
-      topRight: 'MAIA 1',
+      topLeft: 'MAIA 1',
+      topRight: 'AQUILA 1',
       bottomLeft: 'SIRIUS 2',
       bottomRight: 'AQUILA 2',
     },

@@ -367,8 +367,8 @@ export const routes = {
     { name: 'SUPERCENTER 4283', location: 'MP ALAJUELITA' },
     { name: 'SUPERCENTER 4469', location: 'MP AGUACALIENTE' },
     { name: 'SUPERCENTER 1064', location: 'MAXI CURRIDABAT (PLAZA CRISTAL)' },
-    {name: 'SUPERCENTER 738', location: 'PALI TOBOSI' },
-    {name: 'SUPERCENTER 4432', location: 'MAXI OREAMUNO' },
+    { name: 'SUPERCENTER 738', location: 'PALI TOBOSI' },
+    { name: 'SUPERCENTER 4432', location: 'MAXI OREAMUNO' },
   ],
 
   23: [

@@ -12,16 +12,14 @@ import { MODULES } from '@moofy-admin/shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsSidenavContentComponent {
-
   selectedTheme = 'light';
 
   themes = [
     { name: 'light', icon: 'clouds-moon' },
     { name: 'dark', icon: 'sun-cloud' },
-  ]
+  ];
 
   test(theme: any) {
     this.selectedTheme = theme.name;
   }
-
 }
