@@ -4,9 +4,10 @@ import { CommentsComponent } from './pages/comments/comments.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { UploadOrdersComponent } from './dashboard/upload-orders/upload-orders.component';
 import { ProcessedOrdersComponent } from './dashboard/upload-orders/processed-orders/processed-orders.component';
+import { IconProp } from '@fortawesome/angular-fontawesome/types';
 
 export type MenuItem = {
-  icon: string;
+  icon: IconProp;
   label: string;
   route?: string;
   subItems?: MenuItem[];
@@ -15,13 +16,13 @@ export type MenuItem = {
 
 export const menuItems: MenuItem[] = [
   {
-    icon: 'folder-arrow-up',
+    icon: ['far', 'folder'],
     label: 'Subir Órdenes',
     route: 'subir-ordenes',
     component: UploadOrdersComponent,
     subItems: [
       {
-        icon: 'folder-arrow-up',
+        icon: ['far', 'folder'],
         label: 'Ordenes Procesadas',
         route: 'ordenes-procesadas',
         component: ProcessedOrdersComponent,
@@ -29,31 +30,31 @@ export const menuItems: MenuItem[] = [
     ],
   },
   {
-    icon: 'files',
+    icon: ['far', 'rectangle-list'],
     label: 'Historial',
     route: 'historial',
     component: ContentComponent,
   },
   {
-    icon: 'chart-column',
+    icon: ['far', 'chart-bar'],
     label: 'Estadísticas',
     route: 'estadisticas',
     component: AnalyticsComponent,
   },
   {
-    icon: 'chart-mixed-up-circle-dollar',
+    icon: ['far', 'eye'],
     label: 'Predicciones',
     route: 'predicciones',
     component: CommentsComponent,
   },
   {
-    icon: 'book-sparkles',
+    icon: ['far', 'file'],
     label: 'Documentación',
     route: 'documentacion',
     component: CommentsComponent,
   },
   {
-    icon: 'screwdriver-wrench',
+    icon: ['fas', 'sliders'],
     label: 'Configuración',
     route: 'configuracion',
     component: CommentsComponent,

@@ -7,7 +7,6 @@ import {
   MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
 import { MatTableModule } from '@angular/material/table';
-import { CurrencyPipe } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,12 +21,11 @@ describe('PurchaseOrdersBreakdownComponent', () => {
       imports: [
         PurchaseOrdersBreakdownComponent,
         MODULES,
-        MatBottomSheetModule,
-        MatTableModule,
-        CurrencyPipe,
-        MatExpansionModule,
         MatTreeModule,
         MatIconModule,
+        MatTableModule,
+        MatExpansionModule,
+        MatBottomSheetModule,
         NoopAnimationsModule,
       ],
       providers: [

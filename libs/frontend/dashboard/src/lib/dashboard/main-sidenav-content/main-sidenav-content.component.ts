@@ -1,17 +1,17 @@
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { Component, computed, input, output, signal } from '@angular/core';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { Fontawesome } from '@moofy-admin/shared';
-import { IconProp } from '@fortawesome/angular-fontawesome/types';
-import { menuItems } from '../../menu-items';
-import { MenuItemComponent } from './menu-item/menu-item.component';
+import {CommonModule} from '@angular/common';
+import {RouterModule} from '@angular/router';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
+import {Component, computed, input, output, signal} from '@angular/core';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {Fontawesome} from '@moofy-admin/shared';
+import {IconProp} from '@fortawesome/angular-fontawesome/types';
+import {menuItems} from '../../menu-items';
+import {MenuItemComponent} from './menu-item/menu-item.component';
 
 @Component({
-    selector: 'moofy-main-sidenav-content',
-    template: `
+  selector: 'moofy-main-sidenav-content',
+  template: `
     <div class="main-sidenav-container">
       <mat-nav-list>
         @for (item of menuItems; track item.label) {
@@ -20,14 +20,19 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
       </mat-nav-list>
     </div>
   `,
-    styles: [
-        `
+  styles: [
+    `
       :host * {
         transition: all 500ms ease-in-out;
       }
 
       mat-nav-list {
         padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
       }
 
       .main-sidenav-container {
@@ -35,8 +40,7 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
         display: flex;
         flex-direction: column;
         justify-content: center;
-        // align-items: center;
-        // height: calc(100% - 3.5rem);
+        padding: 0 0.5rem 0 1rem;
         height: calc(100% - 3.5rem);
       }
 
@@ -79,16 +83,16 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
         opacity: 0;
       }
     `,
-    ],
-    imports: [
-        Fontawesome,
-        CommonModule,
-        RouterModule,
-        MatIconModule,
-        MatListModule,
-        MatSidenavModule,
-        MenuItemComponent,
-    ]
+  ],
+  imports: [
+    Fontawesome,
+    CommonModule,
+    RouterModule,
+    MatIconModule,
+    MatListModule,
+    MatSidenavModule,
+    MenuItemComponent,
+  ],
 })
 export class MainSidenavContentComponent {
   state = signal(0);

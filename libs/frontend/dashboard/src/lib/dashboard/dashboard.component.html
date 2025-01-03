@@ -6,44 +6,27 @@
   </div>
 
   <button mat-icon-button (click)="settingsSidenav.open()">
-    <fa-icon [icon]="['fal', 'sliders']" />
+    <fa-icon [icon]="['fas', 'sliders']" />
   </button>
 </mat-toolbar>
 <mat-sidenav-container>
-  <mat-sidenav
-    opened
-    mode="side"
-    class="main-mat-sidenav"
-    [style.width]="sidenavWidth()"
-    (mouseenter)="openState === 0 && collapsed.set(false)"
-    (mouseleave)="openState === 0 && collapsed.set(true)"
-  >
+  <mat-sidenav opened mode="side" class="main-mat-sidenav" [style.width]="sidenavWidth()">
+    <!-- (mouseenter)="openState === 0 && collapsed.set(false)"
+    (mouseleave)="openState === 0 && collapsed.set(true)" -->
+
     <moofy-main-sidenav-content
       (toggleOpenStatus)="
-        openState = $event;
-        openState === 1 && collapsed.set(false);
-        openState === 2 && collapsed.set(true)
+        openState = $event; openState === 1 && collapsed.set(false); openState === 2 && collapsed.set(true)
       "
       [collapsed]="collapsed()"
     />
   </mat-sidenav>
 
-  <mat-sidenav
-    mode="over"
-    position="end"
-    #settingsSidenav
-    class="settings-mat-sidenav"
-    (keydown.escape)="close()"
-  >
+  <mat-sidenav mode="over" position="end" #settingsSidenav class="settings-mat-sidenav" (keydown.escape)="close()">
     <moofy-settings-sidenav-content></moofy-settings-sidenav-content>
   </mat-sidenav>
 
-  <mat-sidenav-content
-    #sidenav
-    class="content"
-    [style.margin-left]="'0px'"
-    [style.padding-left]="sidenavWidth()"
-  >
+  <mat-sidenav-content #sidenav class="content" [style.margin-left]="'0px'" [style.padding-left]="sidenavWidth()">
     <div class="content-container">
       <router-outlet></router-outlet>
     </div>

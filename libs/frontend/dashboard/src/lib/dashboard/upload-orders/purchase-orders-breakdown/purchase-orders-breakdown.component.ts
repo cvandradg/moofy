@@ -11,26 +11,24 @@ import {
   ChangeDetectionStrategy,
   signal,
 } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'moofy-purchase-orders-breakdown',
-    imports: [
-        MODULES,
-        MatBottomSheetModule,
-        MatTableModule,
-        CurrencyPipe,
-        MatExpansionModule,
-        MatTreeModule,
-        MatIconModule,
-    ],
-    templateUrl: './purchase-orders-breakdown.component.html',
-    styleUrl: './purchase-orders-breakdown.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'moofy-purchase-orders-breakdown',
+  imports: [
+    MODULES,
+    MatTreeModule,
+    MatIconModule,
+    MatTableModule,
+    MatExpansionModule,
+    MatBottomSheetModule,
+  ],
+  templateUrl: './purchase-orders-breakdown.component.html',
+  styleUrl: './purchase-orders-breakdown.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PurchaseOrdersBreakdownComponent {
   readonly panelOpenState = signal(false);

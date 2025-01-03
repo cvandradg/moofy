@@ -5255,7 +5255,7 @@ __metadata:
     pdfjs-dist: "npm:4.9.124"
     postcss: "npm:^8.4.5"
     postcss-url: "npm:~10.1.3"
-    prettier: "npm:^2.6.2"
+    prettier: "npm:^3.4.2"
     rxjs: "npm:~7.8.0"
     ts-jest: "npm:^29.1.0"
     ts-node: "npm:10.9.1"
@@ -18258,12 +18258,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.6.2":
-  version: 2.8.8
-  resolution: "prettier@npm:2.8.8"
+"prettier@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "prettier@npm:3.4.2"
   bin:
-    prettier: bin-prettier.js
-  checksum: 38b0a43ea17e83f54b904f8808f7d0fd1d9705ef9627bb40017ee276cbd6f5e7d15bcf816c4467b64cfe14ef109369a981ce61fad9c6022749d041f74a672188
+    prettier: bin/prettier.cjs
+  checksum: 68373281a9cc89b22c9190dc0bd0dd5f1b5fd74db479b4887473588c1f0041948feb29d4761ebf2dac99fd98ff1424c9ddf38c60ef3d79eda11efb01c57e9ce0
   languageName: node
   linkType: hard
 
