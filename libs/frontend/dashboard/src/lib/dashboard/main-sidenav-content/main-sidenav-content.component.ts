@@ -10,9 +10,8 @@ import { menuItems } from '../../menu-items';
 import { MenuItemComponent } from './menu-item/menu-item.component';
 
 @Component({
-  selector: 'moofy-main-sidenav-content',
-  standalone: true,
-  template: `
+    selector: 'moofy-main-sidenav-content',
+    template: `
     <div class="main-sidenav-container">
       <mat-nav-list>
         @for (item of menuItems; track item.label) {
@@ -21,8 +20,8 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
       </mat-nav-list>
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
       :host * {
         transition: all 500ms ease-in-out;
       }
@@ -80,16 +79,16 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
         opacity: 0;
       }
     `,
-  ],
-  imports: [
-    Fontawesome,
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    MenuItemComponent,
-  ],
+    ],
+    imports: [
+        Fontawesome,
+        CommonModule,
+        RouterModule,
+        MatIconModule,
+        MatListModule,
+        MatSidenavModule,
+        MenuItemComponent,
+    ]
 })
 export class MainSidenavContentComponent {
   state = signal(0);

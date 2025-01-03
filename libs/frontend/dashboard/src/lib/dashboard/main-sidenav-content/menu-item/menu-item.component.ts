@@ -8,17 +8,16 @@ import { CommonModule } from '@angular/common';
 import { MenuItem } from '../../../menu-items';
 
 @Component({
-  selector: 'moofy-main-sidenav-item',
-  standalone: true,
-  imports: [
-    CommonModule,
-    Fontawesome,
-    RouterModule,
-    MatListModule,
-    MatIconModule,
-    RouterLinkActive,
-  ],
-  template: `
+    selector: 'moofy-main-sidenav-item',
+    imports: [
+        CommonModule,
+        Fontawesome,
+        RouterModule,
+        MatListModule,
+        MatIconModule,
+        RouterLinkActive,
+    ],
+    template: `
     <a
       mat-list-item
       [activated]="rla.isActive"
@@ -37,7 +36,7 @@ import { MenuItem } from '../../../menu-items';
       <span matListItemTitle>{{ item().label }}</span>
     </a>
   `,
-  styles: `
+    styles: `
 
   @use '@angular/material' as mat;
   
@@ -69,17 +68,17 @@ import { MenuItem } from '../../../menu-items';
     }
 
   `,
-  animations: [
-    trigger('expandContractMenu', [
-      transition(':enter', [
-        style({ opacity: 0, height: '0px' }),
-        animate('500ms ease-in-out', style({ opacity: 1, height: '*' })),
-      ]),
-      transition(':leave', [
-        animate('500ms ease-in-out', style({ opacity: 0, height: '0px' })),
-      ]),
-    ]),
-  ],
+    animations: [
+        trigger('expandContractMenu', [
+            transition(':enter', [
+                style({ opacity: 0, height: '0px' }),
+                animate('500ms ease-in-out', style({ opacity: 1, height: '*' })),
+            ]),
+            transition(':leave', [
+                animate('500ms ease-in-out', style({ opacity: 0, height: '0px' })),
+            ]),
+        ]),
+    ]
 })
 export class MenuItemComponent {
   item = input.required<MenuItem>();

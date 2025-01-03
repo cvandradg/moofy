@@ -4,12 +4,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MODULES } from '@moofy-admin/shared';
 
 @Component({
-  selector: 'moofy-settings-sidenav-content',
-  standalone: true,
-  imports: [MODULES],
-  templateUrl: './settings-sidenav-content.component.html',
-  styleUrl: './settings-sidenav-content.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'moofy-settings-sidenav-content',
+    imports: [MODULES],
+    templateUrl: './settings-sidenav-content.component.html',
+    styleUrl: './settings-sidenav-content.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsSidenavContentComponent {
   selectedTheme = 'light';

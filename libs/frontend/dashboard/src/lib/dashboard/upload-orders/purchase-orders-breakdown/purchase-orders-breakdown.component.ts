@@ -18,20 +18,19 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'moofy-purchase-orders-breakdown',
-  standalone: true,
-  imports: [
-    MODULES,
-    MatBottomSheetModule,
-    MatTableModule,
-    CurrencyPipe,
-    MatExpansionModule,
-    MatTreeModule,
-    MatIconModule,
-  ],
-  templateUrl: './purchase-orders-breakdown.component.html',
-  styleUrl: './purchase-orders-breakdown.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'moofy-purchase-orders-breakdown',
+    imports: [
+        MODULES,
+        MatBottomSheetModule,
+        MatTableModule,
+        CurrencyPipe,
+        MatExpansionModule,
+        MatTreeModule,
+        MatIconModule,
+    ],
+    templateUrl: './purchase-orders-breakdown.component.html',
+    styleUrl: './purchase-orders-breakdown.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PurchaseOrdersBreakdownComponent {
   readonly panelOpenState = signal(false);

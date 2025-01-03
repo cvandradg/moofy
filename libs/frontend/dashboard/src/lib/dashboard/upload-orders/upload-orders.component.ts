@@ -21,19 +21,18 @@ import { RouterModule } from '@angular/router';
 import { PurchaseOrdersBreakdownComponent } from './purchase-orders-breakdown/purchase-orders-breakdown.component';
 
 @Component({
-  selector: 'moofy-upload-orders',
-  standalone: true,
-  imports: [
-    MODULES,
-    Fontawesome,
-    RouterModule,
-    MatBadgeModule,
-    NgxDropzoneModule,
-    MatBottomSheetModule,
-  ],
-  templateUrl: './upload-orders.component.html',
-  styleUrls: ['./upload-orders.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'moofy-upload-orders',
+    imports: [
+        MODULES,
+        Fontawesome,
+        RouterModule,
+        MatBadgeModule,
+        NgxDropzoneModule,
+        MatBottomSheetModule,
+    ],
+    templateUrl: './upload-orders.component.html',
+    styleUrls: ['./upload-orders.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadOrdersComponent implements OnInit {
   router = inject(Router);

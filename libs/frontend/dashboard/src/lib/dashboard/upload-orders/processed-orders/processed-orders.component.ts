@@ -16,12 +16,11 @@ export interface PeriodicElement {
 }
 
 @Component({
-  selector: 'moofy-processed-orders',
-  standalone: true,
-  imports: [CommonModule, MatTableModule, CurrencyPipe, MODULES],
-  templateUrl: './processed-orders.component.html',
-  styleUrl: './processed-orders.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'moofy-processed-orders',
+    imports: [CommonModule, MatTableModule, CurrencyPipe, MODULES],
+    templateUrl: './processed-orders.component.html',
+    styleUrl: './processed-orders.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProcessedOrdersComponent implements OnInit {
   uploadOrdersStore = inject(UploadOrdersStore);

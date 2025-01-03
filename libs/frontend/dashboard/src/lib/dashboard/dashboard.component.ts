@@ -11,16 +11,15 @@ import { MainSidenavContentComponent } from './main-sidenav-content/main-sidenav
 import { SettingsSidenavContentComponent } from './settings-sidenav-content/settings-sidenav-content.component';
 
 @Component({
-  selector: 'moofy-dashboard',
-  standalone: true,
-  imports: [
-    MODULES,
-    MainSidenavContentComponent,
-    SettingsSidenavContentComponent,
-  ],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'moofy-dashboard',
+    imports: [
+        MODULES,
+        MainSidenavContentComponent,
+        SettingsSidenavContentComponent,
+    ],
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
   @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
