@@ -4,12 +4,19 @@
 
 .display-order-details {
   // max-width: 60%;
-  min-height: 20rem;
+  min-height: 40rem;
   flex-grow: 8;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: rgba(97, 97, 79, 0.027);
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   border: none;
+
+  .no-selection {
+    padding: 0 0 0 0.7rem;
+    border-left: 3px solid rgba(39, 34, 34, 0.479);
+  }
 }
 
 mat-accordion {
@@ -87,4 +94,10 @@ fa-icon {
 
 :host ::ng-deep .mat-expansion-panel-body {
   padding: 0 !important;
+}
+
+mat-panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

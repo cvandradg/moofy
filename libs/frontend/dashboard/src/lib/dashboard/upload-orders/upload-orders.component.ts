@@ -1,38 +1,19 @@
-import {
-  inject,
-  computed,
-  Component,
-  ChangeDetectionStrategy,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { inject, computed, Component, ChangeDetectionStrategy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatBadgeModule } from '@angular/material/badge';
 import { UploadOrdersStore } from './upload-orders.store';
 import { Fontawesome, MODULES, moofyPO } from '@moofy-admin/shared';
-import { provideComponentStore } from '@ngrx/component-store';
 import { PdfExtractService, routes } from '@moofy-admin/shared';
-import {
-  MatBottomSheet,
-  MatBottomSheetModule,
-} from '@angular/material/bottom-sheet';
+import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { RouterModule } from '@angular/router';
-import { PurchaseOrdersBreakdownComponent } from './purchase-orders-breakdown/purchase-orders-breakdown.component';
 
 @Component({
-    selector: 'moofy-upload-orders',
-    imports: [
-        MODULES,
-        Fontawesome,
-        RouterModule,
-        MatBadgeModule,
-        NgxDropzoneModule,
-        MatBottomSheetModule,
-    ],
-    templateUrl: './upload-orders.component.html',
-    styleUrls: ['./upload-orders.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'moofy-upload-orders',
+  imports: [MODULES, Fontawesome, RouterModule, MatBadgeModule, NgxDropzoneModule, MatBottomSheetModule],
+  templateUrl: './upload-orders.component.html',
+  styleUrls: ['./upload-orders.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadOrdersComponent implements OnInit {
   router = inject(Router);
@@ -43,12 +24,7 @@ export class UploadOrdersComponent implements OnInit {
 
   readonly panelOpenState = signal(false);
   favoriteSeason!: string;
-  seasons: string[] = [
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-  ];
+  seasons: string[] = ['SUPERCENTER 100', 'SUPERCENTER 1354', 'SUPERCENTER 1334', 'SUPERCENTER 200'];
 
   // Derived signal: supermarket counts by route
   /*Creo que se puede simplificar, no hace falta hacer algo tan complejo
@@ -64,29 +40,16 @@ export class UploadOrdersComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.pdfExtractService
-      .walmartBotLogin()
-      .subscribe((a: any) => console.log('login,', a));
+    this.pdfExtractService.walmartBotLogin().subscribe((a: any) => console.log('login,', a));
 
-    this.pdfExtractService
-      .fetchInboundDocuments()
-      .subscribe((a: any) => console.log('holaaaa,', a));
-  }
-
-  openBottomSheet(routePurchaseOrders: any): void {
-    console.log('purchaseOrders', routePurchaseOrders);
-    this._bottomSheet.open(PurchaseOrdersBreakdownComponent, {
-      data: { routePurchaseOrders },
-    });
+    this.pdfExtractService.fetchInboundDocuments().subscribe((a: any) => console.log('holaaaa,', a));
   }
 
   getSupermarketCount(route: string): number {
     return this.supermarketCountByRoute()[route] || 0;
   }
 
-  hasProcessedOrders(
-    purchaseOrders: Record<string, moofyPO[]> | undefined
-  ): boolean {
+  hasProcessedOrders(purchaseOrders: Record<string, moofyPO[]> | undefined): boolean {
     if (!purchaseOrders) {
       return false; // Handle undefined or null
     }

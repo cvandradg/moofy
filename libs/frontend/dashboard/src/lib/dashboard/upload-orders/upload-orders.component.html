@@ -1,74 +1,41 @@
 <ng-container
   *ngrxLet="{
-  error: uploadOrdersStore.error$ | ngrxPush,
-  purchaseOrders: uploadOrdersStore.purchaseOrders$ | ngrxPush,
-  loading: uploadOrdersStore.loading$ | ngrxPush,
-} as vm"
+    error: uploadOrdersStore.error$ | ngrxPush,
+    purchaseOrders: uploadOrdersStore.purchaseOrders$ | ngrxPush,
+    loading: uploadOrdersStore.loading$ | ngrxPush,
+  } as vm"
 >
   @if (router.url.includes('/ordenes-procesadas')) {
-  <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
   } @else {
-  <div class="container">
-    <div class="routes-preview">
-      <mat-accordion>
-        @for(item of [1,2,3,4,5,6,7]; let i = $index; track item;) {
-
-        <mat-expansion-panel
-          (opened)="panelOpenState.set(true)"
-          (closed)="panelOpenState.set(false)"
-        >
-          <mat-expansion-panel-header>
-            <mat-panel-title> Ruta {{ i }} </mat-panel-title>
-          </mat-expansion-panel-header>
-          <mat-radio-group
-            aria-labelledby="example-radio-group-label"
-            class="example-radio-group"
-            [(ngModel)]="favoriteSeason"
-          >
-            @for (season of seasons; track season) {
-            <mat-radio-button class="example-radio-button" [value]="season">{{
-              season
-            }}</mat-radio-button>
-            }
-          </mat-radio-group>
-        </mat-expansion-panel>
-        }
-      </mat-accordion>
-      <div class="display-order-details">test</div>
-      <!-- @for (route of vm.purchaseOrders | keyvalue; track route.key) { @if
-      (route.value.length) {
-      <div class="demo-section">
-        <div>
-          <button
-            mat-raised-button
-            [matBadge]="
-              route.value.length + '/' + getSupermarketCount(route.key)
-            "
-            color="#fff"
-            (click)="openBottomSheet(route.value)"
-          >
-            {{
-              route.key === 'unProcessed' ? 'No Procesado' : 'Ruta ' + route.key
-            }}
-          </button>
+    <div class="container">
+      <div class="routes-preview">
+        <mat-accordion>
+          @for (item of [1, 2, 3, 4, 5, 6, 7]; let i = $index; track item) {
+            <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div>Ruta {{ i }}</div>
+                  <div>{{ i }}/7</div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-radio-group
+                aria-labelledby="example-radio-group-label"
+                class="example-radio-group"
+                [(ngModel)]="favoriteSeason"
+              >
+                @for (season of seasons; track season) {
+                  <mat-radio-button class="example-radio-button" [value]="season">{{ season }}</mat-radio-button>
+                }
+              </mat-radio-group>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+        <div class="display-order-details">
+          <!-- <div class="no-selection">Selecciona una ruta para ver datos</div> -->
+          <!-- <moofy-purchase-order-breakdown></moofy-purchase-order-breakdown> -->
         </div>
       </div>
-      } } @empty { } -->
     </div>
-
-    <!-- <ngx-dropzone
-      (change)="uploadOrdersStore.extractOrders$($event.addedFiles)"
-    >
-      <ngx-dropzone-label>
-        <div class="upload-text">
-          <fa-icon [icon]="['fal', 'up-from-line']" />
-          <h3>Drag and drop files here to upload</h3>
-          <div>or click the 'select files...' button below.</div>
-        </div>
-
-        <ng-content select="[fileInput]"></ng-content
-      ></ngx-dropzone-label>
-    </ngx-dropzone> -->
-  </div>
   }
 </ng-container>

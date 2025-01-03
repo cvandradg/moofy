@@ -3,7 +3,6 @@ import { ContentComponent } from './pages/content/content.component';
 import { CommentsComponent } from './pages/comments/comments.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { UploadOrdersComponent } from './dashboard/upload-orders/upload-orders.component';
-import { ProcessedOrdersComponent } from './dashboard/upload-orders/processed-orders/processed-orders.component';
 import { IconProp } from '@fortawesome/angular-fontawesome/types';
 
 export type MenuItem = {
@@ -20,14 +19,14 @@ export const menuItems: MenuItem[] = [
     label: 'Subir Órdenes',
     route: 'subir-ordenes',
     component: UploadOrdersComponent,
-    subItems: [
-      {
-        icon: ['far', 'folder'],
-        label: 'Ordenes Procesadas',
-        route: 'ordenes-procesadas',
-        component: ProcessedOrdersComponent,
-      },
-    ],
+    // subItems: [
+    //   {
+    //     icon: ['far', 'folder'],
+    //     label: 'Ordenes Procesadas',
+    //     route: 'ordenes-procesadas',
+    //     component: ProcessedOrdersComponent,
+    //   },
+    // ],
   },
   {
     icon: ['far', 'rectangle-list'],
