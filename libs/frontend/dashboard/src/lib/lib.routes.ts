@@ -20,7 +20,7 @@ export const dashboardRoutes: Route[] = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'dashboard',
+        redirectTo: 'subir-ordenes',
       },
       ...menuItems.map((i) => itemToRoute(i)),
     ],

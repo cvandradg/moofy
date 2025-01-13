@@ -10,31 +10,78 @@
   } @else {
     <div class="container">
       <div class="routes-preview">
-        <mat-accordion>
-          @for (item of [1, 2, 3, 4, 5, 6, 7]; let i = $index; track item) {
-            <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div>Ruta {{ i }}</div>
-                  <div>{{ i }}/7</div>
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-              <mat-radio-group
-                aria-labelledby="example-radio-group-label"
-                class="example-radio-group"
-                [(ngModel)]="favoriteSeason"
-              >
-                @for (season of seasons; track season) {
-                  <mat-radio-button class="example-radio-button" [value]="season">{{ season }}</mat-radio-button>
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+          <mat-tab label="Desglose">
+            <div class="accordion-scrollable-container">
+              <mat-accordion>
+                @for (
+                  item of [1, 2, 3, 4, 5, 6, 7, 1, 2, 4, 5, 6, 7, 1, 2, 4, 5, 6, 7, 1, 2];
+                  let i = $index;
+                  track item
+                ) {
+                  <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div>Ruta {{ i }}</div>
+                        <div>{{ i }}/7</div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-radio-group
+                      aria-labelledby="example-radio-group-label"
+                      class="example-radio-group"
+                      [(ngModel)]="favoriteSeason"
+                    >
+                      @for (season of seasons; track season) {
+                        <mat-radio-button class="example-radio-button" [value]="season">{{ season }}</mat-radio-button>
+                      }
+                    </mat-radio-group>
+                  </mat-expansion-panel>
                 }
-              </mat-radio-group>
-            </mat-expansion-panel>
-          }
-        </mat-accordion>
-        <div class="display-order-details">
-          <!-- <div class="no-selection">Selecciona una ruta para ver datos</div> -->
-          <!-- <moofy-purchase-order-breakdown></moofy-purchase-order-breakdown> -->
-        </div>
+              </mat-accordion>
+            </div>
+
+            <div class="display-order-details-container">
+              <div class="display-order-details">
+                <!-- <div class="no-selection">Selecciona una ruta para ver datos</div> -->
+
+                <div class="supercenter">Supercenter 700</div>
+
+                <moofy-purchase-order-breakdown />
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Totales">
+            <div class="accordion-scrollable-container">
+              <mat-accordion>
+                <mat-radio-group
+                  aria-labelledby="example-radio-group-label"
+                  class="example-radio-group"
+                  [(ngModel)]="favoriteSeason"
+                >
+                  <mat-radio-button class="example-radio-button" [value]="'Total General'">
+                    {{ 'Total General' }}
+                  </mat-radio-button>
+
+                  @for (season of seasons; track season; let i = $index) {
+                    <mat-radio-button class="example-radio-button" [value]="season">
+                      {{ 'Ruta' }} {{ i }}
+                    </mat-radio-button>
+                  }
+                </mat-radio-group>
+              </mat-accordion>
+            </div>
+
+            <div class="display-order-details-container">
+              <div class="display-order-details">
+                <!-- <div class="no-selection">Selecciona una ruta para ver datos</div> -->
+
+                <div class="supercenter">Ruta 1</div>
+
+                <moofy-purchase-order-breakdown />
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </div>
   }

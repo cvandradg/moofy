@@ -7,10 +7,19 @@ import { Fontawesome, MODULES, moofyPO } from '@moofy-admin/shared';
 import { PdfExtractService, routes } from '@moofy-admin/shared';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { RouterModule } from '@angular/router';
+import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 
 @Component({
   selector: 'moofy-upload-orders',
-  imports: [MODULES, Fontawesome, RouterModule, MatBadgeModule, NgxDropzoneModule, MatBottomSheetModule],
+  imports: [
+    MODULES,
+    Fontawesome,
+    RouterModule,
+    MatBadgeModule,
+    NgxDropzoneModule,
+    MatBottomSheetModule,
+    PurchaseOrderBreakdownComponent,
+  ],
   templateUrl: './upload-orders.component.html',
   styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,7 +33,40 @@ export class UploadOrdersComponent implements OnInit {
 
   readonly panelOpenState = signal(false);
   favoriteSeason!: string;
-  seasons: string[] = ['SUPERCENTER 100', 'SUPERCENTER 1354', 'SUPERCENTER 1334', 'SUPERCENTER 200'];
+  seasons: string[] = [
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+    'SUPERCENTER 100',
+    'SUPERCENTER 1354',
+    'SUPERCENTER 1334',
+    'SUPERCENTER 200',
+  ];
 
   // Derived signal: supermarket counts by route
   /*Creo que se puede simplificar, no hace falta hacer algo tan complejo
