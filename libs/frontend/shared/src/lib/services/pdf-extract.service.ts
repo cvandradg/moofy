@@ -52,10 +52,8 @@ export class PdfExtractService {
     const headers = new HttpHeaders({
       accept: 'application/json', // Explicitly request JSON
       'accept-language': 'en-US,en;q=0.9,es;q=0.8',
-      priority: 'u=1, i',
       referer: 'https://retaillink2.wal-mart.com/Webedi2/inbound/51619',
-      'sec-ch-ua':
-        '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+      'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
       'sec-ch-ua-mobile': '?0',
       'sec-ch-ua-platform': '"Windows"',
       'sec-fetch-dest': 'empty',
@@ -64,7 +62,8 @@ export class PdfExtractService {
       'user-agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
       'x-requested-with': 'XMLHttpRequest',
-      'x-bot-token': '<your-bot-token>', // Replace with your actual bot token
+      'X-Bot-Token':
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3MzkyMTU0MDksImlhdCI6MTczNDAzMTQwOSwianRpIjoiYTJhNGIxMWYtNjZmMi00YzdlLTk2MTctZjQwOTU4MjFmOTMyIn0.EvVZVyUbeAD540h3zmwNKPi6dDhnjxTneYxKdQULdDlgRoCYfcSWi1og5-3b66kVKL-KNTmSOeeXLu20T1P4ZwwXEAV3nYj7N7V12mlPhHO_3SMdMcMMk_y_ZdpQAdlYKE7zidcTbrYeCvcB0m1mGIyELE_ZnmNrIyB1HbOtHurb8idRXy10D3S5SynXKgztzWDWlyZTnLM-JASAalzab8rvbNDTa3_10qgIzLTgBOsQBzsJyHgpGmtIGRo3rq6RtAs4_mlK-jFG1--QfoXaNxZHx36wToGNIj7s96z2zCMBIK8PRV1ThnfzkEvYl5h3xG3Z8Jy4tvjIzKKJcd7n3w',
     });
 
     return this.http.get(url, { headers });
@@ -89,9 +88,7 @@ export class PdfExtractService {
           }
 
           const [route, supermarkets] = routeEntry;
-          const match = supermarkets.find(
-            (s) => s.name === purchaseOrder.supermarket
-          );
+          const match = supermarkets.find((s) => s.name === purchaseOrder.supermarket);
 
           if (!match) {
             routeMap['unProcessed'].push(purchaseOrder);
@@ -106,24 +103,19 @@ export class PdfExtractService {
   }
 
   extractTextFromPDFs(files: File[]): Observable<MoofyPO[]> {
-    return forkJoin(
-      files.map((file) => (file ? this.extractTextFromPdf(file) : of(null)))
-    ).pipe(map((results) => results.filter(Boolean) as MoofyPO[]));
+    return forkJoin(files.map((file) => (file ? this.extractTextFromPdf(file) : of(null)))).pipe(
+      map((results) => results.filter(Boolean) as MoofyPO[])
+    );
   }
 
   extractTextFromPdf(file: File): Observable<MoofyPO> {
     return from(file.arrayBuffer()).pipe(
-      switchMap((pdfData) =>
-        from(pdfjsLib.getDocument({ data: pdfData }).promise)
-      ),
+      switchMap((pdfData) => from(pdfjsLib.getDocument({ data: pdfData }).promise)),
       switchMap((pdfDoc) => this.parsePurchaseOrder(pdfDoc, file.name))
     );
   }
 
-  parsePurchaseOrder(
-    pdfDoc: pdfjsLib.PDFDocumentProxy,
-    fileName: string
-  ): Observable<MoofyPO> {
+  parsePurchaseOrder(pdfDoc: pdfjsLib.PDFDocumentProxy, fileName: string): Observable<MoofyPO> {
     return forkJoin(
       Array.from({ length: pdfDoc.numPages }, (_, i) =>
         from(pdfDoc.getPage(i + 1)).pipe(
@@ -155,21 +147,15 @@ export class PdfExtractService {
     );
 
     const itemsAmountIndex = table.findIndex(
-      (item) =>
-        ('str' in item && item.str === 'Total artic lín') ||
-        ('str' in item && item.str === 'Total Line Items')
+      (item) => ('str' in item && item.str === 'Total artic lín') || ('str' in item && item.str === 'Total Line Items')
     );
 
-    const itemsAmount = parseInt(
-      this.getTextItemStr(table[itemsAmountIndex + 2])
-    );
+    const itemsAmount = parseInt(this.getTextItemStr(table[itemsAmountIndex + 2]));
 
     console.log('itemsAmount', itemsAmountIndex);
 
     return Array.from({ length: itemsAmount }, (_, i) => {
-      const currentItemIndex = table.findIndex(
-        (item): item is TextItem => 'str' in item && item.str === `00${i + 1}`
-      );
+      const currentItemIndex = table.findIndex((item): item is TextItem => 'str' in item && item.str === `00${i + 1}`);
 
       //si no encuentra artitulo tiene que tirar un error y detener el proceso de lectura del file
 
@@ -181,21 +167,15 @@ export class PdfExtractService {
     });
   }
 
-  getPurchaseOrderTable(
-    content: (TextItem | TextMarkedContent)[]
-  ): (TextItem | TextMarkedContent)[] {
+  getPurchaseOrderTable(content: (TextItem | TextMarkedContent)[]): (TextItem | TextMarkedContent)[] {
     const itemsIdxStart =
       content.findIndex(
-        (item) =>
-          ('str' in item && item.str === 'Costo Extendí') ||
-          ('str' in item && item.str === 'Extended Cost')
+        (item) => ('str' in item && item.str === 'Costo Extendí') || ('str' in item && item.str === 'Extended Cost')
       ) + 2;
     return content.slice(itemsIdxStart);
   }
 
   getTextItemStr(item: unknown): string {
-    return item && typeof item === 'object' && 'str' in item
-      ? (item as TextItem).str
-      : '';
+    return item && typeof item === 'object' && 'str' in item ? (item as TextItem).str : '';
   }
 }

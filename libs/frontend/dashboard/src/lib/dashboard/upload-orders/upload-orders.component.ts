@@ -38,34 +38,18 @@ export class UploadOrdersComponent implements OnInit {
     'SUPERCENTER 1354',
     'SUPERCENTER 1334',
     'SUPERCENTER 200',
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
+    'SUPERCENTER 1000',
+    'SUPERCENTER 13540',
+    'SUPERCENTER 13340',
+    'SUPERCENTER 2000',
+    'SUPERCENTER 100000',
+    'SUPERCENTER 1354000',
+    'SUPERCENTER 1334000',
+    'SUPERCENTER 2000000',
+    'SUPERCENTER 10',
+    'SUPERCENTER 13',
+    'SUPERCENTER 14',
+    'SUPERCENTER 22',
   ];
 
   // Derived signal: supermarket counts by route
@@ -82,9 +66,13 @@ export class UploadOrdersComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.pdfExtractService.walmartBotLogin().subscribe((a: any) => console.log('login,', a));
+    this.pdfExtractService.walmartBotLogin().subscribe((a: any) => {
+      this.pdfExtractService
+        .fetchInboundDocuments()
+        .subscribe((a: any) => console.log('upload orders fetch inbound documents,', a));
 
-    this.pdfExtractService.fetchInboundDocuments().subscribe((a: any) => console.log('holaaaa,', a));
+      console.log('login,', a);
+    });
   }
 
   getSupermarketCount(route: string): number {
