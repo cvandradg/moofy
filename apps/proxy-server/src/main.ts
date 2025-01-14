@@ -8,13 +8,13 @@ import { CookieJar } from 'tough-cookie';
 
 // Environment setup
 const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+const port = process.env.PORT ? Number(process.env.PORT) : 3001;
 
 const app = express();
 
 // Load the CA bundle (for HTTPS requests)
 const caBundlePath = path.resolve('./ca-bundle.crt');
-const caCertificates = fs.readFileSync(caBundlePath, 'utf-8');
+const caCertificates = fs.readFileSync(caBundlePath);
 
 const httpsAgent = new https.Agent({
   ca: caCertificates,

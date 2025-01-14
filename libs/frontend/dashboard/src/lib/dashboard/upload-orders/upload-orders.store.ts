@@ -1,46 +1,40 @@
 import { inject, Injectable } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
-import { switchMap, Observable, tap } from 'rxjs';
-import {
-  moofyPO,
-  PdfExtractService,
-  ComponentStoreMixinHelper,
-} from '@moofy-admin/shared';
+import { switchMap, Observable, tap, pipe } from 'rxjs';
+import { moofyPO, PdfExtractService, ComponentStoreMixinHelper, routes } from '@moofy-admin/shared';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UploadOrdersStore extends ComponentStoreMixinHelper<{
-  purchaseOrders: Record<string, moofyPO[]>;
+  inboundOrders: { DocumentId: number; Location: string }[];
 }> {
   pdfExtractService = inject(PdfExtractService);
 
   constructor() {
-    super({ purchaseOrders: {} });
+    super({ inboundOrders: [] });
+    this.#getInboutOrders$();
   }
 
-  readonly purchaseOrders$ = this.select((state) => state.purchaseOrders);
+  readonly inboundOrders$ = this.select((state) => state.inboundOrders);
 
-  readonly totalOfArticlesRequested$ = this.select((state) => {
-    return this.aggregateArticles(state.purchaseOrders);
+  readonly getInboundOrdersByRoute$ = this.select((state) => {
+    return this.aggregateInboundOrdersByRoute(state.inboundOrders);
   });
 
-  readonly aggregateArticlesPerRoute$ = this.select((state) => {
-    return this.aggregateArticlesPerRoute(state.purchaseOrders);
-  });
-
-  readonly setUser = this.updater((state, purchaseOrders: any) => ({
+  readonly setInboundOrders = this.updater((state, inboundOrders: { DocumentId: number; Location: string }[]) => ({
     ...state,
     loading: false,
-    purchaseOrders,
+    inboundOrders,
   }));
 
-  readonly extractOrders$ = this.effect((files$: Observable<any>) =>
-    files$.pipe(
+  readonly #getInboutOrders$ = this.effect<void>(
+    pipe(
       this.responseHandler(
-        switchMap((files: any) =>
-          this.pdfExtractService.extractOrderByRoute(files).pipe(
-            tap((x) => console.log('processed files,', x)),
+        switchMap(() =>
+          this.pdfExtractService.fetchInboundDocuments().pipe(
+            tap((x) => console.log('INBOUND ORDERS', x)),
+            tap((x) => console.log('aggregated', this.aggregateInboundOrdersByRoute(x))),
             tapResponse(this.onSuccess, this.onSigninError)
           )
         )
@@ -48,91 +42,49 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
     )
   );
 
+  aggregateInboundOrdersByRoute(inboundOrders: any) {
+    console.log('inboundOrders', inboundOrders);
+
+    // Sample input data
+    const documents: any = [
+      /* Your document array */
+    ];
+
+    // Initialize the result object with the same keys as `routes` and empty arrays
+    const result: Record<number | string, any[]> = Object.keys(routes).reduce(
+      (acc, key) => {
+        acc[key] = [];
+        return acc;
+      },
+      {} as Record<number | string, any[]>
+    );
+
+    // Process documents and aggregate by route
+    documents.forEach((doc: any) => {
+      const locationKey = `SUPERCENTER ${doc.Location}`.trim(); // Create the location key
+      console.log('locationKey', locationKey);
+
+      // Iterate through each route to find the matching location
+      for (const [routeKey, stores] of Object.entries(routes)) {
+        const foundStore = (stores as any[]).find((store: any) => store.name === locationKey);
+
+        if (foundStore) {
+          result[routeKey].push(doc); // Add document to the correct route
+          break; // Stop searching once the location is found
+        }
+      }
+    });
+
+    console.log('result', result);
+
+    return inboundOrders;
+  }
+
   get onSigninError() {
     return (error: any) => this.handleError(error);
   }
 
   get onSuccess() {
-    return (files: any) => this.setUser(files);
-  }
-
-  aggregateArticles(
-    purchaseOrders: Record<string, moofyPO[]>
-  ): Record<string, { totalQuantity: number; totalCost: number }> {
-    const articleTotals: Record<
-      string,
-      { totalQuantity: number; totalCost: number }
-    > = {};
-
-    for (const key in purchaseOrders) {
-      const orders = purchaseOrders[key];
-
-      orders.forEach((order) => {
-        order.items.forEach((item) => {
-          const article = item.article;
-          const quantity = parseFloat(item.quantity);
-          const cost = parseFloat(item.cost);
-
-          if (!articleTotals[article]) {
-            // Initialize the article entry if it doesn't exist
-            articleTotals[article] = { totalQuantity: 0, totalCost: 0 };
-          }
-
-          // Update total quantity and total cost
-          articleTotals[article].totalQuantity += quantity;
-          articleTotals[article].totalCost += quantity * cost;
-        });
-      });
-    }
-
-    return articleTotals;
-  }
-
-  aggregateArticlesPerRoute(
-    purchaseOrders: Record<string, moofyPO[]>
-  ): Record<
-    string,
-    { article: string; totalQuantity: number; totalCost: number }[]
-  > {
-    const routeTotals: Record<
-      string,
-      { article: string; totalQuantity: number; totalCost: number }[]
-    > = {};
-
-    for (const route in purchaseOrders) {
-      const orders = purchaseOrders[route];
-      const articleMap: Record<
-        string,
-        { totalQuantity: number; totalCost: number }
-      > = {};
-
-      orders.forEach((order) => {
-        order.items.forEach((item) => {
-          const article = item.article;
-          const quantity = parseFloat(item.quantity);
-          const cost = parseFloat(item.cost);
-
-          if (!articleMap[article]) {
-            // Initialize the article entry if it doesn't exist
-            articleMap[article] = { totalQuantity: 0, totalCost: 0 };
-          }
-
-          // Update total quantity and total cost for this article
-          articleMap[article].totalQuantity += quantity;
-          articleMap[article].totalCost += quantity * cost;
-        });
-      });
-
-      // Convert articleMap to an array and assign to the route
-      routeTotals[route] = Object.entries(articleMap).map(
-        ([article, totals]) => ({
-          article,
-          totalQuantity: totals.totalQuantity,
-          totalCost: totals.totalCost,
-        })
-      );
-    }
-
-    return routeTotals;
+    return (files: any) => this.setInboundOrders(files);
   }
 }

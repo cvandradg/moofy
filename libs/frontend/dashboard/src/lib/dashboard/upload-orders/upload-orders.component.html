@@ -1,8 +1,8 @@
 <ng-container
   *ngrxLet="{
     error: uploadOrdersStore.error$ | ngrxPush,
-    purchaseOrders: uploadOrdersStore.purchaseOrders$ | ngrxPush,
     loading: uploadOrdersStore.loading$ | ngrxPush,
+    getInboundOrdersByRoute$: uploadOrdersStore.getInboundOrdersByRoute$ | ngrxPush,
   } as vm"
 >
   @if (router.url.includes('/ordenes-procesadas')) {

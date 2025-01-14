@@ -9,7 +9,7 @@
     "build": " yarn && npx nx build moofy-admin && npx nx run-many -t test",
     "s": "yarn && npx nx lint moofy-admin && npx nx build moofy-admin && npx nx run-many -t test && npx nx serve moofy-admin",
     "r": "yarn && npx nx serve moofy-admin",
-    "s:proxy-server": "NODE_EXTRA_CA_CERTS=./ca-bundle.crt  npx nx serve proxy-server"
+    "s:proxy-server": "npx nx serve proxy-server"
   },
   "private": true,
   "dependencies": {
