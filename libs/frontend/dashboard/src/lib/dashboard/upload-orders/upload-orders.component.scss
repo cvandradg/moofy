@@ -11,6 +11,8 @@
   align-items: center;
   border: none;
   width: 100%;
+  max-height: 79vh; /* Set your desired height */
+  overflow-y: auto;
 
   .no-selection {
     padding: 0 0 0 0.7rem;
@@ -84,7 +86,7 @@ fa-icon {
 .example-radio-group {
   display: flex;
   flex-direction: column;
-  margin: 15px 0;
+  margin: 0 0 1rem 0;
   align-items: flex-start;
 }
 
@@ -148,7 +150,8 @@ mat-tap {
   justify-content: center;
   align-items: flex-start;
   gap: 1rem;
-  padding: 0 0.3rem;
+  padding: 2rem 0.3rem 0;
+  height: calc(100vh - 12rem);
 }
 
 .mat-mdc-radio-button {
@@ -170,5 +173,5 @@ mat-tap {
   padding: 1rem;
   padding: 8px;
   width: 21%; /* Set width according to your needs */
-  margin: 5rem 0;
+  margin: 5rem 0 0 0;
 }

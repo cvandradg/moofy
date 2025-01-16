@@ -14,19 +14,15 @@
           <mat-tab label="Desglose">
             <div class="accordion-scrollable-container">
               <mat-accordion>
-                @for (
-                  item of [
-                    100, 200, 300, 400, 500, 600, 700, 10000, 2000, 4000, 5000, 6000, 7000, 1000, 200000, 400000,
-                    500000, 600000, 700000, 100000, 2000000,
-                  ];
-                  let i = $index;
-                  track item
-                ) {
+                @for (inboundOrderRoute of vm.getInboundOrdersByRoute$; track inboundOrderRoute.route) {
                   <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
                     <mat-expansion-panel-header>
                       <mat-panel-title>
-                        <div>Ruta {{ i }}</div>
-                        <div>{{ i }}/7</div>
+                        <div>Ruta {{ inboundOrderRoute.route }}</div>
+                        <div>
+                          {{ inboundOrderRoute.orders.length }}/
+                          {{ moofyToWalmartRoutes[inboundOrderRoute.route].length }}
+                        </div>
                       </mat-panel-title>
                     </mat-expansion-panel-header>
                     <mat-radio-group
@@ -34,8 +30,10 @@
                       class="example-radio-group"
                       [(ngModel)]="favoriteSeason"
                     >
-                      @for (item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90]; track item) {
-                        <mat-radio-button class="example-radio-button" [value]="item">{{ item }}</mat-radio-button>
+                      @for (inboundOrder of inboundOrderRoute.orders; track inboundOrder.DocumentId) {
+                        <mat-radio-button class="example-radio-button" [value]="inboundOrder">
+                          {{ 'Supercenter ' + inboundOrder.Location }}
+                        </mat-radio-button>
                       }
                     </mat-radio-group>
                   </mat-expansion-panel>
@@ -65,7 +63,7 @@
                     {{ 'Total General' }}
                   </mat-radio-button>
 
-                  @for (season of seasons; track season; let i = $index) {
+                  @for (season of [1, 2, 3, 4, 5, 6]; track season; let i = $index) {
                     <mat-radio-button class="example-radio-button" [value]="season">
                       {{ 'Ruta' }} {{ i }}
                     </mat-radio-button>

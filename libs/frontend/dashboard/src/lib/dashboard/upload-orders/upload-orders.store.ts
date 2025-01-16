@@ -1,7 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
-import { switchMap, Observable, tap, pipe } from 'rxjs';
-import { moofyPO, PdfExtractService, ComponentStoreMixinHelper, routes } from '@moofy-admin/shared';
+import { switchMap, Observable, tap, pipe, catchError, retry } from 'rxjs';
+import { moofyPO, PdfExtractService, ComponentStoreMixinHelper, moofyToWalmartRoutes } from '@moofy-admin/shared';
+
+type RouteKey = keyof typeof moofyToWalmartRoutes;
+type AggregatedOrders = { route: RouteKey; orders: { DocumentId: number; Location: string }[] }[];
 
 @Injectable({
   providedIn: 'root',
@@ -32,52 +35,68 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
     pipe(
       this.responseHandler(
         switchMap(() =>
-          this.pdfExtractService.fetchInboundDocuments().pipe(
-            tap((x) => console.log('INBOUND ORDERS', x)),
-            tap((x) => console.log('aggregated', this.aggregateInboundOrdersByRoute(x))),
-            tapResponse(this.onSuccess, this.onSigninError)
+          this.pdfExtractService.walmartBotLogin().pipe(
+            tap((x) => console.log('Login', x)),
+            catchError((error) => {
+              console.error('Login failed, retrying...', error);
+              return this.pdfExtractService.walmartBotLogin().pipe(retry(1)); // Retry login once
+            }),
+            switchMap(() =>
+              this.pdfExtractService.fetchInboundDocuments().pipe(
+                tap((x) => console.log('fetchInboundDocuments', x)),
+                tapResponse(this.onSuccess, this.onSigninError)
+              )
+            )
           )
         )
       )
     )
   );
 
-  aggregateInboundOrdersByRoute(inboundOrders: any) {
+  aggregateInboundOrdersByRoute(inboundOrders: { DocumentId: number; Location: string }[]): AggregatedOrders {
     console.log('inboundOrders', inboundOrders);
 
-    // Sample input data
-    const documents: any = [
-      /* Your document array */
-    ];
+    if (
+      !inboundOrders ||
+      !inboundOrders.length ||
+      !moofyToWalmartRoutes ||
+      Object.keys(moofyToWalmartRoutes).length === 0
+    ) {
+      console.warn('No inbound orders or routes to process.');
+      return [];
+    }
 
-    // Initialize the result object with the same keys as `routes` and empty arrays
-    const result: Record<number | string, any[]> = Object.keys(routes).reduce(
+    const result: Record<RouteKey, any[]> = Object.keys(moofyToWalmartRoutes).reduce(
       (acc, key) => {
-        acc[key] = [];
+        acc[key as RouteKey] = [];
         return acc;
       },
-      {} as Record<number | string, any[]>
+      {} as Record<RouteKey, any[]>
     );
 
-    // Process documents and aggregate by route
-    documents.forEach((doc: any) => {
-      const locationKey = `SUPERCENTER ${doc.Location}`.trim(); // Create the location key
-      console.log('locationKey', locationKey);
+    inboundOrders.forEach((doc) => {
+      const locationKey = `${doc.Location}`.trim();
 
-      // Iterate through each route to find the matching location
-      for (const [routeKey, stores] of Object.entries(routes)) {
-        const foundStore = (stores as any[]).find((store: any) => store.name === locationKey);
+      for (const [routeKey, stores] of Object.entries(moofyToWalmartRoutes)) {
+        const foundStore = (stores as any[]).find((store) => store.name === locationKey);
 
         if (foundStore) {
-          result[routeKey].push(doc); // Add document to the correct route
-          break; // Stop searching once the location is found
+          result[routeKey as RouteKey].push(doc);
+          break;
         }
       }
     });
 
-    console.log('result', result);
+    const transformedResult = Object.entries(result)
+      .filter(([_, orders]) => orders.length > 0)
+      .map(([routeKey, orders]) => ({
+        route: routeKey as RouteKey,
+        orders,
+      }));
 
-    return inboundOrders;
+    console.log('transformedResult', transformedResult);
+
+    return transformedResult;
   }
 
   get onSigninError() {
