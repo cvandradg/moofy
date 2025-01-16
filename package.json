@@ -8,8 +8,7 @@
     "format": "npx nx format --base=main --head=HEAD",
     "build": " yarn && npx nx build moofy-admin && npx nx run-many -t test",
     "s": "yarn && npx nx lint moofy-admin && npx nx build moofy-admin && npx nx run-many -t test && npx nx serve moofy-admin",
-    "r": "yarn && npx nx serve moofy-admin",
-    "s:proxy-server": "npx nx serve proxy-server"
+    "r": "yarn && npx nx serve moofy-admin"
   },
   "private": true,
   "dependencies": {
