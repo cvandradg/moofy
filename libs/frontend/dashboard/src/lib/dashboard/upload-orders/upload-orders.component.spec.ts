@@ -14,7 +14,6 @@ describe('UploadOrdersComponent', () => {
   let fixture: ComponentFixture<UploadOrdersComponent>;
 
   const pdfExtractService = {
-    walmartBotLogin: jest.fn().mockReturnValue(of(true)),
     fetchInboundDocuments: jest.fn().mockReturnValue(of(true)),
   };
 

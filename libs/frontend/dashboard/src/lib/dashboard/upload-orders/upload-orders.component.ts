@@ -9,6 +9,40 @@ import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-s
 import { RouterModule } from '@angular/router';
 import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 
+type inboundOrder = {
+  AckStatusCode: string | null;
+  AckStatusDescription: string | null;
+  AifNumber: string | null;
+  ApprovalTimestamp: string;
+  Country: string | null;
+  CreatedTimestamp: string;
+  DocSplitInd: string;
+  DocType: string;
+  DocumentCountry: string;
+  DocumentId: number;
+  DocumentNumber: string;
+  DocumentOpenedIndicator: string;
+  DocumentStatusCode: number;
+  DocumentTypeCode: number;
+  EditType: string | null;
+  Location: string;
+  MailboxId: number;
+  MailboxSystemSeparator: string | null;
+  OrderDate: string;
+  PdfRequestIconDisplay: string | null;
+  PdfRequestJsonDetail: string | null;
+  PdfStatus: string | null;
+  RelatedDocumentCount: number;
+  TaSlipNumber: string;
+  TaSplitInd: string;
+  TotalRows: number;
+  TradRelId: string | null;
+  VendorName: string | null;
+  VendorNumber: number;
+  WebEdiSetupId: string | null;
+  XmlPath: string | null;
+};
+
 @Component({
   selector: 'moofy-upload-orders',
   imports: [
@@ -26,11 +60,9 @@ import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purc
 })
 export class UploadOrdersComponent {
   router = inject(Router);
-  readonly pdfExtractService = inject(PdfExtractService);
   readonly uploadOrdersStore = inject(UploadOrdersStore);
 
-  readonly panelOpenState = signal(false);
-  favoriteSeason!: string;
+  readonly selectedInboundOrder = signal<inboundOrder>({} as inboundOrder);
 
   moofyToWalmartRoutes = moofyToWalmartRoutes;
 
@@ -46,4 +78,10 @@ export class UploadOrdersComponent {
       {} as Record<string, number>
     )
   );
+
+  onInboundOrderSelected(selectedOrder: any): void {
+    console.log('Selected inbound order:', selectedOrder);
+
+    this.selectedInboundOrder.set(selectedOrder); // Update the signal with the selected order
+  }
 }

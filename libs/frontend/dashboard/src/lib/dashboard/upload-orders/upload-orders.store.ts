@@ -5,57 +5,132 @@ import { moofyPO, PdfExtractService, ComponentStoreMixinHelper, moofyToWalmartRo
 
 type RouteKey = keyof typeof moofyToWalmartRoutes;
 type AggregatedOrders = { route: RouteKey; orders: { DocumentId: number; Location: string }[] }[];
+type inboundOrder = {
+  AckStatusCode: string | null;
+  AckStatusDescription: string | null;
+  AifNumber: string | null;
+  ApprovalTimestamp: string;
+  Country: string | null;
+  CreatedTimestamp: string;
+  DocSplitInd: string;
+  DocType: string;
+  DocumentCountry: string;
+  DocumentId: number;
+  DocumentNumber: string;
+  DocumentOpenedIndicator: string;
+  DocumentStatusCode: number;
+  DocumentTypeCode: number;
+  EditType: string | null;
+  Location: string;
+  MailboxId: number;
+  MailboxSystemSeparator: string | null;
+  OrderDate: string;
+  PdfRequestIconDisplay: string | null;
+  PdfRequestJsonDetail: string | null;
+  PdfStatus: string | null;
+  RelatedDocumentCount: number;
+  TaSlipNumber: string;
+  TaSplitInd: string;
+  TotalRows: number;
+  TradRelId: string | null;
+  VendorName: string | null;
+  VendorNumber: number;
+  WebEdiSetupId: string | null;
+  XmlPath: string | null;
+};
+
+type PurchaseOrdeDetails = {
+  purchaseOrderNumber: string;
+  purchaseOrderDate: string;
+  shipDate: string;
+  cancelDate: string;
+  additionalDetails: {
+    orderType: string;
+    currency: string;
+    department: string;
+    paymentTerms: string;
+    carrier: string;
+    shipTo: string;
+    billTo: string;
+  };
+  items: {
+    line: string;
+    itemNumber: string;
+    gtin: string;
+    supplierStock: string;
+    color: string;
+    size: string;
+    quantityOrdered: string;
+    uom: string;
+    pack: string;
+    cost: string;
+    extendedCost: string;
+  }[];
+  totals: {
+    totalAmount: string;
+    totalItems: string;
+    totalUnits: string;
+  };
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class UploadOrdersStore extends ComponentStoreMixinHelper<{
-  inboundOrders: { DocumentId: number; Location: string }[];
+  inboundOrders: inboundOrder[];
+  inboundOrderDetails: PurchaseOrdeDetails;
 }> {
   pdfExtractService = inject(PdfExtractService);
 
   constructor() {
-    super({ inboundOrders: [] });
+    super({ inboundOrders: [], inboundOrderDetails: {} as PurchaseOrdeDetails });
     this.#getInboutOrders$();
   }
 
   readonly inboundOrders$ = this.select((state) => state.inboundOrders);
+  readonly inboundOrderDetails$ = this.select((state) => state.inboundOrderDetails);
 
   readonly getInboundOrdersByRoute$ = this.select((state) => {
     return this.aggregateInboundOrdersByRoute(state.inboundOrders);
   });
 
-  readonly setInboundOrders = this.updater((state, inboundOrders: { DocumentId: number; Location: string }[]) => ({
+  readonly setInboundOrders = this.updater((state, inboundOrders: inboundOrder[]) => ({
     ...state,
     loading: false,
     inboundOrders,
+  }));
+
+  readonly setInboundOrderDetails = this.updater((state, inboundOrderDetails: any) => ({
+    ...state,
+    loading: false,
+    inboundOrderDetails,
   }));
 
   readonly #getInboutOrders$ = this.effect<void>(
     pipe(
       this.responseHandler(
         switchMap(() =>
-          this.pdfExtractService.walmartBotLogin().pipe(
-            tap((x) => console.log('Login', x)),
-            catchError((error) => {
-              console.error('Login failed, retrying...', error);
-              return this.pdfExtractService.walmartBotLogin().pipe(retry(1)); // Retry login once
-            }),
-            switchMap(() =>
-              this.pdfExtractService.fetchInboundDocuments().pipe(
-                tap((x) => console.log('fetchInboundDocuments', x)),
-                tapResponse(this.onSuccess, this.onSigninError)
-              )
-            )
-          )
+          this.pdfExtractService.fetchInboundDocuments().pipe(tapResponse(this.onSetInboundOrdersSuccess, this.onError))
         )
       )
     )
   );
 
-  aggregateInboundOrdersByRoute(inboundOrders: { DocumentId: number; Location: string }[]): AggregatedOrders {
-    console.log('inboundOrders', inboundOrders);
+  readonly getInboutOrderDetails$ = this.effect((inbountOrder$: Observable<any>) =>
+    inbountOrder$.pipe(
+      this.responseHandler(
+        switchMap((inboundOrder) => {
+          console.log('Inbound Order Details Input', inboundOrder);
+          return this.pdfExtractService.getInboutOrderDetails(inboundOrder.DocumentId, inboundOrder.Location).pipe(
+            tap((x) => console.log('details of orders', x)),
+            tapResponse(this.onSetInboundOrderDetailsSuccess, this.onError)
+          );
+        })
+      )
+    )
+  );
 
+  aggregateInboundOrdersByRoute(inboundOrders: { DocumentId: number; Location: string }[]): AggregatedOrders {
     if (
       !inboundOrders ||
       !inboundOrders.length ||
@@ -94,16 +169,18 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
         orders,
       }));
 
-    console.log('transformedResult', transformedResult);
-
     return transformedResult;
   }
 
-  get onSigninError() {
-    return (error: any) => this.handleError(error);
+  get onError() {
+    return (error: any, component?: any) => this.errorHelperService.handleError(error, component || 'not reported');
   }
 
-  get onSuccess() {
+  get onSetInboundOrdersSuccess() {
     return (files: any) => this.setInboundOrders(files);
+  }
+
+  get onSetInboundOrderDetailsSuccess() {
+    return (files: any) => this.setInboundOrderDetails(files);
   }
 }

@@ -2,6 +2,7 @@
   *ngrxLet="{
     error: uploadOrdersStore.error$ | ngrxPush,
     loading: uploadOrdersStore.loading$ | ngrxPush,
+    inboundOrderDetails$: uploadOrdersStore.inboundOrderDetails$ | ngrxPush,
     getInboundOrdersByRoute$: uploadOrdersStore.getInboundOrdersByRoute$ | ngrxPush,
   } as vm"
 >
@@ -15,7 +16,7 @@
             <div class="accordion-scrollable-container">
               <mat-accordion>
                 @for (inboundOrderRoute of vm.getInboundOrdersByRoute$; track inboundOrderRoute.route) {
-                  <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+                  <mat-expansion-panel>
                     <mat-expansion-panel-header>
                       <mat-panel-title>
                         <div>Ruta {{ inboundOrderRoute.route }}</div>
@@ -25,13 +26,16 @@
                         </div>
                       </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <mat-radio-group
-                      aria-labelledby="example-radio-group-label"
-                      class="example-radio-group"
-                      [(ngModel)]="favoriteSeason"
-                    >
+                    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
                       @for (inboundOrder of inboundOrderRoute.orders; track inboundOrder.DocumentId) {
-                        <mat-radio-button class="example-radio-button" [value]="inboundOrder">
+                        <mat-radio-button
+                          class="example-radio-button"
+                          [value]="inboundOrder"
+                          (change)="
+                            onInboundOrderSelected(inboundOrder); uploadOrdersStore.getInboutOrderDetails$($event.value)
+                          "
+                        >
+                          <!-- (change)="uploadOrdersStore.getInboutOrderDetails$($event.value)" -->
                           {{ 'Supercenter ' + inboundOrder.Location }}
                         </mat-radio-button>
                       }
@@ -45,20 +49,19 @@
               <div class="display-order-details">
                 <!-- <div class="no-selection">Selecciona una ruta para ver datos</div> -->
 
-                <div class="supercenter">Supercenter 700</div>
-
-                <moofy-purchase-order-breakdown />
+                @if (vm.inboundOrderDetails$) {
+                  <moofy-purchase-order-breakdown
+                    [purchaseOrder]="selectedInboundOrder"
+                    [purchaseOrderDetails$]="vm.inboundOrderDetails$"
+                  />
+                }
               </div>
             </div>
           </mat-tab>
           <mat-tab label="Totales">
             <div class="accordion-scrollable-container">
               <mat-accordion>
-                <mat-radio-group
-                  aria-labelledby="example-radio-group-label"
-                  class="example-radio-group"
-                  [(ngModel)]="favoriteSeason"
-                >
+                <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
                   <mat-radio-button class="example-radio-button" [value]="'Total General'">
                     {{ 'Total General' }}
                   </mat-radio-button>
@@ -78,7 +81,7 @@
 
                 <div class="supercenter">Ruta 1</div>
 
-                <moofy-purchase-order-breakdown />
+                <!-- <moofy-purchase-order-breakdown /> -->
               </div>
             </div>
           </mat-tab>
