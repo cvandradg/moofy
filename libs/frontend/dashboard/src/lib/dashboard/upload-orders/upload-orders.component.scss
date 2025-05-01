@@ -175,3 +175,11 @@ mat-tap {
   width: 21%; /* Set width according to your needs */
   margin: 5rem 0 0 0;
 }
+
+.date-picker-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}

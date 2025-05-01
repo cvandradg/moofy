@@ -1,13 +1,21 @@
-import { inject, computed, Component, ChangeDetectionStrategy, OnInit, signal } from '@angular/core';
+import * as _ from 'lodash';
+import { inject, computed, Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatBadgeModule } from '@angular/material/badge';
 import { UploadOrdersStore } from './upload-orders.store';
-import { Fontawesome, MODULES, moofyPO } from '@moofy-admin/shared';
-import { PdfExtractService, moofyToWalmartRoutes } from '@moofy-admin/shared';
-import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { Fontawesome, MODULES } from '@moofy-admin/shared';
+import { moofyToWalmartRoutes } from '@moofy-admin/shared';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { RouterModule } from '@angular/router';
 import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+
+
 
 type inboundOrder = {
   AckStatusCode: string | null;
@@ -52,6 +60,9 @@ type inboundOrder = {
     MatBadgeModule,
     NgxDropzoneModule,
     MatBottomSheetModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
     PurchaseOrderBreakdownComponent,
   ],
   templateUrl: './upload-orders.component.html',
@@ -60,6 +71,10 @@ type inboundOrder = {
 })
 export class UploadOrdersComponent {
   router = inject(Router);
+
+  selectedStartDate = signal<Date | null>(null);
+  selectedEndDate = signal<Date | null>(null);
+
   readonly uploadOrdersStore = inject(UploadOrdersStore);
 
   readonly selectedInboundOrder = signal<inboundOrder>({} as inboundOrder);
@@ -79,9 +94,86 @@ export class UploadOrdersComponent {
     )
   );
 
+  formattedStartDate = computed(() => {
+    const date = this.selectedStartDate();
+    if (!date) return '';
+
+    const month = date.getMonth() + 1;  // JS months are 0-indexed
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    return `${month}/${day}/${year}`;
+  });
+
+  formattedEndDate = computed(() => {
+    const date = this.selectedEndDate();
+    if (!date) return '';
+
+    const month = date.getMonth() + 1;  // JS months are 0-indexed
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    return `${month}/${day}/${year}`;
+  });
+
+  readonly allOrders = toSignal(this.uploadOrdersStore.currentRouteOrders$, { initialValue: [] });
+
+  readonly filteredOrders = computed(() => {
+    const orders = this.allOrders();
+    const start = this.selectedStartDate();
+    const end = this.selectedEndDate();
+
+    if (!start && !end) return this.routesArticlesGroups(orders);
+
+    const filtered = orders.filter(order => {
+      if (!order.purchaseOrderDate) return false;
+      const [month, day, year] = order.purchaseOrderDate.split('/').map(Number);
+      const orderDate = new Date(year, month - 1, day);
+
+      if (start && end) {
+        return orderDate >= start && orderDate <= end;
+      } else if (start) {
+        return orderDate >= start;
+      } else if (end) {
+        return orderDate <= end;
+      }
+      return true;
+    });
+
+    return this.routesArticlesGroups(filtered);
+  });
+
+
+
+
+  constructor() {
+    effect(() => {
+      console.log('Selected date:', this.formattedStartDate());
+    })
+  }
+
+
+
   onInboundOrderSelected(selectedOrder: any): void {
     console.log('Selected inbound order:', selectedOrder);
 
     this.selectedInboundOrder.set(selectedOrder); // Update the signal with the selected order
   }
+
+  routesArticlesGroups(currentRouteOrders: any[]) {
+    if (!currentRouteOrders?.length) return [];
+
+    // Flatten all items from all orders
+    const allItems = currentRouteOrders.flatMap(order => order.items ?? []);
+
+    // Group by itemNumber
+    const buckets = _.groupBy(allItems, 'itemNumber');
+
+    // Sum quantities
+    return Object.entries(buckets).map(([itemNumber, items]) => ({
+      itemNumber,
+      quantityOrdered: _.sumBy(items, item => Number(item.quantityOrdered ?? 0))
+    }));
+  }
+
 }

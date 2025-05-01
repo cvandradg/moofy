@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
-import { switchMap, Observable, tap, pipe, catchError, retry } from 'rxjs';
+import { switchMap, Observable, tap, pipe, catchError, retry, bufferCount, concatMap, forkJoin, reduce, from, mergeMap, toArray } from 'rxjs';
 import { moofyPO, PdfExtractService, ComponentStoreMixinHelper, moofyToWalmartRoutes } from '@moofy-admin/shared';
 
 type RouteKey = keyof typeof moofyToWalmartRoutes;
@@ -79,16 +79,18 @@ type PurchaseOrdeDetails = {
 export class UploadOrdersStore extends ComponentStoreMixinHelper<{
   inboundOrders: inboundOrder[];
   inboundOrderDetails: PurchaseOrdeDetails;
+  currentRouteOrders: any[]
 }> {
   pdfExtractService = inject(PdfExtractService);
 
   constructor() {
-    super({ inboundOrders: [], inboundOrderDetails: {} as PurchaseOrdeDetails });
+    super({ inboundOrders: [], inboundOrderDetails: {} as PurchaseOrdeDetails, currentRouteOrders: [] });
     this.#getInboutOrders$();
   }
 
   readonly inboundOrders$ = this.select((state) => state.inboundOrders);
   readonly inboundOrderDetails$ = this.select((state) => state.inboundOrderDetails);
+  readonly currentRouteOrders$ = this.select((state) => state.currentRouteOrders);
 
   readonly getInboundOrdersByRoute$ = this.select((state) => {
     return this.aggregateInboundOrdersByRoute(state.inboundOrders);
@@ -104,6 +106,11 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
     ...state,
     loading: false,
     inboundOrderDetails,
+  }));
+
+  readonly setCurrentRouteOrders = this.updater((state, currentRouteOrders: any[]) => ({
+    ...state,
+    currentRouteOrders,
   }));
 
   readonly #getInboutOrders$ = this.effect<void>(
@@ -126,6 +133,34 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
             tapResponse(this.onSetInboundOrderDetailsSuccess, this.onError)
           );
         })
+      )
+    )
+  );
+
+  readonly onRouteSelectForBreakdown$ = this.effect((orders$: Observable<any>) =>
+    orders$.pipe(
+      switchMap(orderArray =>
+        from(orderArray).pipe(
+          mergeMap(
+            (order: any) => {
+              console.log('Starting fetch for PO', order.DocumentId);
+              return this.pdfExtractService
+                .getInboutOrderDetails(order.DocumentId, order.Location)
+                .pipe(
+                  tap(() => console.log('Completed fetch for PO', order.DocumentId))
+                );
+            },
+            1000 // <-- concurrency: at most 7 HTTP calls in flight
+          ),
+          toArray() // gather all the PurchaseOrderDetails into one array
+        )
+      ),
+      tapResponse(
+        (allDetails) => {
+          console.log('All details fetched', allDetails);
+          this.setCurrentRouteOrders(allDetails.flatMap((order: any) => order.items))
+        },
+        this.onError
       )
     )
   );

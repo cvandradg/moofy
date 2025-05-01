@@ -4,6 +4,7 @@
     loading: uploadOrdersStore.loading$ | ngrxPush,
     inboundOrderDetails$: uploadOrdersStore.inboundOrderDetails$ | ngrxPush,
     getInboundOrdersByRoute$: uploadOrdersStore.getInboundOrdersByRoute$ | ngrxPush,
+    currentRouteOrders$: uploadOrdersStore.currentRouteOrders$ | ngrxPush,
   } as vm"
 >
   @if (router.url.includes('/ordenes-procesadas')) {
@@ -35,7 +36,6 @@
                             onInboundOrderSelected(inboundOrder); uploadOrdersStore.getInboutOrderDetails$($event.value)
                           "
                         >
-                          <!-- (change)="uploadOrdersStore.getInboutOrderDetails$($event.value)" -->
                           {{ 'Supercenter ' + inboundOrder.Location }}
                         </mat-radio-button>
                       }
@@ -47,8 +47,6 @@
 
             <div class="display-order-details-container">
               <div class="display-order-details">
-                <!-- <div class="no-selection">Selecciona una ruta para ver datos</div> -->
-
                 @if (vm.inboundOrderDetails$) {
                   <moofy-purchase-order-breakdown
                     [purchaseOrder]="selectedInboundOrder"
@@ -60,28 +58,62 @@
           </mat-tab>
           <mat-tab label="Totales">
             <div class="accordion-scrollable-container">
-              <mat-accordion>
-                <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
-                  <mat-radio-button class="example-radio-button" [value]="'Total General'">
-                    {{ 'Total General' }}
+              <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
+                @for (inboundOrderRoute of vm.getInboundOrdersByRoute$; track inboundOrderRoute.route) {
+                  <mat-radio-button
+                    class="example-radio-button"
+                    (click)="uploadOrdersStore.onRouteSelectForBreakdown$(inboundOrderRoute.orders)"
+                  >
+                    {{ 'Ruta ' + inboundOrderRoute.route }}
                   </mat-radio-button>
-
-                  @for (season of [1, 2, 3, 4, 5, 6]; track season; let i = $index) {
-                    <mat-radio-button class="example-radio-button" [value]="season">
-                      {{ 'Ruta' }} {{ i }}
-                    </mat-radio-button>
-                  }
-                </mat-radio-group>
-              </mat-accordion>
+                }
+              </mat-radio-group>
             </div>
 
             <div class="display-order-details-container">
               <div class="display-order-details">
-                <!-- <div class="no-selection">Selecciona una ruta para ver datos</div> -->
+                @if (vm.inboundOrderDetails$) {
+                  <div class="date-picker-container">
+                    <mat-form-field appearance="fill">
+                      <mat-label>Pick a start date</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="pickerStart"
+                        [ngModel]="selectedStartDate()"
+                        (ngModelChange)="selectedStartDate.set($event)"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                      <mat-datepicker #pickerStart></mat-datepicker>
+                    </mat-form-field>
 
-                <div class="supercenter">Ruta 1</div>
+                    <mat-form-field appearance="fill">
+                      <mat-label>Pick an end date</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="pickerEnd"
+                        [ngModel]="selectedEndDate()"
+                        (ngModelChange)="selectedEndDate.set($event)"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                      <mat-datepicker #pickerEnd></mat-datepicker>
+                    </mat-form-field>
+                  </div>
 
-                <!-- <moofy-purchase-order-breakdown /> -->
+                  <table mat-table [dataSource]="filteredOrders() || []" class="mat-elevation-z8">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef>Nombre del artículo</th>
+                      <td mat-cell *matCellDef="let element">{{ element.itemNumber }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantity">
+                      <th mat-header-cell *matHeaderCellDef>Cantidad del artículo</th>
+                      <td mat-cell *matCellDef="let element">{{ element.quantityOrdered }}</td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="['name', 'quantity']"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ['name', 'quantity']"></tr>
+                  </table>
+                }
               </div>
             </div>
           </mat-tab>
