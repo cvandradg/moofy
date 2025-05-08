@@ -155,8 +155,6 @@ export class UploadOrdersComponent {
 
 
   onInboundOrderSelected(selectedOrder: any): void {
-    console.log('Selected inbound order:', selectedOrder);
-
     this.selectedInboundOrder.set(selectedOrder); // Update the signal with the selected order
   }
 

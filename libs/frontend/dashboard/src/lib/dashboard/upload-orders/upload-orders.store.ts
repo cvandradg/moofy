@@ -1,6 +1,21 @@
+import { groupBy, sumBy } from 'lodash';
 import { inject, Injectable } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
-import { switchMap, Observable, tap, pipe, catchError, retry, bufferCount, concatMap, forkJoin, reduce, from, mergeMap, toArray } from 'rxjs';
+import {
+  switchMap,
+  Observable,
+  tap,
+  pipe,
+  catchError,
+  retry,
+  bufferCount,
+  concatMap,
+  forkJoin,
+  reduce,
+  from,
+  mergeMap,
+  toArray,
+} from 'rxjs';
 import { moofyPO, PdfExtractService, ComponentStoreMixinHelper, moofyToWalmartRoutes } from '@moofy-admin/shared';
 
 type RouteKey = keyof typeof moofyToWalmartRoutes;
@@ -79,18 +94,64 @@ type PurchaseOrdeDetails = {
 export class UploadOrdersStore extends ComponentStoreMixinHelper<{
   inboundOrders: inboundOrder[];
   inboundOrderDetails: PurchaseOrdeDetails;
-  currentRouteOrders: any[]
+  currentRouteOrders: any[];
+  startDate: Date | null;
+  endDate: Date | null;
 }> {
   pdfExtractService = inject(PdfExtractService);
 
   constructor() {
-    super({ inboundOrders: [], inboundOrderDetails: {} as PurchaseOrdeDetails, currentRouteOrders: [] });
+    super({
+      inboundOrders: [],
+      inboundOrderDetails: {} as PurchaseOrdeDetails,
+      currentRouteOrders: [],
+      startDate: new Date(new Date().setHours(0, 0, 0, 0)),
+      endDate: new Date(new Date().setHours(0, 0, 0, 0)),
+    });
     this.#getInboutOrders$();
   }
 
+  readonly startDate$ = this.select((state) => state.startDate);
+  readonly endDate$ = this.select((state) => state.endDate);
   readonly inboundOrders$ = this.select((state) => state.inboundOrders);
   readonly inboundOrderDetails$ = this.select((state) => state.inboundOrderDetails);
-  readonly currentRouteOrders$ = this.select((state) => state.currentRouteOrders);
+  readonly currentRouteOrders$ = this.select((state) => {
+
+    console.log('currentRouteOrders', state.currentRouteOrders);
+
+    const filtered = state.currentRouteOrders.filter((item) => {
+      const [m, d, y] = item.orderDate.split('/').map(Number);
+      const dt = new Date(y, m - 1, d);
+      return (!state.startDate || dt >= state.startDate) && (!state.endDate || dt <= state.endDate);
+    });
+
+    const grouped: any[] = Object.entries(groupBy(filtered, 'itemNumber')).map(
+      ([itemNumber, items]) => {
+        const totalQuantity = sumBy(items, (o) => +o.quantityOrdered);
+        const totalExtended = sumBy(items, (o) => +o.extendedCost);
+        const unitCost = +items[0].cost; // assume cost is per-unit
+        const { gtin, supplierStock, color, size, uom, pack } = items[0];
+
+        return {
+          itemNumber,
+          gtin,
+          supplierStock,
+          color,
+          size,
+          totalQuantity,
+          uom,
+          pack,
+          unitCost,
+          totalExtendedCost: totalExtended,
+        };
+      }
+    );
+
+    console.log('grouped', grouped);
+    // console.log('inboundOrders', state.inboundOrders);
+
+    return grouped;
+  });
 
   readonly getInboundOrdersByRoute$ = this.select((state) => {
     return this.aggregateInboundOrdersByRoute(state.inboundOrders);
@@ -100,7 +161,12 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
     ...state,
     loading: false,
     inboundOrders,
+
   }));
+
+  isSameDay(d1: Date, d2: Date) {
+    return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+  }
 
   readonly setInboundOrderDetails = this.updater((state, inboundOrderDetails: any) => ({
     ...state,
@@ -111,6 +177,16 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
   readonly setCurrentRouteOrders = this.updater((state, currentRouteOrders: any[]) => ({
     ...state,
     currentRouteOrders,
+  }));
+
+  readonly setStartDate = this.updater((state, startDate: Date | null) => ({
+    ...state,
+    startDate,
+  }));
+
+  readonly setEndDate = this.updater((state, endDate: Date | null) => ({
+    ...state,
+    endDate,
   }));
 
   readonly #getInboutOrders$ = this.effect<void>(
@@ -127,11 +203,9 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
     inbountOrder$.pipe(
       this.responseHandler(
         switchMap((inboundOrder) => {
-          console.log('Inbound Order Details Input', inboundOrder);
-          return this.pdfExtractService.getInboutOrderDetails(inboundOrder.DocumentId, inboundOrder.Location).pipe(
-            tap((x) => console.log('details of orders', x)),
-            tapResponse(this.onSetInboundOrderDetailsSuccess, this.onError)
-          );
+          return this.pdfExtractService
+            .getInboutOrderDetails(inboundOrder.DocumentId, inboundOrder.Location)
+            .pipe(tapResponse(this.onSetInboundOrderDetailsSuccess, this.onError));
         })
       )
     )
@@ -139,29 +213,26 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
 
   readonly onRouteSelectForBreakdown$ = this.effect((orders$: Observable<any>) =>
     orders$.pipe(
-      switchMap(orderArray =>
+      switchMap((orderArray) =>
         from(orderArray).pipe(
           mergeMap(
             (order: any) => {
-              console.log('Starting fetch for PO', order.DocumentId);
-              return this.pdfExtractService
-                .getInboutOrderDetails(order.DocumentId, order.Location)
-                .pipe(
-                  tap(() => console.log('Completed fetch for PO', order.DocumentId))
-                );
+              return this.pdfExtractService.getInboutOrderDetails(order.DocumentId, order.Location);
             },
             1000 // <-- concurrency: at most 7 HTTP calls in flight
           ),
           toArray() // gather all the PurchaseOrderDetails into one array
         )
       ),
-      tapResponse(
-        (allDetails) => {
-          console.log('All details fetched', allDetails);
-          this.setCurrentRouteOrders(allDetails.flatMap((order: any) => order.items))
-        },
-        this.onError
-      )
+      tapResponse((allDetails) => {
+        const enrichedItems = allDetails.flatMap((detail) =>
+          detail.items.map((item: any) => ({
+            ...item,
+            orderDate: detail.purchaseOrderDate, // <-- new property
+          }))
+        );
+        this.setCurrentRouteOrders(enrichedItems);
+      }, this.onError)
     )
   );
 

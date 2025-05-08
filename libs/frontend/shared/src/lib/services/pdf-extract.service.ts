@@ -33,8 +33,6 @@ export class PdfExtractService {
     const url = 'http://localhost:3000/get-inbound-order-details'; // Proxy endpoint
     const params = { documentId: documentId.toString(), location };
 
-    console.log('Inbound Order API PARAMS', params);
-
     return this.http.get(url, { params });
   }
 }
