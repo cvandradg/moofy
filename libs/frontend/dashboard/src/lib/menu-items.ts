@@ -4,16 +4,25 @@ import { CommentsComponent } from './pages/comments/comments.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { UploadOrdersComponent } from './dashboard/upload-orders/upload-orders.component';
 import { IconProp } from '@fortawesome/angular-fontawesome/types';
+import { Route } from '@angular/router';
 
 export type MenuItem = {
   icon: IconProp;
   label: string;
-  route?: string;
+  route: string;
   subItems?: MenuItem[];
+  loadChildren?: () => Promise<Route[]>;
   component?: Type<unknown>;
 };
 
 export const menuItems: MenuItem[] = [
+  {
+    icon: ['far', 'folder'],
+    label: 'Ordenes de Compra',
+    route: 'ordenes-de-compra',
+    loadChildren: () =>
+      import('@moofy-admin/purchase-orders').then((m) => m.purchaseOrdersRoutes),
+  },
   {
     icon: ['far', 'folder'],
     label: 'Subir Órdenes',

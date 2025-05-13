@@ -2,14 +2,17 @@ import { Route } from '@angular/router';
 import { DashboardComponent as dashboard } from './dashboard/dashboard.component';
 import { MenuItem, menuItems } from './menu-items';
 
-const itemToRoute = (i: MenuItem): Route => {
-  const route: Route = { path: i.route, component: i.component };
-  if (i.subItems) {
-    route.children = i.subItems.map((s) => itemToRoute(s));
-  }
-
-  return route;
-};
+const toRoute = ({
+  route,
+  loadChildren,
+  component,
+  subItems,
+}: MenuItem): Route => ({
+  path: route,
+  ...(loadChildren && { loadChildren }),
+  ...(component && { component }),
+  ...(subItems?.length && { children: subItems.map(toRoute) }),
+});
 
 export const dashboardRoutes: Route[] = [
   {
@@ -22,7 +25,7 @@ export const dashboardRoutes: Route[] = [
         pathMatch: 'full',
         redirectTo: 'subir-ordenes',
       },
-      ...menuItems.map((i) => itemToRoute(i)),
+      ...menuItems.map((i) => toRoute(i)),
     ],
   },
 ];
