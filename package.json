@@ -12,6 +12,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-architects/ngrx-toolkit": "^19.1.0",
     "@angular/animations": "19.2.7",
     "@angular/cdk": "19.2.10",
     "@angular/common": "19.2.7",
@@ -41,6 +42,8 @@
     "@ngrx/component": "^18.1.1",
     "@ngrx/component-store": "^18.1.1",
     "@ngrx/operators": "^18.1.1",
+    "@ngrx/signals": "^19.2.0",
+    "@ngrx/store": "^19.2.0",
     "@types/lodash": "^4.17.16",
     "agentkeepalive": "^4.6.0",
     "axios": "^1.7.9",

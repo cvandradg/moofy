@@ -2,12 +2,7 @@ import { Route } from '@angular/router';
 import { DashboardComponent as dashboard } from './dashboard/dashboard.component';
 import { MenuItem, menuItems } from './menu-items';
 
-const toRoute = ({
-  route,
-  loadChildren,
-  component,
-  subItems,
-}: MenuItem): Route => ({
+const toRoute = ({ route, loadChildren, component, subItems }: MenuItem): Route => ({
   path: route,
   ...(loadChildren && { loadChildren }),
   ...(component && { component }),
@@ -23,7 +18,7 @@ export const dashboardRoutes: Route[] = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'subir-ordenes',
+        redirectTo: 'ordenes-de-compra',
       },
       ...menuItems.map((i) => toRoute(i)),
     ],

@@ -22,6 +22,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-architects/ngrx-toolkit@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "@angular-architects/ngrx-toolkit@npm:19.1.0"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ^19.0.0
+    "@angular/core": ^19.0.0
+    "@ngrx/signals": ^19.0.0
+    "@ngrx/store": ^19.0.0
+    rxjs: ^7.0.0
+  peerDependenciesMeta:
+    "@ngrx/store":
+      optional: true
+  checksum: f53ce2633afe8a962012856b78c5368e6f1ababe45ddfccdb61005ed460b349db4bb9a01ad5b6e82226e9058b44b24348f54f1c00a961a29baf562ec134da780
+  languageName: node
+  linkType: hard
+
 "@angular-devkit/architect@npm:0.1900.6, @angular-devkit/architect@npm:>= 0.1900.0 < 0.2000.0":
   version: 0.1900.6
   resolution: "@angular-devkit/architect@npm:0.1900.6"
@@ -6064,6 +6082,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@moofy-ws/source@workspace:."
   dependencies:
+    "@angular-architects/ngrx-toolkit": "npm:^19.1.0"
     "@angular-devkit/build-angular": "npm:19.2.8"
     "@angular-devkit/core": "npm:19.2.8"
     "@angular-devkit/schematics": "npm:19.2.8"
@@ -6100,6 +6119,8 @@ __metadata:
     "@ngrx/component": "npm:^18.1.1"
     "@ngrx/component-store": "npm:^18.1.1"
     "@ngrx/operators": "npm:^18.1.1"
+    "@ngrx/signals": "npm:^19.2.0"
+    "@ngrx/store": "npm:^19.2.0"
     "@nx/angular": "npm:20.8.0"
     "@nx/cypress": "npm:20.8.0"
     "@nx/esbuild": "npm:20.8.0"
@@ -6525,6 +6546,33 @@ __metadata:
   peerDependencies:
     rxjs: ^6.5.3 || ^7.4.0
   checksum: 9a88dc585037d175a36e40943965b2d85bb911c387e9882355b1b1fd44392a03b4b0ce86a31d9c6dd8b8a31a824002eb0f099ed51431d8e73aeb8924775be8e0
+  languageName: node
+  linkType: hard
+
+"@ngrx/signals@npm:^19.2.0":
+  version: 19.2.0
+  resolution: "@ngrx/signals@npm:19.2.0"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/core": ^19.0.0
+    rxjs: ^6.5.3 || ^7.4.0
+  peerDependenciesMeta:
+    rxjs:
+      optional: true
+  checksum: 192920ae7a5ae89ffa000ca2a3696e41c2a60c6bcb5a2278835e7e7fc73f98e425a41140ad1f3018bc2fd15aeef0aa16a1f9c739a442b538936a77c74b64726e
+  languageName: node
+  linkType: hard
+
+"@ngrx/store@npm:^19.2.0":
+  version: 19.2.0
+  resolution: "@ngrx/store@npm:19.2.0"
+  dependencies:
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    "@angular/core": ^19.0.0
+    rxjs: ^6.5.3 || ^7.5.0
+  checksum: 72cf15447966200f0fed3909b7e63baebef2c59f6438f22a93fde64e8150083a42aaa6dc47aac6733fd40fa7391a02353fd0e53b277d80be7d2f8d5eab6d0550
   languageName: node
   linkType: hard
 
@@ -10459,24 +10507,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001646, caniuse-lite@npm:^1.0.30001669":
-  version: 1.0.30001684
-  resolution: "caniuse-lite@npm:1.0.30001684"
-  checksum: 979b81d6016c4c4ce69226d6bb68f3f95f539e6df78cf0cccd63f285879e3bccc1e7677d4997f382c2fb297b49bd46c5f81d1705dab6524d53cd009ebf6356ad
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001520":
-  version: 1.0.30001715
-  resolution: "caniuse-lite@npm:1.0.30001715"
-  checksum: 1772da4ebd352bfcf44dbe01f687e9802435f718782203115f8901fc9f77bc5a55435d6ee1250ccc64b5cf67945f82aaa5d3f99d7a96d23eece48a6416e04c02
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001616, caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001690
-  resolution: "caniuse-lite@npm:1.0.30001690"
-  checksum: 93679a80f2ce896c0d56b9f7f6bba8988ed8f6d8d5829544b77e87d718b4f4e2879bf5a9ac336c6c5dada081dede9e75396bb03905d3dcb42190aa58480c0db4
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001520, caniuse-lite@npm:^1.0.30001616, caniuse-lite@npm:^1.0.30001646, caniuse-lite@npm:^1.0.30001669, caniuse-lite@npm:^1.0.30001688":
+  version: 1.0.30001718
+  resolution: "caniuse-lite@npm:1.0.30001718"
+  checksum: 725a3343e4d706cb33c637c49d8a2ba4dfafb3808c6c97cbd9f76bc52c4d474a48b3ef49dd2eb635c6d6c43e79ce2a25600f4d16d9005bb2792e55e887fb195b
   languageName: node
   linkType: hard
 
