@@ -1,10 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import {
-  FaIconLibrary,
-  FontAwesomeModule,
-} from '@fortawesome/angular-fontawesome';
-
+import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import {
   faPlus as faPlusSolid,
@@ -12,6 +8,7 @@ import {
   faMinus as faMinusSolid,
   faCheck as faCheckSolid,
   faXmark as faXmarkSolid,
+  faCircle as faCircleSolid,
   faSliders as faSlidersSolid,
   faArrowUp as faArrowUpSolid,
   faChevronUp as faChevronUpSolid,
@@ -33,13 +30,6 @@ import {
   faRectangleList as faRectangleListRegular,
 } from '@fortawesome/pro-regular-svg-icons';
 
-import { faBars as faBarsLight } from '@fortawesome/pro-light-svg-icons';
-import { faGoogle as faGoogleBrands } from '@fortawesome/free-brands-svg-icons';
-import { faGripLines as faGripLinesThin } from '@fortawesome/pro-thin-svg-icons';
-import { faDrumstick as faDrumstickSharpSolid } from '@fortawesome/sharp-solid-svg-icons';
-import { faBookOpenCover as faBookOpenCoverDuotone } from '@fortawesome/pro-duotone-svg-icons';
-import { faWhatsappSquare as faWhatsappSquareBrands } from '@fortawesome/free-brands-svg-icons';
-
 @NgModule({
   imports: [FontAwesomeModule],
   exports: [FontAwesomeModule],
@@ -53,6 +43,7 @@ export class Fontawesome {
       faMinusSolid,
       faCheckSolid,
       faXmarkSolid,
+      faCircleSolid,
       faSlidersSolid,
       faArrowUpSolid,
       faChevronUpSolid,

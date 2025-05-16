@@ -6,3 +6,4 @@ export * from './lib/services/pdf-extract.service';
 export * from './lib/assets/fontawesome/fontawesome';
 export * from './lib/services/error-handler.service';
 export * from './lib/services/moofy-to-walmart-routes';
+export * from './lib/purchase-orders/purchase-order.store';

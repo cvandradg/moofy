@@ -1,28 +1,39 @@
-import {
-  signal,
-  computed,
-  Component,
-  ViewChild,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import { MODULES } from '@moofy-admin/shared';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MODULES, purchaseOrdersStore } from '@moofy-admin/shared';
 import { MainSidenavContentComponent } from './main-sidenav-content/main-sidenav-content.component';
+import { signal, computed, Component, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { SettingsSidenavContentComponent } from './settings-sidenav-content/settings-sidenav-content.component';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { fromEvent, map } from 'rxjs';
 
 @Component({
-    selector: 'moofy-dashboard',
-    imports: [
-        MODULES,
-        MainSidenavContentComponent,
-        SettingsSidenavContentComponent,
-    ],
-    templateUrl: './dashboard.component.html',
-    styleUrl: './dashboard.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'moofy-dashboard',
+  imports: [MODULES, MainSidenavContentComponent, SettingsSidenavContentComponent],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
+
+  http = inject(HttpClient);
+
+  purchaseOrdersStore = inject(purchaseOrdersStore);
+  es = new EventSource('/api/cache/stream');
+
+  mergeResource = rxResource({
+    loader: () => {
+      return fromEvent<MessageEvent>(this.es, 'message').pipe(
+        map((evt) => console.log('cache stream status', evt.data))
+      );
+    },
+  });
+
+  statusColor = computed(() => {
+    const status = this.purchaseOrdersStore.cacheStatus.value();
+    return status?.ready ? 'green' : 'orange';
+  });
 
   openState = 0;
 
