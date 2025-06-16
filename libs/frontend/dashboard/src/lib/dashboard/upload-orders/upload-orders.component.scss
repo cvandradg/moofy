@@ -189,3 +189,11 @@ mat-tap {
   width: 100%;
   overflow: auto;
 }
+
+.date-picker-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}

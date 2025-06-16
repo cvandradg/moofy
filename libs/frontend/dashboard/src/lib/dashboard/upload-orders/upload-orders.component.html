@@ -1,111 +1,110 @@
-<ng-container>
-  <div class="container">
-    <div class="routes-preview">
-      {{ purchaseOrdersStore.fetchInboundDocuments.isLoading() }}
-      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-        <mat-tab label="Desglose">
-          <div class="accordion-scrollable-container">
-            <mat-accordion>
-              @for (route of purchaseOrdersStore.moofyToWalmartRoutes(); track route) {
-                <mat-expansion-panel>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                      <div>Ruta {{ route }}</div>
-                    </mat-panel-title>
-                  </mat-expansion-panel-header>
-                  <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
-                    <cdk-virtual-scroll-viewport itemSize="10" class="radio-viewport">
-                      <mat-radio-button
-                        *cdkVirtualFor="
-                          let inboundOrder of purchaseOrdersStore.purchaseOrderByRoutes()[route];
-                          trackBy: trackByOrder
-                        "
-                        class="example-radio-button"
-                        [value]="inboundOrder"
-                        (change)="selectedPurchaseOrder.set(inboundOrder)"
-                      >
-                        {{ 'Supercenter ' + inboundOrder.location }}
-                      </mat-radio-button>
-                    </cdk-virtual-scroll-viewport>
-                  </mat-radio-group>
-                </mat-expansion-panel>
-              }
-            </mat-accordion>
-          </div>
+@if (!fetchInboundDocuments.isLoading()) {
+  <div class="date-picker-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Pick a start date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickerStart"
+        [value]="selectedStartDate()"
+        (dateChange)="selectedStartDate.set($event.value)"
+      />
+      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+    </mat-form-field>
 
-          <div class="display-order-details-container">
-            <div class="display-order-details">
-              @if (selectedPurchaseOrder()) {
-                <moofy-purchase-order-breakdown [purchaseOrderDetails$]="selectedPurchaseOrder" />
-              }
-            </div>
-          </div>
-        </mat-tab>
-        <mat-tab label="Totales">
-          <div class="accordion-scrollable-container">
-            <mat-radio-group
-              aria-labelledby="example-radio-group-label"
-              class="example-radio-group"
-              [value]="selectedRouteTotal()"
-              (change)="selectedRouteTotal.set($event.value)"
-            >
-              <mat-radio-button class="example-radio-button" [value]="''">
-                {{ 'Total' }}
-              </mat-radio-button>
-              @for (route of purchaseOrdersStore.moofyToWalmartRoutes(); track route) {
-                <mat-radio-button class="example-radio-button" [value]="route">
-                  {{ 'Ruta ' + route }}
-                </mat-radio-button>
-              }
-            </mat-radio-group>
-          </div>
-
-          <div class="display-order-details-container">
-            <div class="display-order-details">
-              <div class="date-picker-container"></div>
-
-              <table mat-table [dataSource]="filteredItems()" class="mat-elevation-z8">
-                <ng-container matColumnDef="name">
-                  <th mat-header-cell *matHeaderCellDef>Nombre del artículo</th>
-                  <td mat-cell *matCellDef="let element">{{ element.itemNumber }}</td>
-                </ng-container>
-
-                <ng-container matColumnDef="quantity">
-                  <th mat-header-cell *matHeaderCellDef>Cantidad del artículo</th>
-                  <td mat-cell *matCellDef="let element">{{ element.quantityOrdered }}</td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="['name', 'quantity']"></tr>
-                <tr mat-row *matRowDef="let row; columns: ['name', 'quantity']"></tr>
-              </table>
-            </div>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Pick an end date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickerEnd"
+        [value]="selectedEndDate()"
+        (dateChange)="selectedStartDate.set($event.value)"
+      />
+      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+    </mat-form-field>
   </div>
-</ng-container>
+  <ng-container>
+    <div class="container">
+      <div class="routes-preview">
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+          <mat-tab label="Desglose">
+            <div class="accordion-scrollable-container">
+              <mat-accordion>
+                @for (route of moofyToWalmartRoutes(); track route) {
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div>Ruta {{ route }}</div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
+                      <cdk-virtual-scroll-viewport itemSize="10" class="radio-viewport">
+                        <mat-radio-button
+                          *cdkVirtualFor="let inboundOrder of purchaseOrderByRoutes()[route]; trackBy: trackByOrder"
+                          class="example-radio-button"
+                          [value]="inboundOrder"
+                          (change)="selectedPurchaseOrder.set(inboundOrder)"
+                        >
+                          {{ 'Supercenter ' + inboundOrder.location }}
+                        </mat-radio-button>
+                      </cdk-virtual-scroll-viewport>
+                    </mat-radio-group>
+                  </mat-expansion-panel>
+                }
+              </mat-accordion>
+            </div>
 
-<!-- <mat-form-field appearance="fill">
-                      <mat-label>Pick a start date</mat-label>
-                      <input
-                        matInput
-                        [matDatepicker]="pickerStart"
-                        [value]="vm.startDate$"
-                        (dateChange)="uploadOrdersStore.setStartDate($event.value)"
-                      />
-                      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-                      <mat-datepicker #pickerStart></mat-datepicker>
-                    </mat-form-field>
+            <div class="display-order-details-container">
+              <div class="display-order-details">
+                @if (selectedPurchaseOrder()) {
+                  <moofy-purchase-order-breakdown [purchaseOrderDetails$]="selectedPurchaseOrder" />
+                }
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Totales">
+            <div class="accordion-scrollable-container">
+              <mat-radio-group
+                aria-labelledby="example-radio-group-label"
+                class="example-radio-group"
+                [value]="selectedRouteTotal()"
+                (change)="selectedRouteTotal.set($event.value)"
+              >
+                <mat-radio-button class="example-radio-button" [value]="''">
+                  {{ 'Total' }}
+                </mat-radio-button>
+                @for (route of moofyToWalmartRoutes(); track route) {
+                  <mat-radio-button class="example-radio-button" [value]="route">
+                    {{ 'Ruta ' + route }}
+                  </mat-radio-button>
+                }
+              </mat-radio-group>
+            </div>
 
-                    <mat-form-field appearance="fill">
-                      <mat-label>Pick an end date</mat-label>
-                      <input
-                        matInput
-                        [matDatepicker]="pickerEnd"
-                        [value]="vm.endDate$"
-                        (dateChange)="uploadOrdersStore.setEndDate($event.value)"
-                      />
-                      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-                      <mat-datepicker #pickerEnd></mat-datepicker>
-                    </mat-form-field> -->
+            <div class="display-order-details-container">
+              <div class="display-order-details">
+                <div class="date-picker-container"></div>
+
+                <table mat-table [dataSource]="filteredItems()" class="mat-elevation-z8">
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Nombre del artículo</th>
+                    <td mat-cell *matCellDef="let element">{{ element.itemNumber }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="quantity">
+                    <th mat-header-cell *matHeaderCellDef>Cantidad del artículo</th>
+                    <td mat-cell *matCellDef="let element">{{ element.quantityOrdered }}</td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="['name', 'quantity']"></tr>
+                  <tr mat-row *matRowDef="let row; columns: ['name', 'quantity']"></tr>
+                </table>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+  </ng-container>
+}

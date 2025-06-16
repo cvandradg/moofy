@@ -1,5 +1,5 @@
 import { MatSidenav } from '@angular/material/sidenav';
-import { MODULES, purchaseOrdersStore } from '@moofy-admin/shared';
+import { MODULES } from '@moofy-admin/shared';
 import { MainSidenavContentComponent } from './main-sidenav-content/main-sidenav-content.component';
 import { signal, computed, Component, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { SettingsSidenavContentComponent } from './settings-sidenav-content/settings-sidenav-content.component';
@@ -16,8 +16,6 @@ import { fromEvent, map } from 'rxjs';
 })
 export class DashboardComponent {
   @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
-
-  purchaseOrdersStore = inject(purchaseOrdersStore);
 
   openState = 0;
 
