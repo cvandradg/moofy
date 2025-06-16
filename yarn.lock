@@ -6985,6 +6985,7 @@ __metadata:
     tslib: "npm:^2.8.1"
     typescript: "npm:5.8.3"
     typescript-eslint: "npm:8.29.0"
+    web-streams-polyfill: "npm:3.3.3"
     zone.js: "npm:0.15.0"
   languageName: unknown
   linkType: soft
@@ -24387,6 +24388,13 @@ __metadata:
   version: 1.2.2
   resolution: "weak-lru-cache@npm:1.2.2"
   checksum: 8935521554da8046928f4204a106a8797c6263302a17c05a6c9bf78dbc7cc2e639dd24ec67436718bd24927aafb2049ecc7c124e871d75df0fb69516821adf7a
+  languageName: node
+  linkType: hard
+
+"web-streams-polyfill@npm:3.3.3":
+  version: 3.3.3
+  resolution: "web-streams-polyfill@npm:3.3.3"
+  checksum: 11a325b8d9981e5082fc4bb7dab6f1267cdceb4f3d91a2155c33121391e8ff681c2c4fd9d2bf1052a3345b426c0325eff276594d4ed332582d2a30a579a62cb3
   languageName: node
   linkType: hard
 

@@ -17,10 +17,7 @@ import { fromEvent, map } from 'rxjs';
 export class DashboardComponent {
   @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
 
-  http = inject(HttpClient);
-
   purchaseOrdersStore = inject(purchaseOrdersStore);
-
 
   openState = 0;
 
