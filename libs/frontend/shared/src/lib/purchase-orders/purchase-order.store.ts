@@ -31,7 +31,6 @@ export const purchaseOrdersStore = signalStore(
         {} as Record<string, number>
       );
 
-      console.log('locationToRoute', locationToRoute);
 
       return groupBy(store.fetchInboundDocuments.value(), el => locationToRoute[el.location]);
     }),
