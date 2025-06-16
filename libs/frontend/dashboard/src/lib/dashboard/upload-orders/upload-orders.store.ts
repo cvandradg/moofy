@@ -249,7 +249,7 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
 
     const result: Record<RouteKey, any[]> = Object.keys(moofyToWalmartRoutes).reduce(
       (acc, key) => {
-        acc[key as RouteKey] = [];
+        acc[key as unknown as RouteKey] = [];
         return acc;
       },
       {} as Record<RouteKey, any[]>
@@ -262,7 +262,7 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
         const foundStore = (stores as any[]).find((store) => store.name === locationKey);
 
         if (foundStore) {
-          result[routeKey as RouteKey].push(doc);
+          result[routeKey as unknown as RouteKey].push(doc);
           break;
         }
       }
@@ -271,7 +271,7 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
     const transformedResult = Object.entries(result)
       .filter(([_, orders]) => orders.length > 0)
       .map(([routeKey, orders]) => ({
-        route: routeKey as RouteKey,
+        route: routeKey as unknown as RouteKey,
         orders,
       }));
 

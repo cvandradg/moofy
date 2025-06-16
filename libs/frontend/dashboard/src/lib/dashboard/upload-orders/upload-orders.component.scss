@@ -168,11 +168,11 @@ mat-tap {
 }
 
 .accordion-scrollable-container {
-  max-height: 49vh; /* Set your desired height */
+  max-height: 68vh;
   overflow-y: auto;
   padding: 1rem;
   padding: 8px;
-  width: 21%; /* Set width according to your needs */
+  width: 21%;
   margin: 5rem 0 0 0;
 }
 
@@ -182,4 +182,10 @@ mat-tap {
   align-items: center;
   gap: 1rem;
   margin: 0.5rem 0;
+}
+
+.radio-viewport {
+  height: 400px;
+  width: 100%;
+  overflow: auto;
 }

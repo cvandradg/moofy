@@ -4,6 +4,8 @@ import { environment, ErrorHandlerService } from '@moofy-admin/shared';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { provideClientHydration } from '@angular/platform-browser';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   ApplicationConfig,
@@ -22,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideFirestore(() => getFirestore()),
     {
       provide: FIREBASE_OPTIONS,
       useValue: environment.firebaseConfig,

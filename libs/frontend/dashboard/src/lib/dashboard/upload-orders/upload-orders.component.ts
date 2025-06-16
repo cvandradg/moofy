@@ -1,55 +1,17 @@
 import * as _ from 'lodash';
-import { inject, computed, Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgxDropzoneModule } from 'ngx-dropzone';
-import { MatBadgeModule } from '@angular/material/badge';
-import { UploadOrdersStore } from './upload-orders.store';
-import { Fontawesome, MODULES } from '@moofy-admin/shared';
-import { moofyToWalmartRoutes } from '@moofy-admin/shared';
-import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { RouterModule } from '@angular/router';
-import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 import { MatInputModule } from '@angular/material/input';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatBadgeModule } from '@angular/material/badge';
+import { purchaseOrdersStore } from '@moofy-admin/shared';
+import { Fontawesome, MODULES } from '@moofy-admin/shared';
 import { MatNativeDateModule } from '@angular/material/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-
-
-
-type inboundOrder = {
-  AckStatusCode: string | null;
-  AckStatusDescription: string | null;
-  AifNumber: string | null;
-  ApprovalTimestamp: string;
-  Country: string | null;
-  CreatedTimestamp: string;
-  DocSplitInd: string;
-  DocType: string;
-  DocumentCountry: string;
-  DocumentId: number;
-  DocumentNumber: string;
-  DocumentOpenedIndicator: string;
-  DocumentStatusCode: number;
-  DocumentTypeCode: number;
-  EditType: string | null;
-  Location: string;
-  MailboxId: number;
-  MailboxSystemSeparator: string | null;
-  OrderDate: string;
-  PdfRequestIconDisplay: string | null;
-  PdfRequestJsonDetail: string | null;
-  PdfStatus: string | null;
-  RelatedDocumentCount: number;
-  TaSlipNumber: string;
-  TaSplitInd: string;
-  TotalRows: number;
-  TradRelId: string | null;
-  VendorName: string | null;
-  VendorNumber: number;
-  WebEdiSetupId: string | null;
-  XmlPath: string | null;
-};
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { inject, computed, Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
+import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 
 @Component({
   selector: 'moofy-upload-orders',
@@ -62,6 +24,7 @@ type inboundOrder = {
     MatBottomSheetModule,
     MatDatepickerModule,
     MatInputModule,
+    ScrollingModule,
     MatNativeDateModule,
     PurchaseOrderBreakdownComponent,
   ],
@@ -72,106 +35,38 @@ type inboundOrder = {
 export class UploadOrdersComponent {
   router = inject(Router);
 
-  selectedStartDate = signal<Date | null>(null);
+  selectedRouteTotal = signal<any>('');
+  selectedPurchaseOrder = signal<any>(null);
   selectedEndDate = signal<Date | null>(null);
+  selectedStartDate = signal<Date | null>(null);
+  purchaseOrdersStore = inject(purchaseOrdersStore);
 
-  readonly uploadOrdersStore = inject(UploadOrdersStore);
+  filteredItems = computed(() => {
+    console.log('llama al computed filteredItems');
 
-  readonly selectedInboundOrder = signal<inboundOrder>({} as inboundOrder);
+    const routesMap = this.purchaseOrdersStore.purchaseOrderByRoutes() ?? {};
+    const selectedKey = this.selectedRouteTotal();
 
-  moofyToWalmartRoutes = moofyToWalmartRoutes;
+    const orders = selectedKey ? (routesMap[selectedKey] ?? []) : Object.values(routesMap).flat();
 
-  // Derived signal: supermarket counts by route
-  /*Creo que se puede simplificar, no hace falta hacer algo tan complejo
-  solo para la linea 59 */
-  supermarketCountByRoute = computed(() =>
-    Object.entries(moofyToWalmartRoutes).reduce(
-      (acc, [route, supermarkets]) => ({
-        ...acc,
-        [route]: supermarkets.length,
-      }),
-      {} as Record<string, number>
-    )
-  );
-
-  formattedStartDate = computed(() => {
-    const date = this.selectedStartDate();
-    if (!date) return '';
-
-    const month = date.getMonth() + 1;  // JS months are 0-indexed
-    const day = date.getDate();
-    const year = date.getFullYear();
-
-    return `${month}/${day}/${year}`;
+    return _.chain(orders)
+      .flatMap('items')
+      .filter((i) => i.quantityOrdered)
+      .groupBy('itemNumber')
+      .map((group, itemNumber) => ({
+        itemNumber,
+        quantityOrdered: _.sumBy(group, (i) => Number(i.quantityOrdered)),
+      }))
+      .value();
   });
 
-  formattedEndDate = computed(() => {
-    const date = this.selectedEndDate();
-    if (!date) return '';
-
-    const month = date.getMonth() + 1;  // JS months are 0-indexed
-    const day = date.getDate();
-    const year = date.getFullYear();
-
-    return `${month}/${day}/${year}`;
-  });
-
-  readonly allOrders = toSignal(this.uploadOrdersStore.currentRouteOrders$, { initialValue: [] });
-
-  readonly filteredOrders = computed(() => {
-    const orders = this.allOrders();
-    const start = this.selectedStartDate();
-    const end = this.selectedEndDate();
-
-    if (!start && !end) return this.routesArticlesGroups(orders);
-
-    const filtered = orders.filter(order => {
-      if (!order.purchaseOrderDate) return false;
-      const [month, day, year] = order.purchaseOrderDate.split('/').map(Number);
-      const orderDate = new Date(year, month - 1, day);
-
-      if (start && end) {
-        return orderDate >= start && orderDate <= end;
-      } else if (start) {
-        return orderDate >= start;
-      } else if (end) {
-        return orderDate <= end;
-      }
-      return true;
-    });
-
-    return this.routesArticlesGroups(filtered);
-  });
-
-
-
+  trackByOrder(_index: number, order: any) {
+    return order.DocumentId;
+  }
 
   constructor() {
     effect(() => {
-      console.log('Selected date:', this.formattedStartDate());
-    })
+      console.log('filteredItems:', this.filteredItems());
+    });
   }
-
-
-
-  onInboundOrderSelected(selectedOrder: any): void {
-    this.selectedInboundOrder.set(selectedOrder); // Update the signal with the selected order
-  }
-
-  routesArticlesGroups(currentRouteOrders: any[]) {
-    if (!currentRouteOrders?.length) return [];
-
-    // Flatten all items from all orders
-    const allItems = currentRouteOrders.flatMap(order => order.items ?? []);
-
-    // Group by itemNumber
-    const buckets = _.groupBy(allItems, 'itemNumber');
-
-    // Sum quantities
-    return Object.entries(buckets).map(([itemNumber, items]) => ({
-      itemNumber,
-      quantityOrdered: _.sumBy(items, item => Number(item.quantityOrdered ?? 0))
-    }));
-  }
-
 }

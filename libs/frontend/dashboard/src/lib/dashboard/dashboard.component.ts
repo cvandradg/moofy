@@ -20,20 +20,7 @@ export class DashboardComponent {
   http = inject(HttpClient);
 
   purchaseOrdersStore = inject(purchaseOrdersStore);
-  es = new EventSource('/api/cache/stream');
 
-  mergeResource = rxResource({
-    loader: () => {
-      return fromEvent<MessageEvent>(this.es, 'message').pipe(
-        map((evt) => console.log('cache stream status', evt.data))
-      );
-    },
-  });
-
-  statusColor = computed(() => {
-    const status = this.purchaseOrdersStore.cacheStatus.value();
-    return status?.ready ? 'green' : 'orange';
-  });
 
   openState = 0;
 

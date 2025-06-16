@@ -1,3 +1,5 @@
+import { faArrowDownFromBracket } from "@fortawesome/pro-solid-svg-icons";
+
 export const moofyToWalmartRoutes = {
   2: [
     { name: '717', location: 'MP NARANJO' },
@@ -387,7 +389,6 @@ export const moofyToWalmartRoutes = {
     { name: '4449', location: 'WM LA LIMA' },
     { name: '4469', location: 'MP AGUACALIENTE' },
     { name: '4504', location: 'PALI ZAPOTE' },
-
   ],
-  unProcessed: [],
+  // faArrowDownFromBracket: [],
 };

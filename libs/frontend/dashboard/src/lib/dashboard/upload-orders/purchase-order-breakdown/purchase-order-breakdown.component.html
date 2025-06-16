@@ -1,6 +1,6 @@
-<div class="supercenter">{{ 'Supercenter ' + this.purchaseOrder().Location }}</div>
+<div class="supercenter">{{ 'Supercenter ' + purchaseOrderDetails$().location }}</div>
 
-<table mat-table [dataSource]="purchaseOrderDetails$.items" class="mat-elevation-z8">
+<table mat-table [dataSource]="filteredItems().items" class="mat-elevation-z8">
   <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
