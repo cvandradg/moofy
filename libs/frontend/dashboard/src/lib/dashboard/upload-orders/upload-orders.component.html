@@ -18,7 +18,7 @@
         matInput
         [matDatepicker]="pickerEnd"
         [value]="selectedEndDate()"
-        (dateChange)="selectedStartDate.set($event.value)"
+        (dateChange)="selectedEndDate.set($event.value)"
       />
       <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
       <mat-datepicker #pickerEnd></mat-datepicker>

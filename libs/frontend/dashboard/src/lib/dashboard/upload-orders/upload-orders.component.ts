@@ -42,8 +42,8 @@ export class UploadOrdersComponent {
 
   selectedRouteTotal = signal<any>('');
   selectedPurchaseOrder = signal<any>(null);
-  selectedEndDate = signal<Date | null>(new Date());
-  selectedStartDate = signal<Date | null>(new Date());
+  selectedEndDate = signal<Date>(new Date());
+  selectedStartDate = signal<Date>(new Date());
 
   firestore = inject(Firestore);
   platformId = inject(PLATFORM_ID);
@@ -75,10 +75,12 @@ export class UploadOrdersComponent {
         return of<any[]>([]);
       }
 
+      console.log('end of day', this.endOfDay(endDate));
+
       const q = query(
         collection(this.firestore, 'purchaseOrderDetails'),
         where('purchaseOrderDate', '>=', startDate),
-        where('purchaseOrderDate', '<=', endDate)
+        where('purchaseOrderDate', '<=', this.endOfDay(endDate)),
       );
 
       return collectionData(q, { idField: 'DocumentId' });
@@ -104,6 +106,10 @@ export class UploadOrdersComponent {
 
   trackByOrder(_index: number, order: any) {
     return order.DocumentId;
+  }
+
+  endOfDay(d: Date): Date {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
   }
 
   constructor() {

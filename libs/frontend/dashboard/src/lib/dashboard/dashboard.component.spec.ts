@@ -9,21 +9,11 @@ import { provideRouter, RouterModule } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MainSidenavContentComponent } from './main-sidenav-content/main-sidenav-content.component';
-import { purchaseOrdersStore } from '@moofy-admin/shared';
 import { Firestore } from '@angular/fire/firestore';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
-
-  const purchaseOrdersStoreMock = {
-    moofyToWalmartRoutes: jest.fn(() => []),
-    fetchInboundDocuments: {
-      isLoading: jest.fn(() => false),
-    },
-    purchaseOrderByRoutes: jest.fn(() => ({})),
-    // add any other signals/methods used in DashboardComponent or its children
-  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -41,7 +31,6 @@ describe('DashboardComponent', () => {
       ],
       providers: [
         provideRouter([]),
-        { provide: purchaseOrdersStore, useValue: purchaseOrdersStoreMock },
         { provide: Firestore, useValue: {} },
       ],
     }).compileComponents();

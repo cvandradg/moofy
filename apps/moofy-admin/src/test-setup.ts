@@ -13,14 +13,3 @@ setupZoneTestEnv({
   errorOnUnknownProperties: true,
 });
 
-import { TestBed } from '@angular/core/testing';
-import { purchaseOrdersStore } from '@moofy-admin/shared';
-
-// minimal stub so nothing in your real store ever runs:
-const purchaseOrdersStoreStub = {
-  fetchInboundDocuments: { isLoading: () => false },
-  moofyToWalmartRoutes: () => [],
-  purchaseOrderByRoutes: () => ({}),
-};
-
-TestBed.overrideProvider(purchaseOrdersStore, { useValue: purchaseOrdersStoreStub });
