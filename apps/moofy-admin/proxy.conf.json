@@ -1,10 +1,6 @@
 {
   "/api": {
-    "target": "https://retaillink.login.wal-mart.com",
-    "secure": false,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/api": ""
-    }
+    "target": "http://localhost:3000",
+    "secure": false
   }
 }

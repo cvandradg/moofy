@@ -12,9 +12,7 @@ export interface GenericState extends Record<string, unknown> {
 }
 
 @Directive()
-export class ComponentStoreMixinHelper<
-  T extends GenericState
-> extends ComponentStore<T> {
+export class ComponentStoreMixinHelper<T extends GenericState> extends ComponentStore<T> {
   router = inject(Router);
   errorHelperService = inject(ErrorHandlerService);
 
@@ -32,7 +30,7 @@ export class ComponentStoreMixinHelper<
     error,
   }));
 
-  get handleError() {
+  get handleFirebaseError() {
     return (error: FirebaseError) => {
       return this.setError(this.errorHelperService.firebaseErrorHandler(error));
     };

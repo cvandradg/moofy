@@ -1,28 +1,20 @@
-import {
-  inject,
-  computed,
-  Component,
-  ChangeDetectionStrategy,
-  OnInit,
-  signal,
-} from '@angular/core';
+import * as _ from 'lodash';
 import { Router } from '@angular/router';
-import { NgxDropzoneModule } from 'ngx-dropzone';
-import { MatBadgeModule } from '@angular/material/badge';
-import { UploadOrdersStore } from './upload-orders.store';
-import { Fontawesome, MODULES, moofyPO } from '@moofy-admin/shared';
-import { provideComponentStore } from '@ngrx/component-store';
-import { PdfExtractService, routes } from '@moofy-admin/shared';
-import {
-  MatBottomSheet,
-  MatBottomSheetModule,
-} from '@angular/material/bottom-sheet';
 import { RouterModule } from '@angular/router';
-import { PurchaseOrdersBreakdownComponent } from './purchase-orders-breakdown/purchase-orders-breakdown.component';
+import { NgxDropzoneModule } from 'ngx-dropzone';
+import { MatInputModule } from '@angular/material/input';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatBadgeModule } from '@angular/material/badge';
+import { purchaseOrdersStore } from '@moofy-admin/shared';
+import { Fontawesome, MODULES } from '@moofy-admin/shared';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { inject, computed, Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
+import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 
 @Component({
   selector: 'moofy-upload-orders',
-  standalone: true,
   imports: [
     MODULES,
     Fontawesome,
@@ -30,70 +22,51 @@ import { PurchaseOrdersBreakdownComponent } from './purchase-orders-breakdown/pu
     MatBadgeModule,
     NgxDropzoneModule,
     MatBottomSheetModule,
+    MatDatepickerModule,
+    MatInputModule,
+    ScrollingModule,
+    MatNativeDateModule,
+    PurchaseOrderBreakdownComponent,
   ],
   templateUrl: './upload-orders.component.html',
   styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadOrdersComponent implements OnInit {
+export class UploadOrdersComponent {
   router = inject(Router);
-  readonly pdfExtractService = inject(PdfExtractService);
-  readonly uploadOrdersStore = inject(UploadOrdersStore);
 
-  private _bottomSheet = inject(MatBottomSheet);
+  selectedRouteTotal = signal<any>('');
+  selectedPurchaseOrder = signal<any>(null);
+  selectedEndDate = signal<Date | null>(null);
+  selectedStartDate = signal<Date | null>(null);
+  purchaseOrdersStore = inject(purchaseOrdersStore);
 
-  readonly panelOpenState = signal(false);
-  favoriteSeason!: string;
-  seasons: string[] = [
-    'SUPERCENTER 100',
-    'SUPERCENTER 1354',
-    'SUPERCENTER 1334',
-    'SUPERCENTER 200',
-  ];
+  filteredItems = computed(() => {
+    console.log('llama al computed filteredItems');
 
-  // Derived signal: supermarket counts by route
-  /*Creo que se puede simplificar, no hace falta hacer algo tan complejo
-  solo para la linea 59 */
-  supermarketCountByRoute = computed(() =>
-    Object.entries(routes).reduce(
-      (acc, [route, supermarkets]) => ({
-        ...acc,
-        [route]: supermarkets.length,
-      }),
-      {} as Record<string, number>
-    )
-  );
+    const routesMap = this.purchaseOrdersStore.purchaseOrderByRoutes() ?? {};
+    const selectedKey = this.selectedRouteTotal();
 
-  ngOnInit(): void {
-    this.pdfExtractService
-      .walmartBotLogin()
-      .subscribe((a: any) => console.log('login,', a));
+    const orders = selectedKey ? (routesMap[selectedKey] ?? []) : Object.values(routesMap).flat();
 
-    this.pdfExtractService
-      .fetchInboundDocuments()
-      .subscribe((a: any) => console.log('holaaaa,', a));
+    return _.chain(orders)
+      .flatMap('items')
+      .filter((i) => i.quantityOrdered)
+      .groupBy('itemNumber')
+      .map((group, itemNumber) => ({
+        itemNumber,
+        quantityOrdered: _.sumBy(group, (i) => Number(i.quantityOrdered)),
+      }))
+      .value();
+  });
+
+  trackByOrder(_index: number, order: any) {
+    return order.DocumentId;
   }
 
-  openBottomSheet(routePurchaseOrders: any): void {
-    console.log('purchaseOrders', routePurchaseOrders);
-    this._bottomSheet.open(PurchaseOrdersBreakdownComponent, {
-      data: { routePurchaseOrders },
+  constructor() {
+    effect(() => {
+      console.log('filteredItems:', this.filteredItems());
     });
-  }
-
-  getSupermarketCount(route: string): number {
-    return this.supermarketCountByRoute()[route] || 0;
-  }
-
-  hasProcessedOrders(
-    purchaseOrders: Record<string, moofyPO[]> | undefined
-  ): boolean {
-    if (!purchaseOrders) {
-      return false; // Handle undefined or null
-    }
-
-    return Object.entries(purchaseOrders)
-      .filter(([key]) => key !== 'unProcessed') // Exclude 'unProcessed'
-      .some(([_, items]) => Array.isArray(items) && items.length); // Check for non-empty arrays
   }
 }

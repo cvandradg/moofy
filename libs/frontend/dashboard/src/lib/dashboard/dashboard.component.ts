@@ -1,23 +1,15 @@
-import {
-  signal,
-  computed,
-  Component,
-  ViewChild,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import { MODULES } from '@moofy-admin/shared';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MODULES, purchaseOrdersStore } from '@moofy-admin/shared';
 import { MainSidenavContentComponent } from './main-sidenav-content/main-sidenav-content.component';
+import { signal, computed, Component, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { SettingsSidenavContentComponent } from './settings-sidenav-content/settings-sidenav-content.component';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { fromEvent, map } from 'rxjs';
 
 @Component({
   selector: 'moofy-dashboard',
-  standalone: true,
-  imports: [
-    MODULES,
-    MainSidenavContentComponent,
-    SettingsSidenavContentComponent,
-  ],
+  imports: [MODULES, MainSidenavContentComponent, SettingsSidenavContentComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,14 +17,16 @@ import { SettingsSidenavContentComponent } from './settings-sidenav-content/sett
 export class DashboardComponent {
   @ViewChild('settingsSidenav') settingsSidenav!: MatSidenav;
 
+  purchaseOrdersStore = inject(purchaseOrdersStore);
+
   openState = 0;
 
   close() {
     this.settingsSidenav.close();
   }
-  collapsed = signal(false);
+  collapsed = signal(true);
   // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '250px'));
   // sidenavWidth = computed(() => (this.collapsed() ? '65px' : '165px'));
   // sidenavWidth = computed(() => (this.collapsed() ? 82 : 165));
-  sidenavWidth = computed(() => (this.collapsed() ? '82px' : '225px'));
+  sidenavWidth = computed(() => (this.collapsed() ? '90px' : '225px'));
 }

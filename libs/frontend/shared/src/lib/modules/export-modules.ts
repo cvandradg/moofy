@@ -28,6 +28,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Fontawesome } from '../assets/fontawesome/fontawesome';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
 
 export const MODULES = [
   PushPipe,
@@ -42,6 +43,7 @@ export const MODULES = [
   MatMenuModule,
   MatTabsModule,
   MatRadioModule,
+  MatTableModule,
   MatInputModule,
   MatChipsModule,
   MatSelectModule,

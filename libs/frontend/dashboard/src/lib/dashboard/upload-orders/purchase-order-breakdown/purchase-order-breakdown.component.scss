@@ -1,0 +1,50 @@
+table {
+  width: 100%;
+  border: 1px solid #b3b2bb;
+  border-collapse: separate; /* Ensures border-radius works properly */
+  border-spacing: 0; /* Removes spacing between cells */
+  border: 1px solid rgba(0, 0, 0, 0.432);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mat-mdc-row {
+  height: 40px;
+}
+
+//odd number cells color
+.mat-mdc-row:nth-child(odd) {
+  background-color: #eee;
+}
+
+//even number cells color
+.mat-mdc-row:nth-child(even) {
+  background-color: #b3b2bb41;
+}
+
+.mat-mdc-cell {
+  border: none;
+  text-align: center;
+}
+
+.mat-mdc-header-cell {
+  text-align: center;
+  border-bottom: 1px solid black;
+}
+
+.mat-mdc-header-cell:first-child {
+  text-align: center;
+  border-right: 1px solid black;
+}
+
+.mat-mdc-header-row {
+  background-color: #b3b2bb6b;
+  height: 40px;
+  text-align: center;
+}
+
+routes-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -9,7 +9,6 @@ import { combineLatest, map, Observable, startWith, tap } from 'rxjs';
 
 @Component({
   selector: 'app-content',
-  standalone: true,
   imports: [
     CommonModule,
     CommonModule,
@@ -68,7 +67,7 @@ import { combineLatest, map, Observable, startWith, tap } from 'rxjs';
       </form>
     </div>
   `,
-  styleUrl: './content.component.scss',
+  styleUrl: './content.component.scss'
 })
 export class ContentComponent {
   title = 'htf';
@@ -87,14 +86,12 @@ export class ContentComponent {
   ngOnInit() {
     this.filteredOptionsOrigin = this.myControlOrigin.valueChanges.pipe(
       startWith(''),
-      tap((x) => console.log('valor de input', x)),
       map((value) => this._filter(value || ''))
     );
 
     this.filteredOptionsDestination =
       this.myControlDestination.valueChanges.pipe(
         startWith(''),
-        tap((x) => console.log('valor de input', x)),
         map((value) => this._filter2(value || ''))
       );
 

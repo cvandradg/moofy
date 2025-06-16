@@ -1,12 +1,7 @@
-import * as pdfjsLib from 'pdfjs-dist';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, from, forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api';
-import { routes } from './moofy-to-walmart-routes';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 /* @vite-ignore */
-(pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'assets/pdf.worker.min.mjs';
 
 interface Item {
   cost: string;
@@ -28,174 +23,16 @@ interface MoofyPO {
 export class PdfExtractService {
   http = inject(HttpClient);
 
-  walmartBotLogin() {
-    const url = 'http://localhost:3000/walmart-bot-login/';
-    const body = {
-      username: 'candradeg9182@gmail.com',
-      password: 'PastryFactory2024',
-      language: 'en',
-    };
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'User-Agent': 'AngularApp',
-      'X-Bot-Token':
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3MzkyMTU0MDksImlhdCI6MTczNDAzMTQwOSwianRpIjoiYTJhNGIxMWYtNjZmMi00YzdlLTk2MTctZjQwOTU4MjFmOTMyIn0.EvVZVyUbeAD540h3zmwNKPi6dDhnjxTneYxKdQULdDlgRoCYfcSWi1og5-3b66kVKL-KNTmSOeeXLu20T1P4ZwwXEAV3nYj7N7V12mlPhHO_3SMdMcMMk_y_ZdpQAdlYKE7zidcTbrYeCvcB0m1mGIyELE_ZnmNrIyB1HbOtHurb8idRXy10D3S5SynXKgztzWDWlyZTnLM-JASAalzab8rvbNDTa3_10qgIzLTgBOsQBzsJyHgpGmtIGRo3rq6RtAs4_mlK-jFG1--QfoXaNxZHx36wToGNIj7s96z2zCMBIK8PRV1ThnfzkEvYl5h3xG3Z8Jy4tvjIzKKJcd7n3w',
-    });
-
-    return this.http.post(url, body, { headers });
-  }
-
   fetchInboundDocuments() {
-    const url = 'http://localhost:3000/inbound-documents'; // Proxy endpoint
+    const url = 'http://localhost:3000/get-inbound-documents'; // Proxy endpoint
 
-    const headers = new HttpHeaders({
-      accept: 'application/json', // Explicitly request JSON
-      'accept-language': 'en-US,en;q=0.9,es;q=0.8',
-      priority: 'u=1, i',
-      referer: 'https://retaillink2.wal-mart.com/Webedi2/inbound/51619',
-      'sec-ch-ua':
-        '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-      'sec-ch-ua-mobile': '?0',
-      'sec-ch-ua-platform': '"Windows"',
-      'sec-fetch-dest': 'empty',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-site': 'same-origin',
-      'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-      'x-requested-with': 'XMLHttpRequest',
-      'x-bot-token': '<your-bot-token>', // Replace with your actual bot token
-    });
-
-    return this.http.get(url, { headers });
+    return this.http.get(url);
   }
 
-  extractOrderByRoute(files: File[]): Observable<Record<string, MoofyPO[]>> {
-    const routeMap: Record<string, MoofyPO[]> = Object.keys(routes).reduce(
-      (acc, route) => ({ ...acc, [route]: [] }),
-      {} as Record<string, MoofyPO[]>
-    );
+  getInboutOrderDetails(documentId: number, location: string): Observable<any> {
+    const url = 'http://localhost:3000/get-inbound-order-details'; // Proxy endpoint
+    const params = { documentId: documentId.toString(), location };
 
-    return this.extractTextFromPDFs(files).pipe(
-      map((purchaseOrders) => {
-        purchaseOrders.forEach((purchaseOrder) => {
-          const routeEntry = Object.entries(routes).find(([_, supermarkets]) =>
-            supermarkets.some((s) => s.name === purchaseOrder.supermarket)
-          );
-
-          if (!routeEntry) {
-            routeMap['unProcessed'].push(purchaseOrder);
-            return;
-          }
-
-          const [route, supermarkets] = routeEntry;
-          const match = supermarkets.find(
-            (s) => s.name === purchaseOrder.supermarket
-          );
-
-          if (!match) {
-            routeMap['unProcessed'].push(purchaseOrder);
-            return;
-          }
-
-          routeMap[route].push(purchaseOrder);
-        });
-        return routeMap;
-      })
-    );
-  }
-
-  extractTextFromPDFs(files: File[]): Observable<MoofyPO[]> {
-    return forkJoin(
-      files.map((file) => (file ? this.extractTextFromPdf(file) : of(null)))
-    ).pipe(map((results) => results.filter(Boolean) as MoofyPO[]));
-  }
-
-  extractTextFromPdf(file: File): Observable<MoofyPO> {
-    return from(file.arrayBuffer()).pipe(
-      switchMap((pdfData) =>
-        from(pdfjsLib.getDocument({ data: pdfData }).promise)
-      ),
-      switchMap((pdfDoc) => this.parsePurchaseOrder(pdfDoc, file.name))
-    );
-  }
-
-  parsePurchaseOrder(
-    pdfDoc: pdfjsLib.PDFDocumentProxy,
-    fileName: string
-  ): Observable<MoofyPO> {
-    return forkJoin(
-      Array.from({ length: pdfDoc.numPages }, (_, i) =>
-        from(pdfDoc.getPage(i + 1)).pipe(
-          switchMap((page) => from(page.getTextContent())),
-          map((textContent) => textContent.items)
-        )
-      )
-    ).pipe(
-      map((pages) => {
-        const fullPdfDoc = pages.flat();
-        console.log('ITEMS', this.getPurchaseOrderItems(fullPdfDoc));
-        return {
-          fileName,
-          supermarket: this.getTextItemStr(fullPdfDoc[56]),
-          sendDate: this.getTextItemStr(fullPdfDoc[14]),
-          cancellationDate: this.getTextItemStr(fullPdfDoc[18]),
-          items: this.getPurchaseOrderItems(fullPdfDoc),
-        };
-      })
-    );
-  }
-
-  getPurchaseOrderItems(content: (TextItem | TextMarkedContent)[]): Item[] {
-    const table = this.getPurchaseOrderTable(content);
-
-    console.log(
-      'table',
-      table.map((x: any) => x.str)
-    );
-
-    const itemsAmountIndex = table.findIndex(
-      (item) =>
-        ('str' in item && item.str === 'Total artic lín') ||
-        ('str' in item && item.str === 'Total Line Items')
-    );
-
-    const itemsAmount = parseInt(
-      this.getTextItemStr(table[itemsAmountIndex + 2])
-    );
-
-    console.log('itemsAmount', itemsAmountIndex);
-
-    return Array.from({ length: itemsAmount }, (_, i) => {
-      const currentItemIndex = table.findIndex(
-        (item): item is TextItem => 'str' in item && item.str === `00${i + 1}`
-      );
-
-      //si no encuentra artitulo tiene que tirar un error y detener el proceso de lectura del file
-
-      return {
-        article: this.getTextItemStr(table[currentItemIndex + 2] as TextItem),
-        quantity: this.getTextItemStr(table[currentItemIndex + 14] as TextItem),
-        cost: this.getTextItemStr(table[currentItemIndex + 20] as TextItem),
-      };
-    });
-  }
-
-  getPurchaseOrderTable(
-    content: (TextItem | TextMarkedContent)[]
-  ): (TextItem | TextMarkedContent)[] {
-    const itemsIdxStart =
-      content.findIndex(
-        (item) =>
-          ('str' in item && item.str === 'Costo Extendí') ||
-          ('str' in item && item.str === 'Extended Cost')
-      ) + 2;
-    return content.slice(itemsIdxStart);
-  }
-
-  getTextItemStr(item: unknown): string {
-    return item && typeof item === 'object' && 'str' in item
-      ? (item as TextItem).str
-      : '';
+    return this.http.get(url, { params });
   }
 }

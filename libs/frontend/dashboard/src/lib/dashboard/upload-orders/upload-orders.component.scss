@@ -4,16 +4,26 @@
 
 .display-order-details {
   // max-width: 60%;
-  min-height: 20rem;
-  flex-grow: 8;
-
-  background-color: rgba(97, 97, 79, 0.027);
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  min-height: 30rem;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
   border: none;
+  width: 100%;
+  max-height: 79vh; /* Set your desired height */
+  overflow-y: auto;
+
+  .no-selection {
+    padding: 0 0 0 0.7rem;
+    border-left: 3px solid rgba(39, 34, 34, 0.479);
+  }
 }
 
 mat-accordion {
   flex-grow: 1;
+  width: 15%;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
 .upload-text {
@@ -33,9 +43,8 @@ fa-icon {
 
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 3.5rem;
-  padding: 0 2rem;
 
   .demo-section {
     display: flex;
@@ -54,7 +63,7 @@ fa-icon {
 .container {
   width: 100%;
 }
-// .container,
+
 .processed-files-container {
   margin: 0 auto;
   display: flex;
@@ -77,14 +86,106 @@ fa-icon {
 .example-radio-group {
   display: flex;
   flex-direction: column;
-  margin: 15px 0;
+  margin: 0 0 1rem 0;
   align-items: flex-start;
 }
 
-.example-radio-button {
-  margin: 5px;
+mat-panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-:host ::ng-deep .mat-expansion-panel-body {
-  padding: 0 !important;
+moofy-purchase-order-breakdown {
+  width: 90%;
+  margin: 0.5rem;
+}
+
+mat-tab-group {
+  margin: 0.5rem 0;
+  width: 90%;
+}
+
+mat-tap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 30rem;
+}
+
+.supercenter {
+  margin: 2.5rem 0 1.5rem 0;
+}
+
+.display-order-details-container {
+  // flex-grow: 7;
+  flex-grow: 3;
+  width: 70%;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+
+  button {
+    align-self: flex-end;
+    margin: 2rem 0;
+  }
+}
+
+.button-wrapper {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.next-button {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+:host ::ng-deep .mat-mdc-tab-body-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 2rem 0.3rem 0;
+  height: calc(100vh - 12rem);
+}
+
+.mat-mdc-radio-button {
+  height: 1.6rem;
+}
+
+:host ::ng-deep mat-radio-button {
+  margin-top: 0;
+
+  > div:first-of-type {
+    margin: 0;
+    height: 1.6rem;
+  }
+}
+
+.accordion-scrollable-container {
+  max-height: 68vh;
+  overflow-y: auto;
+  padding: 1rem;
+  padding: 8px;
+  width: 21%;
+  margin: 5rem 0 0 0;
+}
+
+.date-picker-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.radio-viewport {
+  height: 400px;
+  width: 100%;
+  overflow: auto;
 }

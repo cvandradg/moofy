@@ -1,57 +1,34 @@
 import { NgModule } from '@angular/core';
 
-import {
-  FaIconLibrary,
-  FontAwesomeModule,
-} from '@fortawesome/angular-fontawesome';
+import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import {
-  faBars as faBarsLight,
-  faFiles as faFilesLight,
-  faXmark as faXmarkLight,
-  faSliders as faSlidersLight,
-  faSunCloud as faSunCloudLight,
-  faLockOpen as faLockOpenLight,
-  faArrowRight as faArrowRightLight,
-  faCloudsMoon as faCloudsMoonLight,
-  faUpFromLine as faUpFromLineLight,
-  faChartColumn as faChartColumnLight,
-  faCrystalBall as faCrystalBallLight,
-  faLockKeyhole as faLockKeyholeLight,
-  faBookSparkles as faBookSparklesLight,
-  faFolderArrowUp as faFolderArrowUpLight,
-  faLockKeyholeOpen as faLockKeyholeOpenLight,
-  faScrewdriverWrench as faScrewdriverWrenchLight,
-  faChartMixedUpCircleDollar as faChartMixedUpCircleDollarLight,
-} from '@fortawesome/pro-light-svg-icons';
-
-import {
+  faPlus as faPlusSolid,
   faBars as faBarsSolid,
-  faGear as faGearSolid,
-  faFiles as faFilesSolid,
+  faMinus as faMinusSolid,
+  faCheck as faCheckSolid,
   faXmark as faXmarkSolid,
+  faCircle as faCircleSolid,
   faSliders as faSlidersSolid,
-  faSunCloud as faSunCloudSolid,
-  faLockOpen as faLockOpenSolid,
-  faCloudsMoon as faCloudsMoonSolid,
-  faUpFromLine as faUpFromLineSolid,
+  faArrowUp as faArrowUpSolid,
+  faChevronUp as faChevronUpSolid,
   faArrowRight as faArrowRightSolid,
-  faChartColumn as faChartColumnSolid,
-  faCrystalBall as faCrystalBallSolid,
-  faLockKeyhole as faLockKeyholeSolid,
-  faBookSparkles as faBookSparklesSolid,
+  faChevronDown as faChevronDownSolid,
   faChevronRight as faChevronRightSolid,
-  faFolderArrowUp as faFolderArrowUpSolid,
-  faLockKeyholeOpen as faLockKeyholeOpenSolid,
-  faScrewdriverWrench as faScrewdriverWrenchSolid,
-  faChartMixedUpCircleDollar as faChartMixedUpCircleDollarSolid,
+  faArrowUpFromBracket as faArrowUpFromBracketSolid,
 } from '@fortawesome/pro-solid-svg-icons';
-import { faGoogle as faGoogleBrands } from '@fortawesome/free-brands-svg-icons';
-import { faGripLines as faGripLinesThin } from '@fortawesome/pro-thin-svg-icons';
-import { faHouseTree as faHouseTreeRegular } from '@fortawesome/pro-regular-svg-icons';
-import { faDrumstick as faDrumstickSharpSolid } from '@fortawesome/sharp-solid-svg-icons';
-import { faBookOpenCover as faBookOpenCoverDuotone } from '@fortawesome/pro-duotone-svg-icons';
-import { faWhatsappSquare as faWhatsappSquareBrands } from '@fortawesome/free-brands-svg-icons';
+
+import {
+  faEye as faEyeRegular,
+  faFile as faFileRegular,
+  faFolder as faFolderRegular,
+  faCalendar as faCalendarRegular,
+  faChartBar as faChartBarRegular,
+  faTrashCan as faTrashCanRegular,
+  faNoteSticky as faNoteStickyRegular,
+  faCircleCheck as faCircleCheckRegular,
+  faRectangleList as faRectangleListRegular,
+} from '@fortawesome/pro-regular-svg-icons';
 
 @NgModule({
   imports: [FontAwesomeModule],
@@ -60,48 +37,31 @@ import { faWhatsappSquare as faWhatsappSquareBrands } from '@fortawesome/free-br
 export class Fontawesome {
   constructor(private library: FaIconLibrary) {
     library?.addIcons(
-      faBarsLight,
+      //Solid
+      faPlusSolid,
       faBarsSolid,
-      faGearSolid,
-      faFilesLight,
-      faFilesSolid,
-      faXmarkLight,
+      faMinusSolid,
+      faCheckSolid,
       faXmarkSolid,
-      faSlidersLight,
+      faCircleSolid,
       faSlidersSolid,
-      faGoogleBrands,
-      faSunCloudLight,
-      faSunCloudSolid,
-      faLockOpenLight,
-      faLockOpenSolid,
-      faGripLinesThin,
-      faArrowRightLight,
+      faArrowUpSolid,
+      faChevronUpSolid,
       faArrowRightSolid,
-      faCloudsMoonSolid,
-      faCloudsMoonLight,
-      faUpFromLineLight,
-      faUpFromLineSolid,
-      faChartColumnLight,
-      faChartColumnSolid,
-      faCrystalBallSolid,
-      faLockKeyholeSolid,
-      faCrystalBallLight,
-      faLockKeyholeLight,
-      faHouseTreeRegular,
+      faChevronDownSolid,
       faChevronRightSolid,
-      faBookSparklesSolid,
-      faBookSparklesLight,
-      faFolderArrowUpLight,
-      faFolderArrowUpSolid,
-      faDrumstickSharpSolid,
-      faLockKeyholeOpenSolid,
-      faLockKeyholeOpenLight,
-      faBookOpenCoverDuotone,
-      faWhatsappSquareBrands,
-      faScrewdriverWrenchSolid,
-      faScrewdriverWrenchLight,
-      faChartMixedUpCircleDollarLight,
-      faChartMixedUpCircleDollarSolid
+      faArrowUpFromBracketSolid,
+
+      //Regular
+      faEyeRegular,
+      faFileRegular,
+      faFolderRegular,
+      faCalendarRegular,
+      faChartBarRegular,
+      faTrashCanRegular,
+      faNoteStickyRegular,
+      faCircleCheckRegular,
+      faRectangleListRegular
     );
   }
 }
