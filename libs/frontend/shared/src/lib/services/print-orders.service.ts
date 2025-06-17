@@ -63,82 +63,73 @@ export class PrintOrdersService {
       const info = {
         columns: [
           [
-            { text: `PO Number: ${po.purchaseOrderNumber}`, style: 'subheader' },
+            { text: `Supercenter ${po.location}`, margin: [0, 8, 0, 8], style: 'subheader' },
+            { text: `PO Number: ${po.purchaseOrderNumber}` },
             { text: `Document ID: ${po.DocumentId}` },
           ],
           [
-            { text: `PO Date: ${fmt(po.purchaseOrderDate)}`, alignment: 'right' },
-            { text: `Ship Date: ${fmt(po.shipDate)}`, alignment: 'right' },
-            { text: `Cancel Date: ${fmt(po.cancelDate)}`, alignment: 'right' },
+            { text: `PO Date: ${fmt(po.purchaseOrderDate)}`, alignment: 'right', fontSize: 9 },
+            { text: `Ship Date: ${fmt(po.shipDate)}`, alignment: 'right', fontSize: 9 },
+            { text: `Cancel Date: ${fmt(po.cancelDate)}`, alignment: 'right', fontSize: 9 },
           ],
         ],
       };
-      const locationText = { text: `Location: ${po.location}`, margin: [0, 8, 0, 8] };
 
       // Details section
       const detailsTitle = { text: 'Details', style: 'header' };
       const detailsTable = {
         table: {
           widths: ['auto', '*'],
-          body: Object.entries(po.additionalDetails)
-            .map(([k, v]) => [
-              { text: k, bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
-              { text: v, fontSize: 7, margin: [0, 1, 0, 1] }
-            ])
+          body: Object.entries(po.additionalDetails).map(([k, v]) => [
+            { text: k, bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
+            { text: v, fontSize: 7, margin: [0, 1, 0, 1] },
+          ]),
         },
-        layout: 'lightHorizontalLines'
+        layout: 'lightHorizontalLines',
       };
 
       // Totals only table for side-by-side
       const totalsOnlyTable = {
         table: {
+          widths: ['*', 'auto'],
           body: [
             [
-              { text: 'Total Items:', bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
-              { text: po.totals.totalItems, fontSize: 7, margin: [0, 1, 0, 1] }
+              { text: 'Total Items:', bold: true, fontSize: 9, margin: [0, 1, 0, 1] },
+              { text: po.totals.totalItems, fontSize: 9, margin: [0, 1, 0, 1], alignment: 'right' },
             ],
             [
-              { text: 'Total Units:', bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
-              { text: po.totals.totalUnits, fontSize: 7, margin: [0, 1, 0, 1] }
+              { text: 'Total Units:', bold: true, fontSize: 9, margin: [0, 1, 0, 1] },
+              { text: po.totals.totalUnits, fontSize: 9, margin: [0, 1, 0, 1], alignment: 'right' },
             ],
             [
-              { text: 'Total Amount:', bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
-              { text: po.totals.totalAmount, fontSize: 7, margin: [0, 1, 0, 1] }
-            ]
-          ]
+              { text: 'Total Amount:', bold: true, fontSize: 9, margin: [0, 1, 0, 1] },
+              { text: po.totals.totalAmount, fontSize: 9, margin: [0, 1, 0, 1], alignment: 'right' },
+            ],
+          ],
         },
         layout: 'noBorders',
-        margin: [0, 8, 0, 0]
+        margin: [0, 2, 0, 0], // reduced top margin to bring table closer
       };
 
       // Combine details and totals side by side
-      // Details on 40%, totals on 60% and right-aligned
-      // Combine details and totals side by side
-      // Details take 40%, totals column expands and right-aligns its content
-      // Combine details and totals side by side
-      // Details take 40%, totals column takes 40% and right-aligns its content; remaining space blank
-            // Combine details and totals side by side
-      // Details take 40%, totals on the right with header and table aligned left
       const detailsAndTotals = {
         columns: [
           { width: '40%', stack: [detailsTitle, detailsTable] },
           {
-            width: '60%',
+            width: '*',
             stack: [
-              // 'Totals' header, aligned left and spaced from above
-              { text: 'Totals', style: 'header', margin: [0, 12, 0, 4], alignment: 'left' },
-              // totals table aligned left
-              { ...totalsOnlyTable, margin: [0, 0, 0, 0] }
+              { text: 'Totals', style: 'header', margin: [0, 2, 0, 2], alignment: 'right' }, // reduced margins
+              totalsOnlyTable,
             ],
-            alignment: 'left'
-          }
+            alignment: 'right',
+          },
         ],
-        columnGap: 10
+        columnGap: 10,
       };
 
       // Items section
       const itemsTitle = { text: 'Items', style: 'header', margin: [0, 8, 0, 4] };
-      const validItems = po.items.filter(i => !isNaN(Number(i.line)));
+      const validItems = po.items.filter((i) => !isNaN(Number(i.line)));
       const itemsTable = {
         table: {
           headerRows: 1,
@@ -148,34 +139,26 @@ export class PrintOrdersService {
               { text: 'Line', style: 'tableHeader' },
               { text: 'Item #', style: 'tableHeader' },
               { text: 'Qty', style: 'tableHeader' },
-              { text: 'Ext. Cost', style: 'tableHeader' }
+              { text: 'Ext. Cost', style: 'tableHeader' },
             ],
-            ...validItems.map(i => [
+            ...validItems.map((i) => [
               { text: i.line, style: 'tableRow' },
               { text: i.itemNumber, style: 'tableRow' },
               { text: i.quantityOrdered, style: 'tableRow' },
-              { text: i.extendedCost, style: 'tableRow' }
-            ])
-          ]
+              { text: i.extendedCost, style: 'tableRow' },
+            ]),
+          ],
         },
         layout: {
           hLineWidth: () => 0.3,
           vLineWidth: () => 0.3,
           paddingTop: () => 1,
-          paddingBottom: () => 1
+          paddingBottom: () => 1,
         },
-        fontSize: 6
+        fontSize: 6,
       };
 
-      return [
-        ...(pageBreak ? [pageBreak] : []),
-        header,
-        info,
-        locationText,
-        detailsAndTotals,
-        itemsTitle,
-        itemsTable
-      ];
+      return [...(pageBreak ? [pageBreak] : []), header, info, detailsAndTotals, itemsTitle, itemsTable];
     });
 
     const docDefinition: any = {
@@ -183,12 +166,12 @@ export class PrintOrdersService {
       pageMargins: [30, 50, 30, 50],
       content,
       styles: {
-        title:      { fontSize: 18, bold: true, margin: [0, 0, 0, 8] },
-        subheader:  { fontSize: 12, bold: true, margin: [0, 4, 0, 4] },
-        header:     { fontSize: 14, bold: true, margin: [0, 8, 0, 4] },
-        tableHeader:{ fontSize: 8, bold: true, fillColor: '#eeeeee', margin: [0, 1, 0, 1] },
-        tableRow:   { fontSize: 6, margin: [0, 0.5, 0, 0.5] }
-      }
+        title: { fontSize: 18, bold: true, margin: [0, 0, 0, 8] },
+        subheader: { fontSize: 12, bold: true, margin: [0, 4, 0, 4] },
+        header: { fontSize: 14, bold: true, margin: [0, 8, 0, 4] },
+        tableHeader: { fontSize: 8, bold: true, fillColor: '#eeeeee', margin: [0, 1, 0, 1] },
+        tableRow: { fontSize: 6, margin: [0, 0.5, 0, 0.5] },
+      },
     };
 
     pdfMake.createPdf(docDefinition).download('purchase-orders.pdf');
