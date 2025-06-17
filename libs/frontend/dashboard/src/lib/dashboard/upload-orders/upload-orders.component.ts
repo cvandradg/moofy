@@ -1,31 +1,38 @@
+import { of } from 'rxjs';
 import * as _ from 'lodash';
+import { groupBy } from 'lodash';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { isPlatformBrowser } from '@angular/common';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatBadgeModule } from '@angular/material/badge';
-import { purchaseOrdersStore } from '@moofy-admin/shared';
+import { moofyToWalmartRoutes } from '@moofy-admin/shared';
 import { Fontawesome, MODULES } from '@moofy-admin/shared';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { inject, computed, Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
+import { collection, collectionData, Firestore, query, where } from '@angular/fire/firestore';
 import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
+import { inject, computed, Component, ChangeDetectionStrategy, signal, effect, PLATFORM_ID } from '@angular/core';
+import { PrintOrders } from '../print-orders/print-orders';
 
 @Component({
   selector: 'moofy-upload-orders',
   imports: [
     MODULES,
+    PrintOrders,
     Fontawesome,
     RouterModule,
     MatBadgeModule,
-    NgxDropzoneModule,
-    MatBottomSheetModule,
-    MatDatepickerModule,
     MatInputModule,
     ScrollingModule,
+    NgxDropzoneModule,
     MatNativeDateModule,
+    MatDatepickerModule,
+    MatBottomSheetModule,
     PurchaseOrderBreakdownComponent,
   ],
   templateUrl: './upload-orders.component.html',
@@ -37,14 +44,14 @@ export class UploadOrdersComponent {
 
   selectedRouteTotal = signal<any>('');
   selectedPurchaseOrder = signal<any>(null);
-  selectedEndDate = signal<Date | null>(null);
-  selectedStartDate = signal<Date | null>(null);
-  purchaseOrdersStore = inject(purchaseOrdersStore);
+  selectedEndDate = signal<Date>(new Date());
+  selectedStartDate = signal<Date>(new Date());
+
+  firestore = inject(Firestore);
+  platformId = inject(PLATFORM_ID);
 
   filteredItems = computed(() => {
-    console.log('llama al computed filteredItems');
-
-    const routesMap = this.purchaseOrdersStore.purchaseOrderByRoutes() ?? {};
+    const routesMap = this.purchaseOrderByRoutes() ?? {};
     const selectedKey = this.selectedRouteTotal();
 
     const orders = selectedKey ? (routesMap[selectedKey] ?? []) : Object.values(routesMap).flat();
@@ -60,13 +67,64 @@ export class UploadOrdersComponent {
       .value();
   });
 
+  fetchInboundDocuments = rxResource({
+    params: () => ({
+      start: this.selectedStartDate(),
+      end: this.selectedEndDate(),
+    }),
+    stream: ({ params: { start: startDate, end: endDate } }) => {
+      if (!isPlatformBrowser(this.platformId)) {
+        return of<any[]>([]);
+      }
+
+      console.log('end of day', this.endOfDay(endDate));
+
+      const q = query(
+        collection(this.firestore, 'purchaseOrderDetails'),
+        where('purchaseOrderDate', '>=', startDate),
+        where('purchaseOrderDate', '<=', this.endOfDay(endDate))
+      );
+
+      return collectionData(q, { idField: 'DocumentId' });
+    },
+    defaultValue: [],
+  });
+
+  moofyToWalmartRoutes = computed(() => Object.keys(moofyToWalmartRoutes));
+
+  purchaseOrderByRoutes = computed(() => {
+    const locationToRoute = Object.entries(moofyToWalmartRoutes).reduce(
+      (acc, [routeKey, stops]) => {
+        stops.forEach(({ name }) => {
+          acc[name] = Number(routeKey);
+        });
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    return groupBy(this.fetchInboundDocuments.value(), (el) => locationToRoute[el.location]);
+  });
+
   trackByOrder(_index: number, order: any) {
     return order.DocumentId;
   }
 
+  endOfDay(d: Date): Date {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+  }
+
+  allOrdersSortedByRoute = computed(() => {
+    const byRoute = this.purchaseOrderByRoutes();
+    return Object.entries(byRoute) // [ [routeKey, orders], … ]
+      .sort(([a], [b]) => +a - +b) // sort by numeric route
+      .flatMap(([, orders]) => orders); // drop the keys, keep orders
+  });
+
   constructor() {
     effect(() => {
-      console.log('filteredItems:', this.filteredItems());
+      console.log('flat:', this.allOrdersSortedByRoute());
+      console.log('date picker', this.selectedStartDate(), this.selectedEndDate());
     });
   }
 }

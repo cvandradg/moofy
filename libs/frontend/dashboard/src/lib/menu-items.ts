@@ -18,13 +18,6 @@ export type MenuItem = {
 export const menuItems: MenuItem[] = [
   {
     icon: ['far', 'folder'],
-    label: 'Ordenes de Compra',
-    route: 'ordenes-de-compra',
-    loadChildren: () =>
-      import('@moofy-admin/purchase-orders').then((m) => m.purchaseOrdersRoutes),
-  },
-  {
-    icon: ['far', 'folder'],
     label: 'Subir Órdenes',
     route: 'subir-ordenes',
     component: UploadOrdersComponent,

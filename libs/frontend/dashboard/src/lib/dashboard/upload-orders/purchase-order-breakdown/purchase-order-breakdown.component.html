@@ -1,4 +1,7 @@
-<div class="supercenter">{{ 'Supercenter ' + purchaseOrderDetails$().location }}</div>
+<div class="supercenter">
+  {{ 'Supercenter ' + purchaseOrderDetails$().location }}
+  <moofy-print-orders [purchaseOrders]="[this.purchaseOrderDetails$()]" />
+</div>
 
 <table mat-table [dataSource]="filteredItems().items" class="mat-elevation-z8">
   <!--- Note that these columns can be defined in any order.
