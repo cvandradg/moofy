@@ -17,6 +17,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { collection, collectionData, Firestore, query, where } from '@angular/fire/firestore';
 import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 import { inject, computed, Component, ChangeDetectionStrategy, signal, effect, PLATFORM_ID } from '@angular/core';
+import { PrintOrders } from "../print-orders/print-orders";
 
 @Component({
   selector: 'moofy-upload-orders',
@@ -32,7 +33,8 @@ import { inject, computed, Component, ChangeDetectionStrategy, signal, effect, P
     MatDatepickerModule,
     MatBottomSheetModule,
     PurchaseOrderBreakdownComponent,
-  ],
+    PrintOrders
+],
   templateUrl: './upload-orders.component.html',
   styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

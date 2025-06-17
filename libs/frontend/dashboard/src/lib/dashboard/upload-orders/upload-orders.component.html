@@ -35,7 +35,10 @@
                   <mat-expansion-panel>
                     <mat-expansion-panel-header>
                       <mat-panel-title>
-                        <div>Ruta {{ route }}</div>
+                        <div>
+                          Ruta {{ route }}
+                          <moofy-print-orders [purchaseOrders]="purchaseOrderByRoutes()[route]" />
+                        </div>
                       </mat-panel-title>
                     </mat-expansion-panel-header>
                     <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group">
