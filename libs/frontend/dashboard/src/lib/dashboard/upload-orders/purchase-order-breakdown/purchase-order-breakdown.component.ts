@@ -1,7 +1,6 @@
 import { MODULES } from '@moofy-admin/shared';
 import { ChangeDetectionStrategy, Component, computed, effect, Input, Signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { Observable } from 'rxjs';
 import { PrintOrders } from "../../print-orders/print-orders";
 
 @Component({

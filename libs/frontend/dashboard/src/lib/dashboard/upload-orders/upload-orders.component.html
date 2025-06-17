@@ -28,7 +28,7 @@
     <div class="container">
       <div class="routes-preview">
         <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-          <mat-tab label="Desglose">
+          <mat-tab label="Desglose de rutas">
             <div class="accordion-scrollable-container">
               <mat-accordion>
                 @for (route of moofyToWalmartRoutes(); track route) {
@@ -74,6 +74,11 @@
                 [value]="selectedRouteTotal()"
                 (change)="selectedRouteTotal.set($event.value)"
               >
+              <div>
+                <moofy-print-orders [purchaseOrders]="allOrdersSortedByRoute()" />
+                {{'Imprimir Órdenes '}}
+              </div>
+
                 <mat-radio-button class="example-radio-button" [value]="''">
                   {{ 'Total' }}
                 </mat-radio-button>

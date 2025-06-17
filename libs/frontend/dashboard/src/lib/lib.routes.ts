@@ -18,7 +18,7 @@ export const dashboardRoutes: Route[] = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'ordenes-de-compra',
+        redirectTo: 'subir-ordenes',
       },
       ...menuItems.map((i) => toRoute(i)),
     ],

@@ -17,12 +17,13 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { collection, collectionData, Firestore, query, where } from '@angular/fire/firestore';
 import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 import { inject, computed, Component, ChangeDetectionStrategy, signal, effect, PLATFORM_ID } from '@angular/core';
-import { PrintOrders } from "../print-orders/print-orders";
+import { PrintOrders } from '../print-orders/print-orders';
 
 @Component({
   selector: 'moofy-upload-orders',
   imports: [
     MODULES,
+    PrintOrders,
     Fontawesome,
     RouterModule,
     MatBadgeModule,
@@ -33,8 +34,7 @@ import { PrintOrders } from "../print-orders/print-orders";
     MatDatepickerModule,
     MatBottomSheetModule,
     PurchaseOrderBreakdownComponent,
-    PrintOrders
-],
+  ],
   templateUrl: './upload-orders.component.html',
   styleUrls: ['./upload-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,7 +82,7 @@ export class UploadOrdersComponent {
       const q = query(
         collection(this.firestore, 'purchaseOrderDetails'),
         where('purchaseOrderDate', '>=', startDate),
-        where('purchaseOrderDate', '<=', this.endOfDay(endDate)),
+        where('purchaseOrderDate', '<=', this.endOfDay(endDate))
       );
 
       return collectionData(q, { idField: 'DocumentId' });
@@ -114,8 +114,16 @@ export class UploadOrdersComponent {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
   }
 
+  allOrdersSortedByRoute = computed(() => {
+    const byRoute = this.purchaseOrderByRoutes();
+    return Object.entries(byRoute) // [ [routeKey, orders], … ]
+      .sort(([a], [b]) => +a - +b) // sort by numeric route
+      .flatMap(([, orders]) => orders); // drop the keys, keep orders
+  });
+
   constructor() {
     effect(() => {
+      console.log('flat:', this.allOrdersSortedByRoute());
       console.log('date picker', this.selectedStartDate(), this.selectedEndDate());
     });
   }

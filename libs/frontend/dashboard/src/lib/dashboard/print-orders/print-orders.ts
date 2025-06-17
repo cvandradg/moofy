@@ -16,11 +16,4 @@ export class PrintOrders {
   purchaseOrders = input.required<any[]>();
 
   printOrdersService = inject(PrintOrdersService);
-
-  constructor(){
-    effect(() => {
-      console.log('🔥 purchaseOrders,',this.purchaseOrders());
-    })
-  }
-
 }

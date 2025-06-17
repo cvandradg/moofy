@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Timestamp } from 'firebase/firestore';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import 'pdfmake/build/vfs_fonts';
+import { moofyToWalmartRoutes } from './moofy-to-walmart-routes';
 
 interface PurchaseOrder {
   DocumentId: string;
@@ -34,10 +35,20 @@ interface PurchaseOrder {
   providedIn: 'root',
 })
 export class PrintOrdersService {
-  /**
-   * Generates a single PDF containing one page per PurchaseOrder
-   * @param purchaseOrders array of PurchaseOrder objects
-   */
+  private readonly locationToRoute: Record<string, number> = Object.entries(moofyToWalmartRoutes).reduce(
+    (acc, [routeKey, stops]) => {
+      const num = Number(routeKey);
+      stops.forEach((stop) => (acc[stop.name] = num));
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  // 2) expose a method that just looks up the route
+  getRouteForLocation(location: string): number | undefined {
+    return this.locationToRoute[location];
+  }
+
   generatePurchaseOrdersPDF(purchaseOrders: PurchaseOrder[]) {
     console.log('🔥 generatePurchaseOrdersPDF called with', purchaseOrders.length, 'items');
 
@@ -64,9 +75,10 @@ export class PrintOrdersService {
         columns: [
           [
             { text: `Supercenter ${po.location}`, margin: [0, 8, 0, 0], style: 'subheader' },
-            { text: `Document ID: ${po.DocumentId}`, style: 'subheader'},
+            { text: `Document ID: ${po.DocumentId}`, style: 'subheader' },
           ],
           [
+            { text: `Route ${this.getRouteForLocation(po.location)}`, alignment: 'right', fontSize: 9 },
             { text: `PO Date: ${fmt(po.purchaseOrderDate)}`, alignment: 'right', fontSize: 9 },
             { text: `Ship Date: ${fmt(po.shipDate)}`, alignment: 'right', fontSize: 9 },
             { text: `Cancel Date: ${fmt(po.cancelDate)}`, alignment: 'right', fontSize: 9 },
