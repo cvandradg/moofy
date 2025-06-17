@@ -63,9 +63,8 @@ export class PrintOrdersService {
       const info = {
         columns: [
           [
-            { text: `Supercenter ${po.location}`, margin: [0, 8, 0, 8], style: 'subheader' },
-            { text: `PO Number: ${po.purchaseOrderNumber}` },
-            { text: `Document ID: ${po.DocumentId}` },
+            { text: `Supercenter ${po.location}`, margin: [0, 8, 0, 0], style: 'subheader' },
+            { text: `Document ID: ${po.DocumentId}`, style: 'subheader'},
           ],
           [
             { text: `PO Date: ${fmt(po.purchaseOrderDate)}`, alignment: 'right', fontSize: 9 },
@@ -76,7 +75,7 @@ export class PrintOrdersService {
       };
 
       // Details section
-      const detailsTitle = { text: 'Details', style: 'header' };
+      const detailsTitle = { text: 'Details', fontSize: 11, bold: true, margin: [0, 8, 0, 3] };
       const detailsTable = {
         table: {
           widths: ['auto', '*'],
@@ -101,10 +100,6 @@ export class PrintOrdersService {
               { text: 'Total Units:', bold: true, fontSize: 9, margin: [0, 1, 0, 1] },
               { text: po.totals.totalUnits, fontSize: 9, margin: [0, 1, 0, 1], alignment: 'right' },
             ],
-            [
-              { text: 'Total Amount:', bold: true, fontSize: 9, margin: [0, 1, 0, 1] },
-              { text: po.totals.totalAmount, fontSize: 9, margin: [0, 1, 0, 1], alignment: 'right' },
-            ],
           ],
         },
         layout: 'noBorders',
@@ -118,7 +113,7 @@ export class PrintOrdersService {
           {
             width: '*',
             stack: [
-              { text: 'Totals', style: 'header', margin: [0, 2, 0, 2], alignment: 'right' }, // reduced margins
+              { text: 'Totals', style: 'header', margin: [0, 6, 0, 1], alignment: 'right' }, // reduced margins
               totalsOnlyTable,
             ],
             alignment: 'right',
@@ -170,7 +165,7 @@ export class PrintOrdersService {
         subheader: { fontSize: 12, bold: true, margin: [0, 4, 0, 4] },
         header: { fontSize: 14, bold: true, margin: [0, 8, 0, 4] },
         tableHeader: { fontSize: 8, bold: true, fillColor: '#eeeeee', margin: [0, 1, 0, 1] },
-        tableRow: { fontSize: 6, margin: [0, 0.5, 0, 0.5] },
+        tableRow: { fontSize: 8, margin: [0, 0.5, 0, 0.5] },
       },
     };
 
