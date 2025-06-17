@@ -57,13 +57,13 @@ export class PrintOrdersService {
       return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
     };
 
-    // Build the content array, inserting a pageBreak before each PO except the first
     const content = purchaseOrders.flatMap((po, idx) => {
       const pageBreak = idx > 0 ? { text: '', pageBreak: 'before' } : null;
       const header = { text: `Purchase Order: ${po.purchaseOrderNumber}`, style: 'title' };
       const info = {
         columns: [
           [
+            { text: `PO Number: ${po.purchaseOrderNumber}`, style: 'subheader' },
             { text: `Document ID: ${po.DocumentId}` },
           ],
           [
@@ -73,22 +73,72 @@ export class PrintOrdersService {
           ],
         ],
       };
-      const locationText = { text: `Supercenter ${po.location}`, margin: [0, 10, 0, 10] };
+      const locationText = { text: `Location: ${po.location}`, margin: [0, 8, 0, 8] };
+
+      // Details section
       const detailsTitle = { text: 'Details', style: 'header' };
       const detailsTable = {
         table: {
           widths: ['auto', '*'],
-          body: Object.entries(po.additionalDetails).map(([k, v]) => [
-            { text: k, bold: true, fontSize: 8 },
-            { text: v, fontSize: 8 },
-          ]),
+          body: Object.entries(po.additionalDetails)
+            .map(([k, v]) => [
+              { text: k, bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
+              { text: v, fontSize: 7, margin: [0, 1, 0, 1] }
+            ])
         },
-        layout: 'lightHorizontalLines',
+        layout: 'lightHorizontalLines'
       };
-      const itemsTitle = { text: 'Items', style: 'header', margin: [0, 10, 0, 5] };
 
-      const validItems = po.items.filter((i) => !isNaN(Number(i.line)));
+      // Totals only table for side-by-side
+      const totalsOnlyTable = {
+        table: {
+          body: [
+            [
+              { text: 'Total Items:', bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
+              { text: po.totals.totalItems, fontSize: 7, margin: [0, 1, 0, 1] }
+            ],
+            [
+              { text: 'Total Units:', bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
+              { text: po.totals.totalUnits, fontSize: 7, margin: [0, 1, 0, 1] }
+            ],
+            [
+              { text: 'Total Amount:', bold: true, fontSize: 7, margin: [0, 1, 0, 1] },
+              { text: po.totals.totalAmount, fontSize: 7, margin: [0, 1, 0, 1] }
+            ]
+          ]
+        },
+        layout: 'noBorders',
+        margin: [0, 8, 0, 0]
+      };
 
+      // Combine details and totals side by side
+      // Details on 40%, totals on 60% and right-aligned
+      // Combine details and totals side by side
+      // Details take 40%, totals column expands and right-aligns its content
+      // Combine details and totals side by side
+      // Details take 40%, totals column takes 40% and right-aligns its content; remaining space blank
+            // Combine details and totals side by side
+      // Details take 40%, totals on the right with header and table aligned left
+      const detailsAndTotals = {
+        columns: [
+          { width: '40%', stack: [detailsTitle, detailsTable] },
+          {
+            width: '60%',
+            stack: [
+              // 'Totals' header, aligned left and spaced from above
+              { text: 'Totals', style: 'header', margin: [0, 12, 0, 4], alignment: 'left' },
+              // totals table aligned left
+              { ...totalsOnlyTable, margin: [0, 0, 0, 0] }
+            ],
+            alignment: 'left'
+          }
+        ],
+        columnGap: 10
+      };
+
+      // Items section
+      const itemsTitle = { text: 'Items', style: 'header', margin: [0, 8, 0, 4] };
+      const validItems = po.items.filter(i => !isNaN(Number(i.line)));
       const itemsTable = {
         table: {
           headerRows: 1,
@@ -97,50 +147,24 @@ export class PrintOrdersService {
             [
               { text: 'Line', style: 'tableHeader' },
               { text: 'Item #', style: 'tableHeader' },
-              { text: 'Quantity', style: 'tableHeader' },
-              { text: 'Ext. Cost', style: 'tableHeader' },
+              { text: 'Qty', style: 'tableHeader' },
+              { text: 'Ext. Cost', style: 'tableHeader' }
             ],
-            ...validItems.map((i) => [
+            ...validItems.map(i => [
               { text: i.line, style: 'tableRow' },
               { text: i.itemNumber, style: 'tableRow' },
               { text: i.quantityOrdered, style: 'tableRow' },
-              { text: i.extendedCost, style: 'tableRow' },
-            ]),
-          ],
+              { text: i.extendedCost, style: 'tableRow' }
+            ])
+          ]
         },
         layout: {
-          hLineWidth: () => 0.5,
-          vLineWidth: () => 0.5,
-          paddingTop: () => 2,
-          paddingBottom: () => 2,
+          hLineWidth: () => 0.3,
+          vLineWidth: () => 0.3,
+          paddingTop: () => 1,
+          paddingBottom: () => 1
         },
-        fontSize: 8,
-      };
-      const totalsTable = {
-        columns: [
-          { width: '*', text: '' },
-          {
-            width: 'auto',
-            table: {
-              body: [
-                [
-                  { text: 'Total Items:', bold: true, fontSize: 8 },
-                  { text: po.totals.totalItems, fontSize: 8 },
-                ],
-                [
-                  { text: 'Total Units:', bold: true, fontSize: 8 },
-                  { text: po.totals.totalUnits, fontSize: 8 },
-                ],
-                [
-                  { text: 'Total Amount:', bold: true, fontSize: 8 },
-                  { text: po.totals.totalAmount, fontSize: 8 },
-                ],
-              ],
-            },
-            layout: 'noBorders',
-          },
-        ],
-        margin: [0, 10, 0, 0],
+        fontSize: 6
       };
 
       return [
@@ -148,25 +172,23 @@ export class PrintOrdersService {
         header,
         info,
         locationText,
-        detailsTitle,
-        detailsTable,
+        detailsAndTotals,
         itemsTitle,
-        itemsTable,
-        totalsTable,
+        itemsTable
       ];
     });
 
     const docDefinition: any = {
       pageSize: 'A4',
-      pageMargins: [40, 60, 40, 60],
+      pageMargins: [30, 50, 30, 50],
       content,
       styles: {
-        title: { fontSize: 20, bold: true, margin: [0, 0, 0, 10] },
-        subheader: { fontSize: 14, bold: true, margin: [0, 5, 0, 5] },
-        header: { fontSize: 16, bold: true, margin: [0, 10, 0, 5] },
-        tableHeader: { fontSize: 10, bold: true, fillColor: '#eeeeee', margin: [0, 2, 0, 2] },
-        tableRow: { fontSize: 7, margin: [0, 1, 0, 1] },
-      },
+        title:      { fontSize: 18, bold: true, margin: [0, 0, 0, 8] },
+        subheader:  { fontSize: 12, bold: true, margin: [0, 4, 0, 4] },
+        header:     { fontSize: 14, bold: true, margin: [0, 8, 0, 4] },
+        tableHeader:{ fontSize: 8, bold: true, fillColor: '#eeeeee', margin: [0, 1, 0, 1] },
+        tableRow:   { fontSize: 6, margin: [0, 0.5, 0, 0.5] }
+      }
     };
 
     pdfMake.createPdf(docDefinition).download('purchase-orders.pdf');
