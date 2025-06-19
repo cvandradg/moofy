@@ -8,12 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
 import { initializeApp } from 'firebase-admin/app';
-import {
-  getFirestore,
-  DocumentReference,
-  DocumentSnapshot,
-  Timestamp,
-} from 'firebase-admin/firestore';
+import { getFirestore, DocumentReference, DocumentSnapshot, Timestamp } from 'firebase-admin/firestore';
 import { fileURLToPath } from 'url';
 
 function parseDate(str: string): Timestamp {
@@ -27,7 +22,7 @@ const db = getFirestore();
 
 // — Initialize Cloud Storage client for screenshots ——————————
 const storage = new Storage();
-const SCREENSHOT_BUCKET = 'moofy-screenshots'; 
+const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
 const USERNAME = 'candradeg9182@gmail.com';
 const PASSWORD = 'PastryFactory202506';
 const MAILBOX_ID = '51619';
@@ -37,8 +32,7 @@ const BOT_TOKEN =
 // — Prepare local screenshots directory ——————————————————————————
 const screenshotsDir = path.resolve('screenshots');
 function ensureScreenshotsDir() {
-  if (!fs.existsSync(screenshotsDir))
-    fs.mkdirSync(screenshotsDir, { recursive: true });
+  if (!fs.existsSync(screenshotsDir)) fs.mkdirSync(screenshotsDir, { recursive: true });
 }
 
 // — Types —————————————————————————————————————————————————————
@@ -54,9 +48,7 @@ interface PurchaseOrderDetails {
 
 // — Helper: upload screenshot to GCS —————————————————————————
 async function uploadScreenshot(localPath: string, destFilename: string) {
-  await storage
-    .bucket(SCREENSHOT_BUCKET)
-    .upload(localPath, { destination: destFilename });
+  await storage.bucket(SCREENSHOT_BUCKET).upload(localPath, { destination: destFilename });
   fs.unlinkSync(localPath);
 }
 
@@ -86,17 +78,12 @@ async function loginAndGetCookies(): Promise<CookieParam[]> {
     const [name, value] = nv.split('=');
     return { name, value, domain: '.wal-mart.com', path: '/' };
   });
-  await db
-    .collection('loginResults')
-    .add({ timestamp: new Date(), cookies, scheduled: false });
+  await db.collection('loginResults').add({ timestamp: new Date(), cookies, scheduled: false });
   return cookies;
 }
 
 // — Fetch inbound docs ————————————————————————————————————————————
-async function fetchInboundDocs(
-  browser: Browser,
-  cookies: CookieParam[]
-): Promise<InboundDoc[]> {
+async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promise<InboundDoc[]> {
   console.log('📥 Fetching inbound documents…');
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0);
@@ -147,13 +134,23 @@ async function fetchOrderDetails(
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 0 });
 
   ensureScreenshotsDir();
+
   try {
+    // wait for the PO number element
     await page.waitForSelector('#poNumber', { timeout: 5000 });
+
+    // — SUCCESS screenshot & upload —
+    const successPath = path.join(screenshotsDir, `po-${docId}.png`);
+    await page.screenshot({ path: successPath, fullPage: true });
+    await uploadScreenshot(successPath, `po-${docId}.png`);
   } catch {
+    // your existing error-case screenshots
     const initPath = path.join(screenshotsDir, `start-po-${docId}.png`);
     await page.screenshot({ path: initPath });
     await uploadScreenshot(initPath, `start-po-${docId}.png`);
+
     console.warn(`⚠️ PO number element missing for ${docId}@${location}`);
+
     const missPath = path.join(screenshotsDir, `missing-po-${docId}.png`);
     await page.screenshot({ path: missPath });
     await uploadScreenshot(missPath, `missing-po-${docId}.png`);
@@ -172,12 +169,10 @@ async function fetchOrderDetails(
     shipDate: parseDate($('#shipDate').text().trim()),
     cancelDate: parseDate($('#cancelDate').text().trim()),
     additionalDetails: Object.fromEntries(
-      ['Order Type', 'Currency', 'Department', 'Payment Terms', 'Carrier'].map(
-        (label) => [
-          label,
-          $(`label:contains("${label}")+div span`).text().trim(),
-        ]
-      )
+      ['Order Type', 'Currency', 'Department', 'Payment Terms', 'Carrier'].map((label) => [
+        label,
+        $(`label:contains("${label}")+div span`).text().trim(),
+      ])
     ),
     items: $('table.table tr')
       .slice(1)
@@ -211,7 +206,8 @@ async function scrapeAll(): Promise<void> {
   const cookies = await loginAndGetCookies();
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1920,1080'],
+    defaultViewport: null,
   });
   try {
     const inbound = await fetchInboundDocs(browser, cookies);
@@ -222,9 +218,7 @@ async function scrapeAll(): Promise<void> {
     for (let i = 0; i < inbound.length; i += batchSize) {
       const chunk = inbound.slice(i, i + batchSize);
       const refs: DocumentReference[] = chunk.map((d) =>
-        db
-          .collection('purchaseOrderDetails')
-          .doc(d.DocumentId.toString())
+        db.collection('purchaseOrderDetails').doc(d.DocumentId.toString())
       );
       const snaps: DocumentSnapshot[] = await db.getAll(...refs);
       snaps.forEach((s) => {
@@ -233,60 +227,35 @@ async function scrapeAll(): Promise<void> {
     }
 
     // Only fetch details for new orders
-    const toFetch = inbound.filter(
-      (d) => !existing.has(d.DocumentId.toString())
-    );
-    console.log(
-      `🔄 Will fetch ${toFetch.length} new POs (of ${inbound.length} inbound)`
-    );
+    const toFetch = inbound.filter((d) => !existing.has(d.DocumentId.toString()));
+    console.log(`🔄 Will fetch ${toFetch.length} new POs (of ${inbound.length} inbound)`);
 
     const limit = pLimit(5);
     let remaining = toFetch.length;
     const detailPromises = toFetch.map((d) =>
       limit(async () => {
         try {
-          const detail = await fetchOrderDetails(
-            browser,
-            cookies,
-            d.DocumentId,
-            d.Location
-          );
+          const detail = await fetchOrderDetails(browser, cookies, d.DocumentId, d.Location);
           remaining--;
-          console.log(
-            `✅ Fetched details for PO ${d.DocumentId}. ${remaining} remaining to fetch.`
-          );
+          console.log(`✅ Fetched details for PO ${d.DocumentId}. ${remaining} remaining to fetch.`);
           return detail;
         } catch (err) {
           remaining--;
-          console.error(
-            `❌ Error fetching details for PO ${d.DocumentId}:`,
-            err
-          );
+          console.error(`❌ Error fetching details for PO ${d.DocumentId}:`, err);
           console.log(`${remaining} remaining after error.`);
           return null;
         }
       })
     );
-    const details = (await Promise.all(detailPromises)).filter(
-      (d): d is PurchaseOrderDetails => d !== null
-    );
+    const details = (await Promise.all(detailPromises)).filter((d): d is PurchaseOrderDetails => d !== null);
 
     // Commit in 500-size batches, using DocumentId as the doc ID
     for (let i = 0; i < details.length; i += batchSize) {
       const chunk = details.slice(i, i + batchSize);
-      console.log(
-        `📥 Writing batch ${Math.floor(i / batchSize) + 1} with ${
-          chunk.length
-        } docs to Firestore`
-      );
+      console.log(`📥 Writing batch ${Math.floor(i / batchSize) + 1} with ${chunk.length} docs to Firestore`);
       const batch = db.batch();
       chunk.forEach((o) => {
-        batch.set(
-          db
-            .collection('purchaseOrderDetails')
-            .doc(o.DocumentId.toString()),
-          o
-        );
+        batch.set(db.collection('purchaseOrderDetails').doc(o.DocumentId.toString()), o);
       });
       await batch.commit();
       console.log(`📤 Committed batch ${Math.floor(i / batchSize) + 1}`);
