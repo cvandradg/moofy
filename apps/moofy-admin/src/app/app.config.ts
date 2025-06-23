@@ -1,5 +1,5 @@
 import { appRoutes } from './app.routes';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { environment, ErrorHandlerService } from '@moofy-admin/shared';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
     provideClientHydration(),
-    provideRouter(appRoutes),
+    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideAnimationsAsync(),
     provideHttpClient(withFetch()),
     provideZoneChangeDetection({ eventCoalescing: true }),
