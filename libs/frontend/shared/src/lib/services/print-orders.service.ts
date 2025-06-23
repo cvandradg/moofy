@@ -3,6 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import 'pdfmake/build/vfs_fonts';
 import { moofyToWalmartRoutes } from './moofy-to-walmart-routes';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
 interface PurchaseOrder {
   DocumentId: string;
@@ -182,5 +183,44 @@ export class PrintOrdersService {
     };
 
     pdfMake.createPdf(docDefinition).download('purchase-orders.pdf');
+  }
+
+  async generatePdfFromImage(screenshotUrl: string) {
+    const dataUrl = await this.toDataUrl(screenshotUrl);
+
+    const img = new Image();
+    img.src = dataUrl;
+    await new Promise((r) => (img.onload = r));
+
+    const widthPt = img.width * 0.45;
+
+    const docDefinition: TDocumentDefinitions = {
+      pageSize: 'A4',
+      pageMargins: [0, 0, 0, 0] as [number, number, number, number],
+      content: [
+        { text: 'Hello World', fontSize: 8, bold: true, margin: [0, 10, 0, 20], alignment: 'right'},
+        {
+          image: dataUrl,
+          width: widthPt,
+        },
+      ],
+    };
+
+    // 3) download!
+    pdfMake.createPdf(docDefinition).download('purchase-order.pdf');
+  }
+
+  private toDataUrl(url: string): Promise<string> {
+    return fetch(url)
+      .then((res) => res.blob())
+      .then(
+        (blob) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          })
+      );
   }
 }

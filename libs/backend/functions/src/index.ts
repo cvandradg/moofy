@@ -139,21 +139,33 @@ async function fetchOrderDetails(
     // wait for the PO number element
     await page.waitForSelector('#poNumber', { timeout: 5000 });
 
-    // — SUCCESS screenshot & upload —
+    const fullHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+    const vp = page.viewport() ?? { width: 1920 };
+    const HEADER_HEIGHT = 600;
+    const BOTTOM_CROP = 100;
+
     const successPath = path.join(screenshotsDir, `po-${docId}.png`);
-    await page.screenshot({ path: successPath, fullPage: true });
-    await uploadScreenshot(successPath, `po-${docId}.png`);
+    await page.screenshot({
+      path: successPath,
+      clip: {
+        x: 0,
+        y: HEADER_HEIGHT,
+        width: vp.width,
+        height: fullHeight - HEADER_HEIGHT - BOTTOM_CROP,
+      },
+    });
+    await uploadScreenshot(successPath, `purchase-orders/po-${docId}.png`);
   } catch {
     // your existing error-case screenshots
     const initPath = path.join(screenshotsDir, `start-po-${docId}.png`);
     await page.screenshot({ path: initPath });
-    await uploadScreenshot(initPath, `start-po-${docId}.png`);
+    await uploadScreenshot(initPath, `failed-fetch/start-po-${docId}.png`);
 
     console.warn(`⚠️ PO number element missing for ${docId}@${location}`);
 
     const missPath = path.join(screenshotsDir, `missing-po-${docId}.png`);
     await page.screenshot({ path: missPath });
-    await uploadScreenshot(missPath, `missing-po-${docId}.png`);
+    await uploadScreenshot(missPath, `failed-fetch/missing-po-${docId}.png`);
   }
 
   const html = await page.content();
@@ -206,7 +218,7 @@ async function scrapeAll(): Promise<void> {
   const cookies = await loginAndGetCookies();
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1920,1080'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1265,1754'],
     defaultViewport: null,
   });
   try {

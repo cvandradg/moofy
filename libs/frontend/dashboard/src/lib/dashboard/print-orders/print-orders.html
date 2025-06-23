@@ -1,3 +1,6 @@
 <button mat-icon-button (click)="printOrdersService.generatePurchaseOrdersPDF(purchaseOrders())">
   <fa-icon [icon]="['fas', 'print']" />
 </button>
+<button mat-icon-button (click)="printOrdersService.generatePdfFromImage(url())">
+  <fa-icon [icon]="['far', 'eye']" />
+</button>
