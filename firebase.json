@@ -3,7 +3,7 @@
     "public": "dist/apps/moofy-admin/browser",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
-      { "source": "**", "destination": "/index.html" }
+      { "source": "**", "destination": "/index.csr.html" }
     ]
   }
 }
