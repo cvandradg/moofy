@@ -207,7 +207,7 @@ export class PrintOrdersService {
       const matchingStop = stops.find((stop) => stop.name === po.location);
 
       const header: any = {
-        text: `Location name: ${matchingStop?.location}`,
+        text: `Úbicacion: ${matchingStop?.location}, Ruta: ${routeNum}`,
         fontSize: 8,
         bold: true,
         margin: [0, 10, 10, 0],
