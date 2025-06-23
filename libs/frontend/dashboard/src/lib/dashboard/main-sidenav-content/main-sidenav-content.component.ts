@@ -1,13 +1,13 @@
-import {CommonModule} from '@angular/common';
-import {RouterModule} from '@angular/router';
-import {MatIconModule} from '@angular/material/icon';
-import {MatListModule} from '@angular/material/list';
-import {Component, computed, input, output, signal} from '@angular/core';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {Fontawesome} from '@moofy-admin/shared';
-import {IconProp} from '@fortawesome/angular-fontawesome/types';
-import {menuItems} from '../../menu-items';
-import {MenuItemComponent} from './menu-item/menu-item.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { Component, computed, input, output, signal } from '@angular/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { Fontawesome } from '@moofy-admin/shared';
+import { IconProp } from '@fortawesome/angular-fontawesome/types';
+import { menuItems } from '../../menu-items';
+import { MenuItemComponent } from './menu-item/menu-item.component';
 
 @Component({
   selector: 'moofy-main-sidenav-content',
@@ -15,7 +15,7 @@ import {MenuItemComponent} from './menu-item/menu-item.component';
     <div class="main-sidenav-container">
       <mat-nav-list>
         @for (item of menuItems; track item.label) {
-        <moofy-main-sidenav-item [item]="item" [collapsed]="collapsed()" />
+          <moofy-main-sidenav-item [item]="item" [collapsed]="collapsed()" />
         }
       </mat-nav-list>
     </div>
@@ -84,15 +84,7 @@ import {MenuItemComponent} from './menu-item/menu-item.component';
       }
     `,
   ],
-  imports: [
-    Fontawesome,
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    MenuItemComponent,
-  ],
+  imports: [Fontawesome, CommonModule, RouterModule, MatIconModule, MatListModule, MatSidenavModule, MenuItemComponent],
 })
 export class MainSidenavContentComponent {
   state = signal(0);

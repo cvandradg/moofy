@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Fontawesome, MODULES, PrintOrdersService } from '@moofy-admin/shared';
-
 
 @Component({
   selector: 'moofy-print-orders',
@@ -12,7 +11,6 @@ import { Fontawesome, MODULES, PrintOrdersService } from '@moofy-admin/shared';
   imports: [CommonModule, MODULES, Fontawesome],
 })
 export class PrintOrders {
-
   purchaseOrders = input.required<any[]>();
 
   printOrdersService = inject(PrintOrdersService);

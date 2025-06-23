@@ -429,9 +429,7 @@ export class LabService {
   }
 
   filterElementsByPrefix(prefix: string): void {
-    const keys = Object.keys(this.lab()).filter((key) =>
-      key.startsWith(prefix)
-    );
+    const keys = Object.keys(this.lab()).filter((key) => key.startsWith(prefix));
     this.filteredKeys.set(keys); // Update the signal with the filtered keys
   }
 
@@ -441,24 +439,16 @@ export class LabService {
    * @param destination The target map key.
    * @returns An array of steps to reach the destination, or an empty array if unreachable.
    */
-  findPath(
-    origin: string,
-    destination: string
-  ): { map: string; portal: string }[] {
-    const queue: { map: string; path: { map: string; portal: string }[] }[] =
-      [];
+  findPath(origin: string, destination: string): { map: string; portal: string }[] {
+    const queue: { map: string; path: { map: string; portal: string }[] }[] = [];
     const visited = new Set<string>();
 
     // Start from the origin map
     if (!this.lab()[origin]) {
-      throw new Error(
-        `Origin map "${origin}" does not exist in the labyrinth.`
-      );
+      throw new Error(`Origin map "${origin}" does not exist in the labyrinth.`);
     }
     if (!this.lab()[destination]) {
-      throw new Error(
-        `Destination map "${destination}" does not exist in the labyrinth.`
-      );
+      throw new Error(`Destination map "${destination}" does not exist in the labyrinth.`);
     }
 
     queue.push({ map: origin, path: [] });

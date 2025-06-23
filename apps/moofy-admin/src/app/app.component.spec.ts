@@ -7,13 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        AppComponent,
-        RouterModule.forRoot([]),
-        RouterModule,
-        MatSidenavModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [AppComponent, RouterModule.forRoot([]), RouterModule, MatSidenavModule, BrowserAnimationsModule],
     }).compileComponents();
   });
 

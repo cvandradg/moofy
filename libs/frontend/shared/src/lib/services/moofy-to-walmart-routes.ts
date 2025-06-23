@@ -1,4 +1,4 @@
-import { faArrowDownFromBracket } from "@fortawesome/pro-solid-svg-icons";
+import { faArrowDownFromBracket } from '@fortawesome/pro-solid-svg-icons';
 
 export const moofyToWalmartRoutes = {
   2: [
@@ -29,11 +29,8 @@ export const moofyToWalmartRoutes = {
     { name: '4107', location: 'PALI EL COYOL' },
     { name: '4282', location: 'PALI EL ROBLE DE ALAJUELA' },
     { name: '4339', location: 'MP ATENAS' },
-
-
   ],
   5: [
-
     { name: '778', location: 'MP MONTECILLOS' },
     { name: '939', location: 'MP ALAJUELA ESTE' },
     { name: '978', location: 'MP SAN PABLO' },
@@ -66,9 +63,6 @@ export const moofyToWalmartRoutes = {
     { name: '4431', location: 'MXM SAN PABLO NORTE' },
     { name: '4444', location: 'PALI SAN PEDRO DE BARVA' },
     { name: '4461', location: 'MP SANTA BARBARA' },
-
-
-
   ],
   7: [
     { name: '737', location: 'PALI PUERTO JIMENEZ' },
@@ -164,7 +158,6 @@ export const moofyToWalmartRoutes = {
     { name: '4000', location: 'PALI SARAPIQUI' },
     { name: '4136', location: 'MP GUAPILES' },
     { name: '4369', location: 'MP SIQUIRRES' },
-
   ],
   13: [
     { name: '763', location: 'PALI JACO' },
@@ -310,7 +303,6 @@ export const moofyToWalmartRoutes = {
     { name: '4413', location: 'WM DESAMPARADOS' },
     { name: '4424', location: 'MXM CIUDAD COLON' },
     { name: '4467', location: 'PALI SAN DIEGO' },
-
   ],
   23: [
     { name: '733', location: 'MP CORONADO' },
@@ -343,7 +335,6 @@ export const moofyToWalmartRoutes = {
     { name: '4432', location: 'MP OREAMUNO' },
     { name: '4435', location: 'MP SAN RAFAEL DE ALAJUELA' },
     { name: '4505', location: 'MXM SAN ISIDRO' },
-
   ],
   24: [
     { name: '719', location: 'MXM HACIENDA VIEJA' },

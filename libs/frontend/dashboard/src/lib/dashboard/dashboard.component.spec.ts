@@ -29,10 +29,7 @@ describe('DashboardComponent', () => {
         NoopAnimationsModule,
         MainSidenavContentComponent,
       ],
-      providers: [
-        provideRouter([]),
-        { provide: Firestore, useValue: {} },
-      ],
+      providers: [provideRouter([]), { provide: Firestore, useValue: {} }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DashboardComponent);

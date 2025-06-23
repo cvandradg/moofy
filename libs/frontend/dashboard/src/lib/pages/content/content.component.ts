@@ -34,7 +34,7 @@ import { combineLatest, map, Observable, startWith, tap } from 'rxjs';
             />
             <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
               @for (option1 of filteredOptionsOrigin | async; track option1) {
-              <mat-option [value]="option1">{{ option1 }}</mat-option>
+                <mat-option [value]="option1">{{ option1 }}</mat-option>
               }
             </mat-autocomplete>
           </mat-form-field>
@@ -50,24 +50,23 @@ import { combineLatest, map, Observable, startWith, tap } from 'rxjs';
               [matAutocomplete]="auto2"
             />
             <mat-autocomplete #auto2="matAutocomplete">
-              @for (option2 of filteredOptionsDestination | async; track
-              option2) {
-              <mat-option [value]="option2">{{ option2 }}</mat-option>
+              @for (option2 of filteredOptionsDestination | async; track option2) {
+                <mat-option [value]="option2">{{ option2 }}</mat-option>
               }
             </mat-autocomplete>
           </mat-form-field>
         </div>
 
         @for (path of result; track path.id) {
-        <div>
-          <span>{{ path.map + '-->>' }} </span>
-          <span>{{ path.portal }}</span>
-        </div>
+          <div>
+            <span>{{ path.map + '-->>' }}</span>
+            <span>{{ path.portal }}</span>
+          </div>
         }
       </form>
     </div>
   `,
-  styleUrl: './content.component.scss'
+  styleUrl: './content.component.scss',
 })
 export class ContentComponent {
   title = 'htf';
@@ -89,16 +88,12 @@ export class ContentComponent {
       map((value) => this._filter(value || ''))
     );
 
-    this.filteredOptionsDestination =
-      this.myControlDestination.valueChanges.pipe(
-        startWith(''),
-        map((value) => this._filter2(value || ''))
-      );
+    this.filteredOptionsDestination = this.myControlDestination.valueChanges.pipe(
+      startWith(''),
+      map((value) => this._filter2(value || ''))
+    );
 
-    this.combinedObservable$ = combineLatest([
-      this.filteredOptionsOrigin,
-      this.filteredOptionsDestination,
-    ]).pipe(
+    this.combinedObservable$ = combineLatest([this.filteredOptionsOrigin, this.filteredOptionsDestination]).pipe(
       tap(([originOptions, destinationOptions]) =>
         console.log('Combined options:', {
           origin: originOptions,
@@ -108,40 +103,34 @@ export class ContentComponent {
     );
 
     // Subscribe to handle combined behavior
-    this.combinedObservable$.subscribe(
-      ([originOptions, destinationOptions]) => {
-        // Initial combined logic
-        console.log('Both emitted:', {
-          originOptions,
-          destinationOptions,
-        });
+    this.combinedObservable$.subscribe(([originOptions, destinationOptions]) => {
+      // Initial combined logic
+      console.log('Both emitted:', {
+        originOptions,
+        destinationOptions,
+      });
 
-        const [origin] = originOptions;
-        const [destination] = destinationOptions;
+      const [origin] = originOptions;
+      const [destination] = destinationOptions;
 
-        this.labService.findPath(origin, destination);
-        // console.log('Path:', this.labService.findPath(origin, destination));
-        this.result = this.labService.findPath(origin, destination);
-        console.log('Path:', this.result);
-        // return this.path;
-      }
-    );
+      this.labService.findPath(origin, destination);
+      // console.log('Path:', this.labService.findPath(origin, destination));
+      this.result = this.labService.findPath(origin, destination);
+      console.log('Path:', this.result);
+      // return this.path;
+    });
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.labService.labKeys.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
+    return this.labService.labKeys.filter((option) => option.toLowerCase().includes(filterValue));
   }
 
   private _filter2(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.labService.labKeys.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
+    return this.labService.labKeys.filter((option) => option.toLowerCase().includes(filterValue));
   }
 
   filterByPrefix(prefix: string): void {

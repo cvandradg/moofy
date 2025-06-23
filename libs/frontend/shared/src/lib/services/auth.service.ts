@@ -1,12 +1,7 @@
 import { from, Observable } from 'rxjs';
 import { Injectable, inject } from '@angular/core';
 import { Credentials } from '../types/general-types';
-import {
-  UserCredential,
-  confirmPasswordReset,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-} from 'firebase/auth';
+import { UserCredential, confirmPasswordReset, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import {
   Auth,
   User,
