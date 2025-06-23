@@ -1,7 +1,7 @@
 import { MODULES } from '@moofy-admin/shared';
 import { ChangeDetectionStrategy, Component, computed, effect, Input, Signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { PrintOrders } from "../../print-orders/print-orders";
+import { PrintOrders } from '../../print-orders/print-orders';
 
 @Component({
   selector: 'moofy-purchase-order-breakdown',
@@ -15,18 +15,16 @@ export class PurchaseOrderBreakdownComponent {
 
   displayedColumns: string[] = ['name', 'quantity'];
 
+  filteredItems = computed(() => {
+    return {
+      ...this.purchaseOrderDetails$(),
+      items: this.purchaseOrderDetails$().items.filter((item: any) => item.quantityOrdered),
+    };
+  });
 
-filteredItems = computed(() =>
-{
-
-  return {...this.purchaseOrderDetails$(), items: this.purchaseOrderDetails$().items.filter((item: any) => item.quantityOrdered)};
-
-})
-  
-
-constructor() {
-  effect(() => {
-    console.log('purchaseOrderDetails$():', this.purchaseOrderDetails$());
-  })
-}
+  constructor() {
+    effect(() => {
+      console.log('purchaseOrderDetails$():', this.purchaseOrderDetails$());
+    });
+  }
 }

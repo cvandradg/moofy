@@ -4,7 +4,9 @@ import { Component } from '@angular/core';
   selector: 'app-long-form',
   standalone: true,
   imports: [],
-  template: ` <p>My Long Form Videos</p> `,
+  template: `
+    <p>My Long Form Videos</p>
+  `,
   styles: ``,
 })
 export class LongFormComponent {}

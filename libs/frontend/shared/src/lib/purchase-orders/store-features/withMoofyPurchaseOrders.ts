@@ -7,7 +7,7 @@ import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 
 export function withMoofyPurchaseOrders() {
   return signalStoreFeature(
- withProps((store, firestore = inject(Firestore), platformId = inject(PLATFORM_ID)) => ({
+    withProps((store, firestore = inject(Firestore), platformId = inject(PLATFORM_ID)) => ({
       fetchInboundDocuments: rxResource({
         stream: () => {
           if (!isPlatformBrowser(platformId)) {
@@ -21,12 +21,12 @@ export function withMoofyPurchaseOrders() {
     }))
   );
 }
-      // purchaseOrdersDetails: rxResource({
-      //   stream: () => {
-      //     const itemsRef = collection(firestore, 'purchaseOrderDetails');
-      //     return collectionData(itemsRef, { idField: 'id' });
-      //   },
-      // }),
+// purchaseOrdersDetails: rxResource({
+//   stream: () => {
+//     const itemsRef = collection(firestore, 'purchaseOrderDetails');
+//     return collectionData(itemsRef, { idField: 'id' });
+//   },
+// }),
 /*
       mergeResource: rxResource({
         loader: () => {
@@ -42,6 +42,6 @@ export function withMoofyPurchaseOrders() {
       }),
       */
 
-            // cacheStatus: httpResource<{ ready: boolean; total: number; fetched: number }>(() => {
-      //   return { url: 'http://localhost:3000/cache-status' };
-      // }),
+// cacheStatus: httpResource<{ ready: boolean; total: number; fetched: number }>(() => {
+//   return { url: 'http://localhost:3000/cache-status' };
+// }),

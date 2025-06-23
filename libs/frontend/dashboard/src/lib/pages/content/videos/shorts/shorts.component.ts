@@ -4,7 +4,9 @@ import { Component } from '@angular/core';
   selector: 'app-shorts',
   standalone: true,
   imports: [],
-  template: ` <p>My Shorts</p> `,
+  template: `
+    <p>My Shorts</p>
+  `,
   styles: ``,
 })
 export class ShortsComponent {}

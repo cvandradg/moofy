@@ -10,12 +10,7 @@
     <h3>Escoge una modalidad</h3>
 
     <div>
-      <button
-        mat-fab
-        extended
-        *ngFor="let theme of themes"
-        (click)="selectedTheme = theme.name"
-      >
+      <button mat-fab extended *ngFor="let theme of themes" (click)="selectedTheme = theme.name">
         <!-- <fa-icon
           matListItemIcon
           [icon]="[selectedTheme === theme.name ? 'fas' : 'fal', theme.icon]"

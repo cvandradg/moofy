@@ -31,7 +31,6 @@
 //         {} as Record<string, number>
 //       );
 
-
 //       return groupBy(store.fetchInboundDocuments.value(), el => locationToRoute[el.location]);
 //     }),
 //   })),

@@ -116,7 +116,6 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
   readonly inboundOrders$ = this.select((state) => state.inboundOrders);
   readonly inboundOrderDetails$ = this.select((state) => state.inboundOrderDetails);
   readonly currentRouteOrders$ = this.select((state) => {
-
     console.log('currentRouteOrders', state.currentRouteOrders);
 
     const filtered = state.currentRouteOrders.filter((item) => {
@@ -125,27 +124,25 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
       return (!state.startDate || dt >= state.startDate) && (!state.endDate || dt <= state.endDate);
     });
 
-    const grouped: any[] = Object.entries(groupBy(filtered, 'itemNumber')).map(
-      ([itemNumber, items]) => {
-        const totalQuantity = sumBy(items, (o) => +o.quantityOrdered);
-        const totalExtended = sumBy(items, (o) => +o.extendedCost);
-        const unitCost = +items[0].cost; // assume cost is per-unit
-        const { gtin, supplierStock, color, size, uom, pack } = items[0];
+    const grouped: any[] = Object.entries(groupBy(filtered, 'itemNumber')).map(([itemNumber, items]) => {
+      const totalQuantity = sumBy(items, (o) => +o.quantityOrdered);
+      const totalExtended = sumBy(items, (o) => +o.extendedCost);
+      const unitCost = +items[0].cost; // assume cost is per-unit
+      const { gtin, supplierStock, color, size, uom, pack } = items[0];
 
-        return {
-          itemNumber,
-          gtin,
-          supplierStock,
-          color,
-          size,
-          totalQuantity,
-          uom,
-          pack,
-          unitCost,
-          totalExtendedCost: totalExtended,
-        };
-      }
-    );
+      return {
+        itemNumber,
+        gtin,
+        supplierStock,
+        color,
+        size,
+        totalQuantity,
+        uom,
+        pack,
+        unitCost,
+        totalExtendedCost: totalExtended,
+      };
+    });
 
     console.log('grouped', grouped);
     // console.log('inboundOrders', state.inboundOrders);
@@ -161,7 +158,6 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
     ...state,
     loading: false,
     inboundOrders,
-
   }));
 
   isSameDay(d1: Date, d2: Date) {
