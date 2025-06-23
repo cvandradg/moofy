@@ -13,7 +13,6 @@ import { Fontawesome, MODULES, PrintOrdersService } from '@moofy-admin/shared';
 })
 export class PrintOrders {
 
-  url = signal('https://storage.googleapis.com/purchase-orders-screenshots/purchase-orders/po-82338129.png')
 
   purchaseOrders = input.required<any[]>();
 

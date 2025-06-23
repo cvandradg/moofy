@@ -46,8 +46,8 @@ export class PrintOrdersService {
   );
 
   // 2) expose a method that just looks up the route
-  getRouteForLocation(location: string): number | undefined {
-    return this.locationToRoute[location];
+  getRouteForLocation(location: string): keyof typeof moofyToWalmartRoutes {
+    return this.locationToRoute[location] as keyof typeof moofyToWalmartRoutes;
   }
 
   generatePurchaseOrdersPDF(purchaseOrders: PurchaseOrder[]) {
@@ -185,29 +185,49 @@ export class PrintOrdersService {
     pdfMake.createPdf(docDefinition).download('purchase-orders.pdf');
   }
 
-  async generatePdfFromImage(screenshotUrl: string) {
-    const dataUrl = await this.toDataUrl(screenshotUrl);
+  async generatePdfFromImage(purchaseOrders: PurchaseOrder[]) {
+    console.log('🔥 generatePdfFromImage called with', purchaseOrders, 'items');
 
-    const img = new Image();
-    img.src = dataUrl;
-    await new Promise((r) => (img.onload = r));
+    const imgs = await Promise.all(
+      purchaseOrders.map(async (po) => {
+        const url = `https://storage.googleapis.com/purchase-orders-screenshots/purchase-orders/po-${po.DocumentId}.png`;
+        const dataUrl = await this.toDataUrl(url);
 
-    const widthPt = img.width * 0.45;
+        const img = new Image();
+        img.src = dataUrl;
+        await new Promise((r) => (img.onload = r));
+
+        return { po, dataUrl, widthPt: (img.width * 0.45) as number };
+      })
+    );
+
+    const content = imgs.flatMap(({ po, dataUrl, widthPt }, idx) => {
+      const routeNum = this.getRouteForLocation(po.location);
+      const stops = moofyToWalmartRoutes[routeNum as keyof typeof moofyToWalmartRoutes] || [];
+      const matchingStop = stops.find((stop) => stop.name === po.location);
+
+      const header: any = {
+        text: `Location name: ${matchingStop?.location}`,
+        fontSize: 8,
+        bold: true,
+        margin: [0, 10, 10, 0],
+        alignment: 'right',
+        ...(idx > 0 ? { pageBreak: 'before' as const } : {}),
+      };
+      const imageBlock = {
+        image: dataUrl,
+        width: widthPt,
+      };
+      return [header, imageBlock];
+    });
 
     const docDefinition: TDocumentDefinitions = {
       pageSize: 'A4',
-      pageMargins: [0, 0, 0, 0] as [number, number, number, number],
-      content: [
-        { text: 'Hello World', fontSize: 8, bold: true, margin: [0, 10, 0, 20], alignment: 'right'},
-        {
-          image: dataUrl,
-          width: widthPt,
-        },
-      ],
+      pageMargins: [0, 0, 0, 0],
+      content,
     };
 
-    // 3) download!
-    pdfMake.createPdf(docDefinition).download('purchase-order.pdf');
+    pdfMake.createPdf(docDefinition).download('purchase-orders.pdf');
   }
 
   private toDataUrl(url: string): Promise<string> {
