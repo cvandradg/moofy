@@ -100,7 +100,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     documentCountry: '',
     newSearch: 'true',
     pageNum: '0',
-    pageSize: '13000',
+    pageSize: '500',
     sortDataField: 'CreatedTimestamp',
     sortOrder: 'desc',
     skipWork: 'true',
@@ -137,7 +137,7 @@ async function fetchOrderDetails(
 
   try {
     // wait for the PO number element
-    await page.waitForSelector('#poNumber', { timeout: 5000 });
+    await page.waitForSelector('#poNumber', { timeout: 20000 });
 
     const fullHeight = await page.evaluate(() => document.documentElement.scrollHeight);
     const vp = page.viewport() ?? { width: 1920 };
