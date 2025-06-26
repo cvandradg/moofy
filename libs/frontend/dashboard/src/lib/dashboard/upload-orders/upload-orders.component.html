@@ -1,29 +1,58 @@
-@if (!fetchInboundDocuments.isLoading()) {
-  <div class="date-picker-container">
-    <mat-form-field appearance="fill">
-      <mat-label>Pick a start date</mat-label>
-      <input
-        matInput
-        [matDatepicker]="pickerStart"
-        [value]="selectedStartDate()"
-        (dateChange)="selectedStartDate.set($event.value)"
-      />
-      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-      <mat-datepicker #pickerStart></mat-datepicker>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Pick an end date</mat-label>
-      <input
-        matInput
-        [matDatepicker]="pickerEnd"
-        [value]="selectedEndDate()"
-        (dateChange)="selectedEndDate.set($event.value)"
-      />
-      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-      <mat-datepicker #pickerEnd></mat-datepicker>
-    </mat-form-field>
+<div class="date-picker-container">
+  <div style="display: flex; gap: 1rem">
+    <p-iftalabel>
+      <p-datepicker
+        #dp
+        inputId="calendar-24h"
+        [showTime]="true"
+        [hourFormat]="'24'"
+        [hideOnDateTimeSelect]="false"
+        [touchUI]="true"
+        [(ngModel)]="dateRange2"
+        [appendTo]="'body'"
+        showIcon
+      >
+        <ng-template pTemplate="header">
+          <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem; margin-bottom: 2rem">
+            Fecha de inicio
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem">
+            <button pButton type="button" label="OK" [style.marginLeft]="'auto'" (click)="dp.hideOverlay()"></button>
+          </div>
+        </ng-template>
+      </p-datepicker>
+      <label for="date">Fecha de inicio</label>
+    </p-iftalabel>
+    <p-iftalabel>
+      <p-datepicker
+        #dp
+        inputId="calendar-24h"
+        [showTime]="true"
+        [hourFormat]="'24'"
+        [hideOnDateTimeSelect]="false"
+        [touchUI]="true"
+        [(ngModel)]="dateRange2"
+        [appendTo]="'body'"
+        showIcon
+      >
+        <ng-template pTemplate="header">
+          <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem">
+            Escoge el final de la fecha para analizar
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem">
+            <button pButton type="button" label="OK" [style.marginLeft]="'auto'" (click)="dp.hideOverlay()"></button>
+          </div>
+        </ng-template>
+      </p-datepicker>
+      <label for="date">Fecha final</label>
+    </p-iftalabel>
   </div>
+</div>
+@if (!fetchInboundDocuments.isLoading()) {
   <ng-container>
     <div class="container">
       <div class="routes-preview">

@@ -230,7 +230,7 @@ async function scrapeAll(): Promise<void> {
     for (let i = 0; i < inbound.length; i += batchSize) {
       const chunk = inbound.slice(i, i + batchSize);
       const refs: DocumentReference[] = chunk.map((d) =>
-        db.collection('purchaseOrderDetails2').doc(d.DocumentId.toString())
+        db.collection('purchaseOrderDetails').doc(d.DocumentId.toString())
       );
       const snaps: DocumentSnapshot[] = await db.getAll(...refs);
       snaps.forEach((s) => {
@@ -267,7 +267,7 @@ async function scrapeAll(): Promise<void> {
       console.log(`📥 Writing batch ${Math.floor(i / batchSize) + 1} with ${chunk.length} docs to Firestore`);
       const batch = db.batch();
       chunk.forEach((o) => {
-        batch.set(db.collection('purchaseOrderDetails2').doc(o.DocumentId.toString()), o);
+        batch.set(db.collection('purchaseOrderDetails').doc(o.DocumentId.toString()), o);
       });
       await batch.commit();
       console.log(`📤 Committed batch ${Math.floor(i / batchSize) + 1}`);

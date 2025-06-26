@@ -27,7 +27,7 @@
             "output": "/assets/"
           }
         ],
-        "styles": ["apps/moofy-admin/src/styles.scss"],
+        "styles": ["apps/moofy-admin/src/styles.scss", "node_modules/primeicons/primeicons.css"],
         "scripts": [],
         "server": "apps/moofy-admin/src/main.server.ts",
         "prerender": true,

@@ -197,3 +197,32 @@ mat-tap {
   gap: 1rem;
   margin: 0.5rem 0;
 }
+
+// // /* in your global styles.scss or component stylesheet */
+// :host ::ng-deep .p-datepicker-panel {
+//   position: fixed !important;
+//   top: 50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -50%) !important;
+//   min-width: 80vw !important;
+//   max-height: 90vh !important;
+//   z-index: 10000 !important;
+// }
+
+// /* primeflex / primeng touchUI date-picker center override */
+// :host ::ng-deep .p-datepicker-touch-ui.p-component-overlay {
+//   position: fixed !important;
+//   top:  50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -50%) !important;
+//   /* optional: constrain max size */
+//   max-width: 90vw !important;
+//   max-height: 90vh !important;
+// }
+
+// :host ::ng-deep .p-datepicker-touch-p.p-component-overlay {
+//   position: fixed !important;
+//   top:  50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -50%) !important;
+// }
