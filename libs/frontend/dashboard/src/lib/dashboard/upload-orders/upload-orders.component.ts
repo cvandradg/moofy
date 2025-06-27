@@ -1,11 +1,9 @@
-import { of, startWith } from 'rxjs';
 import * as _ from 'lodash';
 import { groupBy } from 'lodash';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { NgxDropzoneModule } from 'ngx-dropzone';
-import { isPlatformBrowser } from '@angular/common';
-import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -14,7 +12,15 @@ import { Fontawesome, MODULES } from '@moofy-admin/shared';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { collection, collectionData, CollectionReference, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
+import {
+  collection,
+  collectionData,
+  CollectionReference,
+  Firestore,
+  query,
+  Timestamp,
+  where,
+} from '@angular/fire/firestore';
 import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 import { inject, computed, Component, ChangeDetectionStrategy, signal, effect, PLATFORM_ID } from '@angular/core';
 import { PrintOrders } from '../print-orders/print-orders';
@@ -59,6 +65,8 @@ export class UploadOrdersComponent {
   firestore = inject(Firestore);
   platformId = inject(PLATFORM_ID);
 
+  readonly todayEndOfDay = signal(this.endOfDay(new Date()));
+
   startDate = signal<Date>(this.startOfDay(new Date()));
   endDate = signal<Date>(this.endOfDay(new Date()));
 
@@ -93,7 +101,7 @@ export class UploadOrdersComponent {
 
       return collectionData(q, { idField: 'DocumentId' });
     },
-    defaultValue:[],
+    defaultValue: [],
   });
 
   moofyToWalmartRoutes = computed(() => Object.keys(moofyToWalmartRoutes));

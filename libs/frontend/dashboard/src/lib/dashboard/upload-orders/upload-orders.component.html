@@ -9,6 +9,7 @@
         [hideOnDateTimeSelect]="false"
         [touchUI]="true"
         [ngModel]="startDate()"
+        [maxDate]="todayEndOfDay()"
         (onSelect)="startDate.set($event)"
         [appendTo]="'body'"
         showIcon
@@ -20,7 +21,13 @@
         </ng-template>
         <ng-template pTemplate="footer">
           <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem">
-            <button pButton type="button" label="OK" [style.marginLeft]="'auto'" (click)="startDatePicker.hideOverlay()"></button>
+            <button
+              pButton
+              type="button"
+              label="OK"
+              [style.marginLeft]="'auto'"
+              (click)="startDatePicker.hideOverlay()"
+            ></button>
           </div>
         </ng-template>
       </p-datepicker>
@@ -32,6 +39,7 @@
         inputId="endDate"
         [showTime]="true"
         [hourFormat]="'24'"
+        [maxDate]="todayEndOfDay()"
         [hideOnDateTimeSelect]="false"
         [touchUI]="true"
         [ngModel]="endDate()"
@@ -40,13 +48,19 @@
         showIcon
       >
         <ng-template pTemplate="header">
-          <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem">
+          <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem; margin-bottom: 2rem" >
             Escoge el final de la fecha para analizar
           </div>
         </ng-template>
         <ng-template pTemplate="footer">
           <div style="display: flex; align-items: center; width: 100%; padding: 0.5rem">
-            <button pButton type="button" label="OK" [style.marginLeft]="'auto'" (click)="endDatePicker.hideOverlay()"></button>
+            <button
+              pButton
+              type="button"
+              label="OK"
+              [style.marginLeft]="'auto'"
+              (click)="endDatePicker.hideOverlay()"
+            ></button>
           </div>
         </ng-template>
       </p-datepicker>
