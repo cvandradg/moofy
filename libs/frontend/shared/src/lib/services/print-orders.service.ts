@@ -4,33 +4,8 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import 'pdfmake/build/vfs_fonts';
 import { moofyToWalmartRoutes } from './moofy-to-walmart-routes';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
+import { PurchaseOrder } from '../types/general-types';
 
-interface PurchaseOrder {
-  DocumentId: string;
-  purchaseOrderNumber: string;
-  purchaseOrderDate: Date | any;
-  shipDate: Date | any;
-  cancelDate: Date | any;
-  location: string;
-  additionalDetails: {
-    Carrier: string;
-    Currency: string;
-    Department: string;
-    'Order Type': string;
-    'Payment Terms': string;
-  };
-  items: Array<{
-    line: string;
-    itemNumber: string;
-    quantityOrdered: string;
-    extendedCost: string;
-  }>;
-  totals: {
-    totalItems: string;
-    totalUnits: string;
-    totalAmount: string;
-  };
-}
 
 @Injectable({
   providedIn: 'root',

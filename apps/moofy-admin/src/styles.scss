@@ -31,3 +31,31 @@ html {
   @include mat.core-theme($theme);
   @include mat.all-component-themes($theme);
 }
+
+.p-datepicker-panel {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  min-width: 60vw !important;
+  max-height: 90vh !important;
+  z-index: 10000 !important;
+}
+
+// /* primeflex / primeng touchUI date-picker center override */
+// .p-datepicker-touch-ui.p-component-overlay {
+//   position: fixed !important;
+//   top:  50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -50%) !important;
+//   /* optional: constrain max size */
+//   max-width: 90vw !important;
+//   max-height: 90vh !important;
+// }
+
+// .p-datepicker-touch-p.p-component-overlay {
+//   position: fixed !important;
+//   top:  50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -50%) !important;
+// }

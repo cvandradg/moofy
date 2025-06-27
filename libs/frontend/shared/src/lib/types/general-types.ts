@@ -49,3 +49,30 @@ export interface moofyPO {
   sendDate: string;
   items: moofyPOItems[];
 }
+
+export interface PurchaseOrder {
+  DocumentId: string;
+  purchaseOrderNumber: string;
+  purchaseOrderDate: Date | any;
+  shipDate: Date | any;
+  cancelDate: Date | any;
+  location: string;
+  additionalDetails: {
+    Carrier: string;
+    Currency: string;
+    Department: string;
+    'Order Type': string;
+    'Payment Terms': string;
+  };
+  items: Array<{
+    line: string;
+    itemNumber: string;
+    quantityOrdered: string;
+    extendedCost: string;
+  }>;
+  totals: {
+    totalItems: string;
+    totalUnits: string;
+    totalAmount: string;
+  };
+}
