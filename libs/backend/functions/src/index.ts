@@ -143,20 +143,23 @@ async function fetchOrderDetails(
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
       // wait for the PO number element (may throw)
-      await page.waitForSelector('#poNumber', { timeout: 20000 });
+      await page.waitForSelector('#poNumber', { timeout: 30_000 });
+      await page.waitForSelector('#poNumber', { visible: true, timeout: 30_000 });
+      await page.waitForSelector('table.table tr', { timeout: 30_000 });
 
       // take & upload the “good” screenshot
       const fullHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+      const clipHeight = fullHeight - HEADER_HEIGHT - BOTTOM_CROP;
       const successPath = path.join(screenshotsDir, `po-${docId}.png`);
-      await page.screenshot({
-        path: successPath,
-        clip: {
-          x: 0,
-          y: HEADER_HEIGHT,
-          width: vp.width,
-          height: fullHeight - HEADER_HEIGHT - BOTTOM_CROP,
-        },
-      });
+
+      if (clipHeight > 0) {
+        await page.screenshot({
+          path: successPath,
+          clip: { x: 0, y: HEADER_HEIGHT, width: vp.width, height: clipHeight },
+        });
+      } else {
+        await page.screenshot({ path: successPath, fullPage: true });
+      }
       await uploadScreenshot(successPath, `purchase-orders/po-${docId}.png`);
 
       break; // done!
