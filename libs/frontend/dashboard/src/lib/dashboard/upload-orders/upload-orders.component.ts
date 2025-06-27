@@ -9,16 +9,15 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatBadgeModule } from '@angular/material/badge';
-import { moofyToWalmartRoutes } from '@moofy-admin/shared';
+import { moofyToWalmartRoutes, PurchaseOrder } from '@moofy-admin/shared';
 import { Fontawesome, MODULES } from '@moofy-admin/shared';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { collection, collectionData, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
+import { collection, collectionData, CollectionReference, Firestore, query, Timestamp, where } from '@angular/fire/firestore';
 import { PurchaseOrderBreakdownComponent } from './purchase-order-breakdown/purchase-order-breakdown.component';
 import { inject, computed, Component, ChangeDetectionStrategy, signal, effect, PLATFORM_ID } from '@angular/core';
 import { PrintOrders } from '../print-orders/print-orders';
-import { FormControl, FormGroup } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { DatePicker, DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
@@ -57,24 +56,11 @@ export class UploadOrdersComponent {
   selectedRouteTotal = signal<any>('');
   selectedPurchaseOrder = signal<any>(null);
 
-  dateRange2!: Date[];
-
   firestore = inject(Firestore);
   platformId = inject(PLATFORM_ID);
 
-  dateControl = new FormControl<Date | null>(null);
-
-  range = new FormGroup({
-    start: new FormControl<Date>(new Date(), { nonNullable: true }),
-    end: new FormControl<Date>(new Date(), { nonNullable: true }),
-  });
-
-  dateRange = toSignal(
-    this.range.valueChanges.pipe(
-      startWith(this.range.value) // emit the current value immediately
-    ),
-    { initialValue: this.range.value } // and tell toSignal what that initial value is
-  );
+  startDate = signal<Date>(this.startOfDay(new Date()));
+  endDate = signal<Date>(this.endOfDay(new Date()));
 
   filteredItems = computed(() => {
     const routesMap = this.purchaseOrderByRoutes() ?? {};
@@ -93,28 +79,21 @@ export class UploadOrdersComponent {
       .value();
   });
 
-  fetchInboundDocuments = rxResource({
-    params: () => this.dateRange(),
+  fetchInboundDocuments = rxResource<PurchaseOrder[], { start: Timestamp; end: Timestamp }>({
+    params: () => ({
+      start: Timestamp.fromDate(this.startDate()),
+      end: Timestamp.fromDate(this.endDate()),
+    }),
     stream: ({ params: { start, end } }) => {
-      if (!isPlatformBrowser(this.platformId) || !start || !end) {
-        return of<any[]>([]);
-      }
-
-      const startTs = Timestamp.fromDate(this.startOfDay(start));
-      const endTs = Timestamp.fromDate(this.endOfDay(end));
-
-      console.log('query from', startTs.toDate().toISOString());
-      console.log('query to  ', endTs.toDate().toISOString());
-
       const q = query(
-        collection(this.firestore, 'purchaseOrderDetails'),
-        where('purchaseOrderDate', '>=', startTs),
-        where('purchaseOrderDate', '<=', endTs)
+        collection(this.firestore, 'purchaseOrderDetails') as CollectionReference<PurchaseOrder>,
+        where('purchaseOrderDate', '>=', start),
+        where('purchaseOrderDate', '<=', end)
       );
 
       return collectionData(q, { idField: 'DocumentId' });
     },
-    defaultValue: [],
+    defaultValue:[],
   });
 
   moofyToWalmartRoutes = computed(() => Object.keys(moofyToWalmartRoutes));
@@ -155,7 +134,6 @@ export class UploadOrdersComponent {
   constructor() {
     effect(() => {
       console.log('flat:', this.allOrdersSortedByRoute());
-      console.log('date range', this.dateRange());
     });
   }
 }
