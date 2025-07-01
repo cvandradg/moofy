@@ -10,7 +10,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { ApplicationConfig, ErrorHandler, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import Aura from '@primeng/themes/Aura';
+import Aura from '@primeng/themes/aura';
 import { PRIME_NG_CONFIG, providePrimeNG, PrimeNG } from 'primeng/config';
 
 export const appConfig: ApplicationConfig = {
