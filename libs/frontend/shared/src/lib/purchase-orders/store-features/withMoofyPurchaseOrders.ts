@@ -13,7 +13,7 @@ export function withMoofyPurchaseOrders() {
           if (!isPlatformBrowser(platformId)) {
             return of<any[]>([]);
           }
-          const podRef = collection(firestore, 'purchaseOrderDetails22');
+          const podRef = collection(firestore, 'purchaseOrderDetails');
           return collectionData(podRef, { idField: 'DocumentId' });
         },
         defaultValue: [],

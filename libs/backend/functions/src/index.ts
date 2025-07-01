@@ -11,6 +11,14 @@ import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, DocumentReference, DocumentSnapshot, Timestamp } from 'firebase-admin/firestore';
 import { fileURLToPath } from 'url';
 
+function parseApiTimestamp(raw: string): Timestamp {
+  const ms = Number(raw.match(/\/Date\((\d+)\)\//)?.[1]);
+  if (isNaN(ms)) {
+    throw new Error(`Invalid API date format: ${raw}`);
+  }
+  return Timestamp.fromMillis(ms);
+}
+
 function parseDate(str: string): Timestamp {
   const [m, d, y] = str.split('/').map(Number);
   return Timestamp.fromDate(new Date(y, m - 1, d));
@@ -25,7 +33,7 @@ const storage = new Storage();
 const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
 const USERNAME = 'candradeg9182@gmail.com';
 const PASSWORD = 'PastryFactory202506';
-const MAX_ATTEMPTS = 3;
+const MAX_ATTEMPTS = 6;
 const MAILBOX_ID = '51619';
 const BOT_TOKEN =
   'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NTUxOTMwOTYsImlhdCI6MTc1MDAwOTA5NiwianRpIjoiNmRjZWE2ZWYtMzBmNi00Nzc5LTk2MzktOTg5YjE3NzFhM2E3In0.KfWTg97hH77NriVD-iXgHQhJgRrkIjByMQifmpdt8WXCpbtSDuD-2g-hMoaTfpMjASSdjRb5E_3J1qYvG7gcZX3UiX9YSCYSSP2pR08B52jlA5u2R1zlsC8DNKX-zWlwi-kIcMxq8WWjI1AlFoHB8PW_mRg_jIIsds5XSgoz0rRqNqObAdCkheZXHMJKb9bsNNmRW7wt2ksQOGZLBs0qXZVypC0QLtXH6y5jWubLZ40im9Lf-YwWDDu53spwSzTbNUaa-5DTW2JWI30g4qM8tj12uCycS310ohjZn2Bc-5WRHhpTR5KXjuxThYyu76RLyhY6OAJPW1lKvQ7Q-WWHdw';
@@ -41,6 +49,7 @@ interface InboundDoc {
   DocumentId: number;
   DocumentNumber: string;
   Location: string;
+  createdAtTs: Timestamp;
 }
 interface PurchaseOrderDetails {
   DocumentId: number;
@@ -101,7 +110,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     documentCountry: '',
     newSearch: 'true',
     pageNum: '0',
-    pageSize: '3000',
+    pageSize: '6000',
     sortDataField: 'CreatedTimestamp',
     sortOrder: 'desc',
     skipWork: 'true',
@@ -116,6 +125,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     DocumentId: d.DocumentId,
     DocumentNumber: d.DocumentNumber,
     Location: d.Location,
+    createdAtTs: parseApiTimestamp(d.CreatedTimestamp),
   }));
 }
 
@@ -239,13 +249,15 @@ async function scrapeAll(): Promise<void> {
   try {
     const inbound = await fetchInboundDocs(browser, cookies);
 
+    const createdTsMap = new Map<number, Timestamp>(inbound.map((d) => [d.DocumentId, d.createdAtTs]));
+
     // Batch-check existing PO docs in Firestore by DocumentId
     const existing = new Set<string>();
     const batchSize = 500;
     for (let i = 0; i < inbound.length; i += batchSize) {
       const chunk = inbound.slice(i, i + batchSize);
       const refs: DocumentReference[] = chunk.map((d) =>
-        db.collection('purchaseOrderDetails2').doc(d.DocumentId.toString())
+        db.collection('purchaseOrderDetails').doc(d.DocumentId.toString())
       );
       const snaps: DocumentSnapshot[] = await db.getAll(...refs);
       snaps.forEach((s) => {
@@ -282,7 +294,13 @@ async function scrapeAll(): Promise<void> {
       console.log(`📥 Writing batch ${Math.floor(i / batchSize) + 1} with ${chunk.length} docs to Firestore`);
       const batch = db.batch();
       chunk.forEach((o) => {
-        batch.set(db.collection('purchaseOrderDetails2').doc(o.DocumentId.toString()), o);
+        const createdAtTs = createdTsMap.get(o.DocumentId);
+        const docData = {
+          ...o,
+          ...(createdAtTs && { createdAtTs }),
+        };
+
+        batch.set(db.collection('purchaseOrderDetails').doc(o.DocumentId.toString()), docData);
       });
       await batch.commit();
       console.log(`📤 Committed batch ${Math.floor(i / batchSize) + 1}`);

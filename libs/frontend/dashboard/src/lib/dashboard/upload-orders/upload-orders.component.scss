@@ -42,9 +42,10 @@ fa-icon {
   // width: 100%;
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 3.5rem;
+  gap: 0rem;
 
   .demo-section {
     display: flex;
@@ -151,7 +152,7 @@ mat-tap {
   align-items: flex-start;
   gap: 1rem;
   padding: 2rem 0.3rem 0;
-  height: calc(100vh - 12rem);
+  // height: calc(100vh - 12rem);
 }
 
 .mat-mdc-radio-button {
@@ -168,8 +169,6 @@ mat-tap {
 }
 
 .accordion-scrollable-container {
-  max-height: 68vh;
-  overflow-y: auto;
   padding: 1rem;
   padding: 8px;
   width: 21%;
@@ -226,3 +225,57 @@ mat-tap {
 //   left: 50% !important;
 //   transform: translate(-50%, -50%) !important;
 // }
+
+.p-tab {
+  padding: 0 1rem 0.3rem !important;
+}
+
+.p-tabs {
+  /* map PrimeNG’s vars to Angular Material’s vars */
+  --p-tabs-tab-font-family: var(--mat-tab-label-text-font, var(--mat-sys-title-small-font)) !important;
+  --p-tabs-tab-font-size: var(--mat-tab-label-text-size, var(--mat-sys-title-small-size)) !important;
+  --p-tabs-tab-letter-spacing: var(--mat-tab-label-text-tracking, var(--mat-sys-title-small-tracking)) !important;
+  --p-tabs-tab-line-height: var(--mat-tab-label-text-line-height, var(--mat-sys-title-small-line-height)) !important;
+  --p-tabs-tab-font-weight: var(--mat-tab-label-text-weight, var(--mat-sys-title-small-weight)) !important;
+}
+
+:host ::ng-deep .p-tabs {
+  --p-tabs-tab-active-border-color: var(--mat-tab-active-indicator-color);
+  --p-tabs-active-bar-background: var(--mat-tab-active-indicator-color);
+  --p-tabs-active-bar-height: 2px;
+  --p-tabs-tab-active-color: none;
+  --mat-tab-inactive-indicator-color: red;
+  font-size: var(--mat-tab-label-text-size);
+}
+
+:host ::ng-deep {
+  // --p-tabs-tab-background: transparent;
+  // ///////////////////////////////
+  --p-tabs-tabpanel-background: transparent;
+  --p-tabs-tab-active-background: transparent;
+  --p-tabs-tab-background: transparent;
+  --p-tabs-tablist-background: transparent;
+  --mat-tab-divider-color: transparent;
+}
+
+.tabs-container {
+  width: 100%;
+}
+
+:host ::ng-deep {
+  .mat-mdc-tab {
+    border-bottom: 3px solid #dddddd;
+    padding-bottom: 0.5rem; /* space for the border */
+    margin-bottom: -2px; /* pull it down into place */
+  }
+}
+
+.p-tablist-tab-list,
+.p-tablist-content {
+  display: flex;
+  justify-content: center;
+}
+
+.p-tablist-content {
+  margin: 1rem 0 0 0;
+}

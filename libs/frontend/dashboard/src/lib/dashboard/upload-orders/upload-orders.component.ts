@@ -26,6 +26,7 @@ import { inject, computed, Component, ChangeDetectionStrategy, signal, effect, P
 import { PrintOrders } from '../print-orders/print-orders';
 import { CalendarModule } from 'primeng/calendar';
 import { DatePicker, DatePickerModule } from 'primeng/datepicker';
+import { TabsModule } from 'primeng/tabs';
 import { ButtonModule } from 'primeng/button';
 
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -45,6 +46,7 @@ import { IftaLabelModule } from 'primeng/iftalabel';
     IftaLabelModule,
     DatePicker,
     ButtonModule,
+    TabsModule,
     DatePickerModule,
     MatDatepickerModule,
     CalendarModule,
@@ -94,9 +96,9 @@ export class UploadOrdersComponent {
     }),
     stream: ({ params: { start, end } }) => {
       const q = query(
-        collection(this.firestore, 'purchaseOrderDetails2') as CollectionReference<PurchaseOrder>,
-        where('purchaseOrderDate', '>=', start),
-        where('purchaseOrderDate', '<=', end)
+        collection(this.firestore, 'purchaseOrderDetails') as CollectionReference<PurchaseOrder>,
+        where('createdAtTs', '>=', start),
+        where('createdAtTs', '<=', end)
       );
 
       return collectionData(q, { idField: 'DocumentId' });
@@ -120,6 +122,21 @@ export class UploadOrdersComponent {
     return groupBy(this.fetchInboundDocuments.value(), (el) => locationToRoute[el.location]);
   });
 
+  // in your component class
+  readonly sortedRoutes = computed(() => {
+    const map = this.purchaseOrderByRoutes();
+    return this.moofyToWalmartRoutes()
+      .slice()
+      .sort((a, b) => {
+        const emptyA = !map[a]?.length;
+        const emptyB = !map[b]?.length;
+        if (emptyA === emptyB) {
+          return Number(a) - Number(b);
+        }
+        return emptyA ? 1 : -1;
+      });
+  });
+
   trackByOrder(_index: number, order: any) {
     return order.DocumentId;
   }
@@ -141,7 +158,7 @@ export class UploadOrdersComponent {
 
   constructor() {
     effect(() => {
-      console.log('flat:', this.allOrdersSortedByRoute());
+      // console.log('flat:', this.allOrdersSortedByRoute());
     });
   }
 }
