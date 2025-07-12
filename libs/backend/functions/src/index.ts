@@ -110,7 +110,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     documentCountry: '',
     newSearch: 'true',
     pageNum: '0',
-    pageSize: '6000',
+    pageSize: '250',
     sortDataField: 'CreatedTimestamp',
     sortOrder: 'desc',
     skipWork: 'true',
@@ -146,30 +146,42 @@ async function fetchOrderDetails(
 
   ensureScreenshotsDir();
 
-  const HEADER_HEIGHT = 600;
-  const BOTTOM_CROP = 100;
-  const vp = page.viewport() ?? { width: 1920 };
-
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
-      // wait for the PO number element (may throw)
-      await page.waitForSelector('#poNumber', { timeout: 30_000 });
-      await page.waitForSelector('#poNumber', { visible: true, timeout: 30_000 });
-      await page.waitForSelector('table.table tr', { timeout: 30_000 });
+      // 1) Wait for the PO number so we know the page is ready:
+      // 1) grab the #poNumber anchor
+      const anchor = await page.waitForSelector('#poNumber', { visible: true, timeout: 30_000 });
+      if (!anchor) throw new Error('🛑 #poNumber never appeared');
 
-      // take & upload the “good” screenshot
-      const fullHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-      const clipHeight = fullHeight - HEADER_HEIGHT - BOTTOM_CROP;
+      // 2) get its bounding box
+      const box = await anchor.boundingBox();
+      if (!box) throw new Error('🛑 Could not compute bounding box for #poNumber');
+      const startY = Math.round(box.y);
+
+      // 3) grab your <main> wrapper
+      const mainEl = await page.$('main.container-fluid');
+      if (!mainEl) throw new Error('🛑 <main> wrapper vanished');
+      const mainBox = await mainEl.boundingBox();
+      if (!mainBox) throw new Error('🛑 Could not compute bounding box for <main>');
+      const mainX = Math.round(mainBox.x);
+      const mainW = Math.round(mainBox.width);
+
+      // 4) figure out the real page height
+      const fullHeight = await page.evaluate(() =>
+        Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
+      );
+
+      // 5) build your clip from (mainX, startY) down to bottom of document
+      const clip = {
+        x: mainX,
+        y: startY,
+        width: mainW,
+        height: Math.round(fullHeight - startY),
+      };
+
+      // 6) screenshot exactly that region
       const successPath = path.join(screenshotsDir, `po-${docId}.png`);
-
-      if (clipHeight > 0) {
-        await page.screenshot({
-          path: successPath,
-          clip: { x: 0, y: HEADER_HEIGHT, width: vp.width, height: clipHeight },
-        });
-      } else {
-        await page.screenshot({ path: successPath, fullPage: true });
-      }
+      await page.screenshot({ path: successPath, clip });
       await uploadScreenshot(successPath, `purchase-orders/po-${docId}.png`);
 
       break; // done!
@@ -257,7 +269,7 @@ async function scrapeAll(): Promise<void> {
     for (let i = 0; i < inbound.length; i += batchSize) {
       const chunk = inbound.slice(i, i + batchSize);
       const refs: DocumentReference[] = chunk.map((d) =>
-        db.collection('purchaseOrderDetails').doc(d.DocumentId.toString())
+        db.collection('purchaseOrderDetails3').doc(d.DocumentId.toString())
       );
       const snaps: DocumentSnapshot[] = await db.getAll(...refs);
       snaps.forEach((s) => {
@@ -300,7 +312,7 @@ async function scrapeAll(): Promise<void> {
           ...(createdAtTs && { createdAtTs }),
         };
 
-        batch.set(db.collection('purchaseOrderDetails').doc(o.DocumentId.toString()), docData);
+        batch.set(db.collection('purchaseOrderDetails3').doc(o.DocumentId.toString()), docData);
       });
       await batch.commit();
       console.log(`📤 Committed batch ${Math.floor(i / batchSize) + 1}`);

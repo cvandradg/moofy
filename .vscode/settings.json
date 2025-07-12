@@ -10,5 +10,6 @@
     "subir",
     "SUPERCENTER",
     "Xmark"
-  ]
+  ],
+  "nxConsole.generateAiAgentRules": true
 }

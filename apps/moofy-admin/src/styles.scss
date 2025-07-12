@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Angular Material core styles */
 @use '@angular/material' as mat;
 @include mat.core();
 
@@ -7,6 +8,7 @@ html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
@@ -14,10 +16,11 @@ body {
 
 h1 {
   font-weight: normal;
-  margin: 0px;
+  margin: 0;
   font-size: 1.5rem;
 }
 
+/* Define your Material theme */
 $theme: mat.define-theme(
   (
     color: (
@@ -27,11 +30,13 @@ $theme: mat.define-theme(
   )
 );
 
+/* Apply Material theme globally */
 html {
   @include mat.core-theme($theme);
   @include mat.all-component-themes($theme);
 }
 
+/* Center PrimeNG datepicker panel */
 .p-datepicker-panel {
   position: fixed !important;
   top: 50% !important;
@@ -42,20 +47,4 @@ html {
   z-index: 10000 !important;
 }
 
-// /* primeflex / primeng touchUI date-picker center override */
-// .p-datepicker-touch-ui.p-component-overlay {
-//   position: fixed !important;
-//   top:  50% !important;
-//   left: 50% !important;
-//   transform: translate(-50%, -50%) !important;
-//   /* optional: constrain max size */
-//   max-width: 90vw !important;
-//   max-height: 90vh !important;
-// }
 
-// .p-datepicker-touch-p.p-component-overlay {
-//   position: fixed !important;
-//   top:  50% !important;
-//   left: 50% !important;
-//   transform: translate(-50%, -50%) !important;
-// }

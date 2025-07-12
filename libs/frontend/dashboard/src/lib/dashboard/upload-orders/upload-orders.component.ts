@@ -96,7 +96,7 @@ export class UploadOrdersComponent {
     }),
     stream: ({ params: { start, end } }) => {
       const q = query(
-        collection(this.firestore, 'purchaseOrderDetails') as CollectionReference<PurchaseOrder>,
+        collection(this.firestore, 'purchaseOrderDetails3') as CollectionReference<PurchaseOrder>,
         where('createdAtTs', '>=', start),
         where('createdAtTs', '<=', end)
       );

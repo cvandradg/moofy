@@ -11,8 +11,8 @@
   align-items: center;
   border: none;
   width: 100%;
-  max-height: 79vh; /* Set your desired height */
-  overflow-y: auto;
+  // max-height: 79vh; /* Set your desired height */
+  // overflow-y: auto;
 
   .no-selection {
     padding: 0 0 0 0.7rem;
@@ -119,14 +119,13 @@ mat-tap {
 }
 
 .display-order-details-container {
-  // flex-grow: 7;
   flex-grow: 3;
   width: 70%;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   align-items: center;
-
+  padding: 0.5rem 0 0 0;
   button {
     align-self: flex-end;
     margin: 2rem 0;
@@ -169,10 +168,8 @@ mat-tap {
 }
 
 .accordion-scrollable-container {
-  padding: 1rem;
-  padding: 8px;
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
   width: 21%;
-  margin: 5rem 0 0 0;
 }
 
 .date-picker-container {
@@ -186,7 +183,6 @@ mat-tap {
 .radio-viewport {
   height: 400px;
   width: 100%;
-  overflow: auto;
 }
 
 .date-picker-container {
@@ -196,35 +192,6 @@ mat-tap {
   gap: 1rem;
   margin: 0.5rem 0;
 }
-
-// // /* in your global styles.scss or component stylesheet */
-// :host ::ng-deep .p-datepicker-panel {
-//   position: fixed !important;
-//   top: 50% !important;
-//   left: 50% !important;
-//   transform: translate(-50%, -50%) !important;
-//   min-width: 80vw !important;
-//   max-height: 90vh !important;
-//   z-index: 10000 !important;
-// }
-
-// /* primeflex / primeng touchUI date-picker center override */
-// :host ::ng-deep .p-datepicker-touch-ui.p-component-overlay {
-//   position: fixed !important;
-//   top:  50% !important;
-//   left: 50% !important;
-//   transform: translate(-50%, -50%) !important;
-//   /* optional: constrain max size */
-//   max-width: 90vw !important;
-//   max-height: 90vh !important;
-// }
-
-// :host ::ng-deep .p-datepicker-touch-p.p-component-overlay {
-//   position: fixed !important;
-//   top:  50% !important;
-//   left: 50% !important;
-//   transform: translate(-50%, -50%) !important;
-// }
 
 .p-tab {
   padding: 0 1rem 0.3rem !important;
@@ -268,14 +235,65 @@ mat-tap {
     padding-bottom: 0.5rem; /* space for the border */
     margin-bottom: -2px; /* pull it down into place */
   }
-}
 
-.p-tablist-tab-list,
-.p-tablist-content {
-  display: flex;
-  justify-content: center;
-}
+  .p-tablist-tab-list,
+  .p-tablist-content {
+    display: flex;
+    justify-content: center;
+  }
 
-.p-tablist-content {
-  margin: 1rem 0 0 0;
+  .p-tablist-content {
+    margin: 1rem 0 0 0;
+  }
+
+  p-tabpanel {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .p-tabpanels {
+    padding: 2rem 0 0 0;
+  }
+
+  .mat-mdc-tab-header {
+    position: sticky !important;
+    background-color: #f8fafc;
+    top: 0;
+    z-index: 1000;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* 1) Completely disable Material’s inner tab clipping so the page scrollbar takes over */
+  /* ---------------------------------------------------------------- */
+  .mat-tab-body-wrapper,
+  .mat-mdc-tab-body-wrapper,
+  .mat-mdc-tab-body-container,
+  .mat-mdc-tab-body,
+  .mat-mdc-tab-body.mat-mdc-tab-body-active,
+  .mat-mdc-tab-body-content {
+    overflow: visible !important;
+    overflow-x: clip !important; /* disable horizontal scroll */
+    height: auto      !important;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* 2) Ensure no parent container traps scrolling */
+  /* ---------------------------------------------------------------- */
+  .routes-preview,
+  .tabs-container,
+  .container {
+    overflow: visible !important;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* 3) Stick PrimeNG tab headers to the viewport */
+  /* ---------------------------------------------------------------- */
+  .p-tabs .p-tablist {
+    position: sticky !important;
+    top: 2.5rem !important; /* adjust to clear your <h1> */
+    display: block !important; /* fixes flex/inline quirks */
+    z-index: 1000 !important; /* float above page content */
+    background-color: #f8fafc !important;
+  }
 }
