@@ -1,6 +1,6 @@
-import { User } from 'firebase/auth';
 import { Validators } from '@angular/forms';
 import { FirebaseError } from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 
 export const validations = (...validators: any[]) => [
   '',
@@ -75,4 +75,39 @@ export interface PurchaseOrder {
     totalUnits: string;
     totalAmount: string;
   };
+}
+
+export interface InboundDocument {
+  AckStatusCode: string | null;
+  AckStatusDescription: string | null;
+  AifNumber: string | null;
+  ApprovalTimestamp: string;
+  Country: string | null;
+  CreatedTimestamp: string;
+  DocSplitInd: string;
+  DocType: string;
+  DocumentCountry: string;
+  DocumentId: number;
+  DocumentNumber: string;
+  DocumentOpenedIndicator: string;
+  DocumentStatusCode: number;
+  DocumentTypeCode: number;
+  EditType: string | null;
+  Location: string;
+  MailboxId: number;
+  MailboxSystemSeparator: string | null;
+  OrderDate: string;
+  PdfRequestIconDisplay: string | null;
+  PdfRequestJsonDetail: any | null;
+  PdfStatus: string | null;
+  RelatedDocumentCount: number;
+  TaSlipNumber: string;
+  TaSplitInd: string;
+  TotalRows: number;
+  TradRelId: string | null;
+  VendorName: string | null;
+  VendorNumber: number;
+  WebEdiSetupId: number | null;
+  XmlPath: string;
+  createdAtTs: Timestamp;
 }

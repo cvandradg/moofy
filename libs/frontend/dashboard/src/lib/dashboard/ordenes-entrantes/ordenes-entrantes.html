@@ -1,0 +1,18 @@
+<mat-accordion>
+  @for (inboundOrders of groupedBy3h(); track inboundOrders) {
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-description>
+        <div>
+          <strong>{{ ` ${inboundOrders.length} ` }}</strong>
+          órdenes entrantes el día {{ spanishFormatter.format(inboundOrders[0].createdAtTs.toDate()) }}
+        </div>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    @for (inboundOrder of inboundOrders; track inboundOrder) {
+    <p>{{ inboundOrder.DocumentNumber }}</p>
+    }
+  </mat-expansion-panel>
+  }
+</mat-accordion>

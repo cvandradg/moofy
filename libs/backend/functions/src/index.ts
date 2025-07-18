@@ -24,11 +24,9 @@ function parseDate(str: string): Timestamp {
   return Timestamp.fromDate(new Date(y, m - 1, d));
 }
 
-// — Initialize Firebase Admin SDK ——————————————————————————
 initializeApp();
 const db = getFirestore();
 
-// — Initialize Cloud Storage client for screenshots ——————————
 const storage = new Storage();
 const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
 const USERNAME = 'candradeg9182@gmail.com';
@@ -38,13 +36,11 @@ const MAILBOX_ID = '51619';
 const BOT_TOKEN =
   'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NTUxOTMwOTYsImlhdCI6MTc1MDAwOTA5NiwianRpIjoiNmRjZWE2ZWYtMzBmNi00Nzc5LTk2MzktOTg5YjE3NzFhM2E3In0.KfWTg97hH77NriVD-iXgHQhJgRrkIjByMQifmpdt8WXCpbtSDuD-2g-hMoaTfpMjASSdjRb5E_3J1qYvG7gcZX3UiX9YSCYSSP2pR08B52jlA5u2R1zlsC8DNKX-zWlwi-kIcMxq8WWjI1AlFoHB8PW_mRg_jIIsds5XSgoz0rRqNqObAdCkheZXHMJKb9bsNNmRW7wt2ksQOGZLBs0qXZVypC0QLtXH6y5jWubLZ40im9Lf-YwWDDu53spwSzTbNUaa-5DTW2JWI30g4qM8tj12uCycS310ohjZn2Bc-5WRHhpTR5KXjuxThYyu76RLyhY6OAJPW1lKvQ7Q-WWHdw';
 
-// — Prepare local screenshots directory ——————————————————————————
 const screenshotsDir = path.resolve('screenshots');
 function ensureScreenshotsDir() {
   if (!fs.existsSync(screenshotsDir)) fs.mkdirSync(screenshotsDir, { recursive: true });
 }
 
-// — Types —————————————————————————————————————————————————————
 interface InboundDoc {
   DocumentId: number;
   DocumentNumber: string;
@@ -56,13 +52,11 @@ interface PurchaseOrderDetails {
   [key: string]: any;
 }
 
-// — Helper: upload screenshot to GCS —————————————————————————
 async function uploadScreenshot(localPath: string, destFilename: string) {
   await storage.bucket(SCREENSHOT_BUCKET).upload(localPath, { destination: destFilename });
   fs.unlinkSync(localPath);
 }
 
-// — Login helper —————————————————————————————————————————————
 async function loginAndGetCookies(): Promise<CookieParam[]> {
   console.log('🔑 Performing login…');
   const res = await fetch('https://retaillink.login.wal-mart.com/api/login', {
@@ -92,7 +86,6 @@ async function loginAndGetCookies(): Promise<CookieParam[]> {
   return cookies;
 }
 
-// — Fetch inbound docs ————————————————————————————————————————————
 async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promise<InboundDoc[]> {
   console.log('📥 Fetching inbound documents…');
   const page = await browser.newPage();
@@ -110,7 +103,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     documentCountry: '',
     newSearch: 'true',
     pageNum: '0',
-    pageSize: '250',
+    pageSize: '1000',
     sortDataField: 'CreatedTimestamp',
     sortOrder: 'desc',
     skipWork: 'true',
@@ -122,6 +115,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
   const docs = JSON.parse(content) as any[];
   console.log(`📄 Fetched ${docs.length} inbound documents`);
   return docs.map((d) => ({
+    ...d,
     DocumentId: d.DocumentId,
     DocumentNumber: d.DocumentNumber,
     Location: d.Location,
@@ -129,7 +123,6 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
   }));
 }
 
-// — Fetch PO details —————————————————————————————————————————————
 async function fetchOrderDetails(
   browser: Browser,
   cookies: CookieParam[],
@@ -148,17 +141,13 @@ async function fetchOrderDetails(
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
-      // 1) Wait for the PO number so we know the page is ready:
-      // 1) grab the #poNumber anchor
       const anchor = await page.waitForSelector('#poNumber', { visible: true, timeout: 30_000 });
       if (!anchor) throw new Error('🛑 #poNumber never appeared');
 
-      // 2) get its bounding box
       const box = await anchor.boundingBox();
       if (!box) throw new Error('🛑 Could not compute bounding box for #poNumber');
       const startY = Math.round(box.y);
 
-      // 3) grab your <main> wrapper
       const mainEl = await page.$('main.container-fluid');
       if (!mainEl) throw new Error('🛑 <main> wrapper vanished');
       const mainBox = await mainEl.boundingBox();
@@ -166,32 +155,32 @@ async function fetchOrderDetails(
       const mainX = Math.round(mainBox.x);
       const mainW = Math.round(mainBox.width);
 
-      // 4) figure out the real page height
       const fullHeight = await page.evaluate(() =>
         Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
       );
 
-      // 5) build your clip from (mainX, startY) down to bottom of document
+      const TOP_MARGIN = 5;
+      const clipY = Math.max(0, startY - TOP_MARGIN);
+      const clipHeight = Math.round(fullHeight - clipY);
+
       const clip = {
         x: mainX,
-        y: startY,
+        y: clipY,
         width: mainW,
-        height: Math.round(fullHeight - startY),
+        height: clipHeight,
       };
 
-      // 6) screenshot exactly that region
       const successPath = path.join(screenshotsDir, `po-${docId}.png`);
       await page.screenshot({ path: successPath, clip });
       await uploadScreenshot(successPath, `purchase-orders/po-${docId}.png`);
 
-      break; // done!
+      break;
     } catch (err) {
       console.warn(`⚠️ Attempt ${attempt} failed for PO ${docId}@${location}:`, err);
 
       if (attempt < MAX_ATTEMPTS) {
         console.log(`⏳ Retrying screenshot (${attempt + 1}/${MAX_ATTEMPTS})…`);
       } else {
-        // after final failure, do your two fallback screenshots:
         const initPath = path.join(screenshotsDir, `start-po-${docId}.png`);
         await page.screenshot({ path: initPath });
         await uploadScreenshot(initPath, `failed-fetch/start-po-${docId}.png`);
@@ -250,7 +239,6 @@ async function fetchOrderDetails(
   };
 }
 
-// — Core scraping flow with batched existence check —————————————————————
 async function scrapeAll(): Promise<void> {
   const cookies = await loginAndGetCookies();
   const browser = await puppeteer.launch({
@@ -261,15 +249,24 @@ async function scrapeAll(): Promise<void> {
   try {
     const inbound = await fetchInboundDocs(browser, cookies);
 
+    if (inbound.length) {
+      const batch = db.batch();
+      inbound.forEach((d) => {
+        const ref = db.collection('inboundOrders').doc(d.DocumentId.toString());
+        batch.set(ref, d);
+      });
+      await batch.commit();
+      console.log(`✅ Stored ${inbound.length} docs in inboundOrders`);
+    }
+
     const createdTsMap = new Map<number, Timestamp>(inbound.map((d) => [d.DocumentId, d.createdAtTs]));
 
-    // Batch-check existing PO docs in Firestore by DocumentId
     const existing = new Set<string>();
     const batchSize = 500;
     for (let i = 0; i < inbound.length; i += batchSize) {
       const chunk = inbound.slice(i, i + batchSize);
       const refs: DocumentReference[] = chunk.map((d) =>
-        db.collection('purchaseOrderDetails3').doc(d.DocumentId.toString())
+        db.collection('purchaseOrderDetails2').doc(d.DocumentId.toString())
       );
       const snaps: DocumentSnapshot[] = await db.getAll(...refs);
       snaps.forEach((s) => {
@@ -277,7 +274,6 @@ async function scrapeAll(): Promise<void> {
       });
     }
 
-    // Only fetch details for new orders
     const toFetch = inbound.filter((d) => !existing.has(d.DocumentId.toString()));
     console.log(`🔄 Will fetch ${toFetch.length} new POs (of ${inbound.length} inbound)`);
 
@@ -300,7 +296,6 @@ async function scrapeAll(): Promise<void> {
     );
     const details = (await Promise.all(detailPromises)).filter((d): d is PurchaseOrderDetails => d !== null);
 
-    // Commit in 500-size batches, using DocumentId as the doc ID
     for (let i = 0; i < details.length; i += batchSize) {
       const chunk = details.slice(i, i + batchSize);
       console.log(`📥 Writing batch ${Math.floor(i / batchSize) + 1} with ${chunk.length} docs to Firestore`);
@@ -312,7 +307,7 @@ async function scrapeAll(): Promise<void> {
           ...(createdAtTs && { createdAtTs }),
         };
 
-        batch.set(db.collection('purchaseOrderDetails3').doc(o.DocumentId.toString()), docData);
+        batch.set(db.collection('purchaseOrderDetails2').doc(o.DocumentId.toString()), docData);
       });
       await batch.commit();
       console.log(`📤 Committed batch ${Math.floor(i / batchSize) + 1}`);
@@ -322,7 +317,6 @@ async function scrapeAll(): Promise<void> {
   }
 }
 
-// — Express app for Cloud Run ————————————————————————————————————
 const app = express();
 app.use(cors({ origin: true }));
 app.post('/run-scrape', async (_req, res) => {
@@ -340,7 +334,6 @@ app.post('/run-scrape', async (_req, res) => {
 const PORT = parseInt(process.env.PORT || '8080', 10);
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
-// — Run as script guard —————————————————————————————————————
 const __filename = fileURLToPath(import.meta.url);
 if (process.argv[1] === __filename) {
   scrapeAll()

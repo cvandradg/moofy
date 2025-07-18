@@ -1,6 +1,11 @@
 <div class="supercenter">
-  {{ 'Supercenter ' + purchaseOrderDetails$().location }}
-  <moofy-print-orders [purchaseOrders]="[this.purchaseOrderDetails$()]" />
+  <div>
+    {{ 'Supercenter ' + purchaseOrderDetails$().location }}
+    <moofy-print-orders [purchaseOrders]="[this.purchaseOrderDetails$()]" />
+  </div>
+  <div>
+    {{ 'Número de Órden  ' + purchaseOrderDetails$().DocumentId }}
+  </div>
 </div>
 
 <table mat-table [dataSource]="filteredItems().items" class="mat-elevation-z8">

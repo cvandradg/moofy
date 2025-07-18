@@ -30,6 +30,7 @@ import { TabsModule } from 'primeng/tabs';
 import { ButtonModule } from 'primeng/button';
 
 import { IftaLabelModule } from 'primeng/iftalabel';
+import { OrdenesEntrantes } from "../ordenes-entrantes/ordenes-entrantes";
 
 @Component({
   selector: 'moofy-upload-orders',
@@ -52,7 +53,8 @@ import { IftaLabelModule } from 'primeng/iftalabel';
     CalendarModule,
     MatBottomSheetModule,
     PurchaseOrderBreakdownComponent,
-  ],
+    OrdenesEntrantes
+],
   providers: [provideNativeDateAdapter()],
   templateUrl: './upload-orders.component.html',
   styleUrls: ['./upload-orders.component.scss'],
@@ -96,7 +98,7 @@ export class UploadOrdersComponent {
     }),
     stream: ({ params: { start, end } }) => {
       const q = query(
-        collection(this.firestore, 'purchaseOrderDetails3') as CollectionReference<PurchaseOrder>,
+        collection(this.firestore, 'purchaseOrderDetails2') as CollectionReference<PurchaseOrder>,
         where('createdAtTs', '>=', start),
         where('createdAtTs', '<=', end)
       );
