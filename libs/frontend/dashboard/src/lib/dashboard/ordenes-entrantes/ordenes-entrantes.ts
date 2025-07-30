@@ -71,13 +71,13 @@ export class OrdenesEntrantes {
   }
 
   readonly spanishFormatter = new Intl.DateTimeFormat('es-CR', {
-    weekday: 'long', // “jueves”
-    day: 'numeric', // “15”
-    month: 'numeric', // “7”
-    year: 'numeric', // “2015”
-    hour: '2-digit', // “14”
-    minute: '2-digit', // “00”
-    hour12: false, // 24‑hour mode
+    weekday: 'long',
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
     hourCycle: 'h23',
   });
 }
