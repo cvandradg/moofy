@@ -1,9 +1,9 @@
-import 'pdfmake/build/vfs_fonts';
 import { Injectable } from '@angular/core';
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import 'pdfmake/build/vfs_fonts';
 import { PurchaseOrder } from '../types/general-types';
-import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { moofyToWalmartRoutes } from './moofy-to-walmart-routes';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -29,20 +29,20 @@ export class PrintOrdersService {
     const imgs = await Promise.all(
       purchaseOrders.map(async (po) => {
         const url = `https://storage.googleapis.com/purchase-orders-screenshots/purchase-orders/po-${po.DocumentId}.png`;
+      console.log('dataurl:',url);
 
-        const dataUrl = await this.toDataUrl(url);
+        const originalDataUrl = await this.toDataUrl(url);
 
-        const img = new Image();
-        img.src = dataUrl;
-        await new Promise((r) => (img.onload = r));
+        const imgEl = await this.loadImg(originalDataUrl);
+        const croppedDataUrl = this.cropTopFraction(imgEl, 0.94); // keep top 96%
 
-        return { po, dataUrl, widthPt: (img.width * 0.45) as number };
+        return { po, dataUrl: croppedDataUrl, widthPt: imgEl.width * 0.45 };
       })
     );
 
     const content = imgs.flatMap(({ po, dataUrl, widthPt }, idx) => {
       const routeNum = this.getRouteForLocation(po.location);
-      const stops = moofyToWalmartRoutes[routeNum as keyof typeof moofyToWalmartRoutes] || [];
+      const stops = moofyToWalmartRoutes[routeNum] || [];
       const matchingStop = stops.find((stop) => stop.name === po.location);
 
       const header: any = {
@@ -81,5 +81,32 @@ export class PrintOrdersService {
             reader.readAsDataURL(blob);
           })
       );
+  }
+
+  private loadImg(dataUrl: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = reject;
+      i.src = dataUrl;
+    });
+  }
+
+  private cropTopFraction(img: HTMLImageElement, keepFraction = 0.5): string {
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    const keptH = Math.floor(h * keepFraction);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = keptH;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      throw new Error('Failed to get 2D context from canvas');
+    }
+    ctx.drawImage(img, 0, 0, w, keptH, 0, 0, w, keptH);
+
+    return canvas.toDataURL('image/png');
   }
 }
