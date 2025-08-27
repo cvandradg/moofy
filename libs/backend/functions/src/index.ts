@@ -30,7 +30,7 @@ const db = getFirestore();
 const storage = new Storage();
 const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
 const USERNAME = 'candradeg9182@gmail.com';
-const PASSWORD = 'PastryFactory2025';
+const PASSWORD = 'PastryFactory202508';
 const MAX_ATTEMPTS = 6;
 const MAILBOX_ID = '51619';
 const BOT_TOKEN =
@@ -71,9 +71,13 @@ async function loginAndGetCookies(): Promise<CookieParam[]> {
       password: PASSWORD,
       language: 'en',
     }),
+  }).catch((err: unknown) => {
+    console.error('LOGIN network error:', err);
+    throw err;
   });
   if (!res.ok) {
     const text = await res.text();
+    console.error('LOGIN failed:', res.status, res.statusText, text);
     throw new Error(`Login failed: ${text}`);
   }
   const raw = res.headers.raw()['set-cookie'] || [];
@@ -103,7 +107,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     documentCountry: '',
     newSearch: 'true',
     pageNum: '0',
-    pageSize: '1000',
+    pageSize: '6000',
     sortDataField: 'CreatedTimestamp',
     sortOrder: 'desc',
     skipWork: 'true',
@@ -215,7 +219,7 @@ async function fetchOrderDetails(
     items: $('table.table tr')
       .slice(1)
       .toArray()
-      .map((row) => {
+      .map((row: any) => {
         const c = $(row).find('td');
         return {
           line: c.eq(0).text().trim(),
@@ -321,7 +325,15 @@ const app = express();
 app.use(cors({ origin: true }));
 app.post('/run-scrape', async (_req, res) => {
   try {
-    await scrapeAll();
+    await scrapeAll()
+      .then(() => {
+        console.log('DONE');
+        process.exit(0);
+      })
+      .catch((e) => {
+        console.error('FATAL scrape error:', e && (e.stack || e));
+        process.exit(1);
+      });
     res.status(200).send('Scrape completed');
     process.exit(0);
   } catch (err) {
@@ -340,5 +352,8 @@ if (process.argv[1] === __filename) {
     .then(() => process.exit(0))
     .catch(() => process.exit(1));
 }
+
+process.on('unhandledRejection', (e) => console.error('UNHANDLED REJECTION', e));
+process.on('uncaughtException', (e) => console.error('UNCAUGHT EXCEPTION', e));
 
 export default app;
