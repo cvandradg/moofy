@@ -30,11 +30,11 @@ const db = getFirestore();
 const storage = new Storage();
 const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
 const USERNAME = 'candradeg9182@gmail.com';
-const PASSWORD = 'PastryFactory202506';
+const PASSWORD = 'PastryFactory202508';
 const MAX_ATTEMPTS = 6;
 const MAILBOX_ID = '51619';
 const BOT_TOKEN =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NTUxOTMwOTYsImlhdCI6MTc1MDAwOTA5NiwianRpIjoiNmRjZWE2ZWYtMzBmNi00Nzc5LTk2MzktOTg5YjE3NzFhM2E3In0.KfWTg97hH77NriVD-iXgHQhJgRrkIjByMQifmpdt8WXCpbtSDuD-2g-hMoaTfpMjASSdjRb5E_3J1qYvG7gcZX3UiX9YSCYSSP2pR08B52jlA5u2R1zlsC8DNKX-zWlwi-kIcMxq8WWjI1AlFoHB8PW_mRg_jIIsds5XSgoz0rRqNqObAdCkheZXHMJKb9bsNNmRW7wt2ksQOGZLBs0qXZVypC0QLtXH6y5jWubLZ40im9Lf-YwWDDu53spwSzTbNUaa-5DTW2JWI30g4qM8tj12uCycS310ohjZn2Bc-5WRHhpTR5KXjuxThYyu76RLyhY6OAJPW1lKvQ7Q-WWHdw';
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NjA4MTYzOTksImlhdCI6MTc1NTYzMjM5OSwianRpIjoiMDY4YzUyYWUtNjE4NC00MzE0LWE3NDQtNjY1YWIzNmQ4NTEzIn0.q7zmqTYFiE9Um2IQKAdMGs93-LAF7K9SrWpSkjNn_vVjHGkky2owPqxuRR6zumXIgwjyx2AAQUJKH8AUwjldquh9m7C9J72XaM6Bkt9kDpQN10214iKOW0rLFT68VHbJMwkkMBDypNlbTvTOwpacdf0yeEbUqQhQoggdVH8d1lhk8gDwrVRETDu0Gqfw8sIWZff3I3x1an-4iXGOF0Ijawi2A3erRzWscvxgbeNpoffpICVpxvNqRyBOvmmHZFl1wkokyXN9qsMABE7Z6M90XRMr_ErTJxXfYQo7Q-3tgLiHVPLmqS73h9JMNgrfYRpDY8JrBuXIm6DebVGKlusN_g';
 
 const screenshotsDir = path.resolve('screenshots');
 function ensureScreenshotsDir() {
@@ -71,9 +71,13 @@ async function loginAndGetCookies(): Promise<CookieParam[]> {
       password: PASSWORD,
       language: 'en',
     }),
+  }).catch((err: unknown) => {
+    console.error('LOGIN network error:', err);
+    throw err;
   });
   if (!res.ok) {
     const text = await res.text();
+    console.error('LOGIN failed:', res.status, res.statusText, text);
     throw new Error(`Login failed: ${text}`);
   }
   const raw = res.headers.raw()['set-cookie'] || [];
@@ -103,7 +107,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     documentCountry: '',
     newSearch: 'true',
     pageNum: '0',
-    pageSize: '1000',
+    pageSize: '6000',
     sortDataField: 'CreatedTimestamp',
     sortOrder: 'desc',
     skipWork: 'true',
@@ -215,7 +219,7 @@ async function fetchOrderDetails(
     items: $('table.table tr')
       .slice(1)
       .toArray()
-      .map((row) => {
+      .map((row: any) => {
         const c = $(row).find('td');
         return {
           line: c.eq(0).text().trim(),
@@ -321,7 +325,15 @@ const app = express();
 app.use(cors({ origin: true }));
 app.post('/run-scrape', async (_req, res) => {
   try {
-    await scrapeAll();
+    await scrapeAll()
+      .then(() => {
+        console.log('DONE');
+        process.exit(0);
+      })
+      .catch((e) => {
+        console.error('FATAL scrape error:', e && (e.stack || e));
+        process.exit(1);
+      });
     res.status(200).send('Scrape completed');
     process.exit(0);
   } catch (err) {
@@ -340,5 +352,8 @@ if (process.argv[1] === __filename) {
     .then(() => process.exit(0))
     .catch(() => process.exit(1));
 }
+
+process.on('unhandledRejection', (e) => console.error('UNHANDLED REJECTION', e));
+process.on('uncaughtException', (e) => console.error('UNCAUGHT EXCEPTION', e));
 
 export default app;
