@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-analytics',
-  imports: [CommonModule],
+  imports: [],
   template: `
     <h1>Analytics</h1>
   `,

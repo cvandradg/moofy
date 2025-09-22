@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { InboundDocument } from '@moofy-admin/shared';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -7,7 +6,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 
 @Component({
   selector: 'moofy-ordenes-entrantes',
-  imports: [MatExpansionModule, CommonModule],
+  imports: [MatExpansionModule],
   templateUrl: './ordenes-entrantes.html',
   styleUrl: './ordenes-entrantes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

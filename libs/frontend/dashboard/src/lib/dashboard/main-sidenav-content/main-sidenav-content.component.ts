@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -84,7 +83,7 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
       }
     `,
   ],
-  imports: [Fontawesome, CommonModule, RouterModule, MatIconModule, MatListModule, MatSidenavModule, MenuItemComponent],
+  imports: [Fontawesome, RouterModule, MatIconModule, MatListModule, MatSidenavModule, MenuItemComponent],
 })
 export class MainSidenavContentComponent {
   state = signal(0);

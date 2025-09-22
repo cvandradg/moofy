@@ -4,12 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLinkActive, RouterModule } from '@angular/router';
 import { Component, computed, input, signal } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { CommonModule } from '@angular/common';
+
 import { MenuItem } from '../../../menu-items';
 
 @Component({
   selector: 'moofy-main-sidenav-item',
-  imports: [CommonModule, Fontawesome, RouterModule, MatListModule, MatIconModule, RouterLinkActive],
+  imports: [Fontawesome, RouterModule, MatListModule, MatIconModule, RouterLinkActive],
   template: `
     <div class="item-container">
       <a

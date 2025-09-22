@@ -29,7 +29,7 @@ export class PrintOrdersService {
     const imgs = await Promise.all(
       purchaseOrders.map(async (po) => {
         const url = `https://storage.googleapis.com/purchase-orders-screenshots/purchase-orders/po-${po.DocumentId}.png`;
-      console.log('dataurl:',url);
+        console.log('dataurl:', url);
 
         const originalDataUrl = await this.toDataUrl(url);
 
