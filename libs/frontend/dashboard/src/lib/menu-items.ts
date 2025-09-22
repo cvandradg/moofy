@@ -3,11 +3,12 @@ import { ContentComponent } from './pages/content/content.component';
 import { CommentsComponent } from './pages/comments/comments.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { UploadOrdersComponent } from './dashboard/upload-orders/upload-orders.component';
-import { IconProp } from '@fortawesome/angular-fontawesome/types';
 import { Route } from '@angular/router';
+import { IconLookup, IconName } from '@fortawesome/fontawesome-common-types';
+import { IconPrefix } from '@fortawesome/angular-fontawesome';
 
 export type MenuItem = {
-  icon: IconProp;
+  icon: IconName | [IconPrefix, IconName] | IconLookup;
   label: string;
   route: string;
   subItems?: MenuItem[];

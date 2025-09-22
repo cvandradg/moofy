@@ -116,7 +116,6 @@ export class UploadOrdersStore extends ComponentStoreMixinHelper<{
   readonly inboundOrders$ = this.select((state) => state.inboundOrders);
   readonly inboundOrderDetails$ = this.select((state) => state.inboundOrderDetails);
   readonly currentRouteOrders$ = this.select((state) => {
-    console.log('currentRouteOrders', state.currentRouteOrders);
 
     const filtered = state.currentRouteOrders.filter((item) => {
       const [m, d, y] = item.orderDate.split('/').map(Number);

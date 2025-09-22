@@ -158,9 +158,4 @@ export class UploadOrdersComponent {
       .flatMap(([, orders]) => orders); // drop the keys, keep orders
   });
 
-  constructor() {
-    effect(() => {
-      // console.log('flat:', this.allOrdersSortedByRoute());
-    });
-  }
 }

@@ -4,7 +4,6 @@ import { MatListModule } from '@angular/material/list';
 import { Component, computed, input, output, signal } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Fontawesome } from '@moofy-admin/shared';
-import { IconProp } from '@fortawesome/angular-fontawesome/types';
 import { menuItems } from '../../menu-items';
 import { MenuItemComponent } from './menu-item/menu-item.component';
 

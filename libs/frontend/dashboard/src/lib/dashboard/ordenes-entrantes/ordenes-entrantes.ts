@@ -38,12 +38,6 @@ export class OrdenesEntrantes {
     return itemsNewestFirst.reverse();
   });
 
-  constructor() {
-    effect(() => {
-      console.log('orders arranged:', this.groupedBy3h());
-    });
-  }
-
   groupByTimeGap<T>(items: T[], getTime: (item: T) => number, maxGapMs: number): T[][] {
     const sorted = [...items].sort((a, b) => getTime(a) - getTime(b));
     const groups: T[][] = [];

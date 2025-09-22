@@ -21,10 +21,4 @@ export class PurchaseOrderBreakdownComponent {
       items: this.purchaseOrderDetails$().items.filter((item: any) => item.quantityOrdered),
     };
   });
-
-  constructor() {
-    effect(() => {
-      console.log('purchaseOrderDetails$():', this.purchaseOrderDetails$());
-    });
-  }
 }
