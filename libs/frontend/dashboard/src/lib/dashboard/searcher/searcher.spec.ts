@@ -7,7 +7,7 @@ describe('Searcher', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [Searcher],
+      imports: [Searcher],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Searcher);

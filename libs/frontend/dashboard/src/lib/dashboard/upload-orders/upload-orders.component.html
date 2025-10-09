@@ -13,6 +13,7 @@
               <p-tablist>
                 <p-tab value="0">Totales</p-tab>
                 <p-tab value="1">Desglose de rutas</p-tab>
+                <p-tab value="searcher">Buscador</p-tab>
                 <p-tab value="2">
                   <p-iftalabel
                     class="date-picker-container"
@@ -201,6 +202,11 @@
                           </div>
                         }
                       </div>
+                    </div>
+                  </p-tabpanel>
+                  <p-tabpanel value="searcher">
+                    <div class="tabs-container">
+                      <moofy-upload-searcher />
                     </div>
                   </p-tabpanel>
                 </p-tabpanels>

@@ -31,6 +31,7 @@ import { ButtonModule } from 'primeng/button';
 
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { OrdenesEntrantes } from "../ordenes-entrantes/ordenes-entrantes";
+import { Searcher } from '../searcher/searcher';
 
 @Component({
   selector: 'moofy-upload-orders',
@@ -53,7 +54,8 @@ import { OrdenesEntrantes } from "../ordenes-entrantes/ordenes-entrantes";
     CalendarModule,
     MatBottomSheetModule,
     PurchaseOrderBreakdownComponent,
-    OrdenesEntrantes
+    OrdenesEntrantes,
+    Searcher,
 ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './upload-orders.component.html',
