@@ -5,18 +5,20 @@
       inputId="searchQuery"
       class="ac"
       [(ngModel)]="query"
-      [suggestions]="suggestions()"
+      [suggestions]="filteredOptions()"
       (completeMethod)="filterOptions($event)"
       (onSelect)="onOptionSelect($event)"
+      (ngModelChange)="onModelChange($event)"
       [dropdown]="true"
+      [showClear]="true"
       [forceSelection]="true"
       [minLength]="0"
-      [placeholder]="'Escribe para buscar por ' + (searchMode === 'code' ? 'código' : 'categoría')"
+      [placeholder]="'Escribe para buscar por ' + (searchMode === 'code' ? 'código' : (searchMode === 'ruta' ? 'categoría' : 'nombre'))"
     ></p-autoComplete>
   </div>
 
   <p-table
-    [value]="items()"
+    [value]="visibleItems()"
     [paginator]="true"
     [rows]="10"
     [rowsPerPageOptions]="[5,10,20]"
@@ -26,9 +28,9 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="width:10rem">Code</th>
-        <th>Name</th>
-        <th style="width:12rem">ruta</th>
+        <th style="width:10rem" scope="col">Code</th>
+        <th scope="col">Name</th>
+        <th style="width:12rem" scope="col">ruta</th>
       </tr>
     </ng-template>
 

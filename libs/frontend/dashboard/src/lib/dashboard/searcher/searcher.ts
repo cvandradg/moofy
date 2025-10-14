@@ -4,6 +4,7 @@ import { MODULES } from '@moofy-admin/shared';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
+import type { AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 
 type Item = {
   code: string;
@@ -21,74 +22,85 @@ type Item = {
 })
 export class Searcher {
   readonly items = signal<Item[]>([
-    { code: 'A100', name: 'Manzana Fuji',     ruta: 'Fruta'   },
-    { code: 'A100', name: 'Manzana Gala',     ruta: 'Fruta'   },
-    { code: 'B200', name: 'Banano Cavendish', ruta: 'Fruta'   },
-    { code: 'B200', name: 'Banano Criollo',   ruta: 'Fruta'   },
-    { code: 'C300', name: 'Zanahoria',        ruta: 'Vegetal' },
-    { code: 'D400', name: 'Lechuga Romana',   ruta: 'Vegetal' },
-    { code: 'C300', name: 'Zanahoria Baby',   ruta: 'Vegetal' },
-    { code: 'E500', name: 'Arroz Integral',   ruta: 'Grano'   },
-    { code: 'E500', name: 'Arroz Jazmín',     ruta: 'Grano'   },
-    { code: 'F600', name: 'Avena',            ruta: 'Cereal'  },
+    { code: 'A100', name: 'Manzana Fuji', ruta: 'Fruta' },
+    { code: 'A100', name: 'Manzana Gala', ruta: 'Fruta' },
+    { code: 'B200', name: 'Banano Cavendish', ruta: 'Fruta' },
+    { code: 'B200', name: 'Banano Criollo', ruta: 'Fruta' },
+    { code: 'C300', name: 'Zanahoria', ruta: 'Vegetal' },
+    { code: 'D400', name: 'Lechuga Romana', ruta: 'Vegetal' },
+    { code: 'C300', name: 'Zanahoria Baby', ruta: 'Vegetal' },
+    { code: 'E500', name: 'Arroz Integral', ruta: 'Grano' },
+    { code: 'E500', name: 'Arroz Jazmín', ruta: 'Grano' },
+    { code: 'F600', name: 'Avena', ruta: 'Cereal' },
   ]);
 
   searchMode: 'code' | 'ruta' | 'name' = 'code';
+
   query: string | null = null;
-  readonly querySignal = signal<string>('');
+
+  readonly filteredOptions = signal<string[]>([]);
+
+  readonly filterState = signal<{ field: 'code' | 'name' | 'ruta'; value: string } | null>(null);
+
+  readonly visibleItems = computed<Item[]>(() => {
+    const f = this.filterState();
+    if (!f) return this.items();
+    return this.items().filter((item) => item[f.field] === f.value);
+  });
 
   readonly uniqueCodes = computed<string[]>(() => {
-    const set = new Set(this.items().map(i => i.code));
+    const set = new Set(this.items().map((i) => i.code));
     return Array.from(set).sort();
   });
 
   readonly uniqueRutas = computed<string[]>(() => {
-    const set = new Set(this.items().map(i => i.ruta));
+    const set = new Set(this.items().map((i) => i.ruta));
     return Array.from(set).sort();
   });
 
   readonly uniqueNames = computed<string[]>(() => {
-    const set = new Set(this.items().map(i => i.name));
+    const set = new Set(this.items().map((i) => i.name));
     return Array.from(set).sort();
   });
 
   readonly combinedOptions = computed<string[]>(() => {
-    const codes = this.uniqueCodes().map(v => `code: ${v}`);
-    const names = this.uniqueNames().map(v => `name: ${v}`);
-    const rutas = this.uniqueRutas().map(v => `ruta: ${v}`);
+    const codes = this.uniqueCodes().map((v) => `code: ${v}`);
+    const names = this.uniqueNames().map((v) => `name: ${v}`);
+    const rutas = this.uniqueRutas().map((v) => `ruta: ${v}`);
     return [...codes, ...names, ...rutas];
   });
 
-  readonly suggestions = computed(() => {
-    const q = this.querySignal().toLowerCase().trim();
+  filterOptions({ query }: AutoCompleteCompleteEvent): void {
+    const q = (query ?? '').toLowerCase().trim();
     const all = this.combinedOptions();
-    const filtered = q ? all.filter(s => s.toLowerCase().includes(q)) : all;
-    return filtered.slice(0, 50);
-  });
-
-  filterOptions(event: { query: string }): void {
-    this.querySignal.set(event?.query ?? '');
+    const next = q ? all.filter((s) => s.toLowerCase().includes(q)) : all;
+    this.filteredOptions.set(next.slice(0, 50));
   }
 
-  onOptionSelect(event: string | { value?: string } | null): void {
-    const raw = typeof event === 'string' ? event : (event?.value ?? this.query ?? '');
-    const [maybeField, ...rest] = raw.split(':');
-    const value = rest.join(':').trim();
+  onOptionSelect(event: AutoCompleteSelectEvent | { value?: string } | string | null): void {
+    const raw =
+      typeof event === 'string'
+        ? event
+        : ((event as AutoCompleteSelectEvent | { value?: string })?.value ?? this.query ?? '');
+
+    const [maybeField, ...rest] = String(raw).split(':');
     const key = (maybeField ?? '').trim().toLowerCase();
+    const valueOnly = rest.join(':').trim();
 
     const field: 'code' | 'name' | 'ruta' | null =
       key === 'code' || key === 'name' || key === 'ruta' ? (key as 'code' | 'name' | 'ruta') : null;
 
     const effectiveField = field ?? this.searchMode;
 
-    const matches = this.items().filter(item => {
-      switch (effectiveField) {
-        case 'code': return item.code === value;
-        case 'ruta': return item.ruta === value;
-        default:     return item.name === value;
-      }
-    });
+    this.filterState.set(valueOnly ? { field: effectiveField, value: valueOnly } : null);
 
-    console.log(`[Seleccionado ${effectiveField}="${value}"]`, matches);
+    this.query = valueOnly ? `${effectiveField}: ${valueOnly}` : '';
+  }
+
+  onModelChange(val: string | null): void {
+    if (!val) {
+      this.filterState.set(null);
+      this.filteredOptions.set(this.combinedOptions());
+    }
   }
 }
