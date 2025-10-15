@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MODULES } from '@moofy-admin/shared';
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -102,5 +102,15 @@ export class Searcher {
       this.filterState.set(null);
       this.filteredOptions.set(this.combinedOptions());
     }
+  }
+
+    purchaseOrders = input<any[]>([]);
+
+
+  constructor() {
+    effect(() => {
+      const data = this.purchaseOrders();
+      console.log('[Searcher] input recibido', data);
+    });
   }
 }
