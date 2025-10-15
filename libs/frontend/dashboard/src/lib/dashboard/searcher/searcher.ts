@@ -109,7 +109,7 @@ export class Searcher {
 
   constructor() {
     effect(() => {
-      const data = this.purchaseOrders();
+      const data = this.purchaseOrders().flatMap((x:any) => x.items);
       console.log('[Searcher] input recibido', data);
     });
   }
