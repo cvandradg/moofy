@@ -25,6 +25,7 @@
     >
       <ng-template pTemplate="header">
         <tr>
+           <th>Supercenter</th>
           <th style="width: 12rem">Código</th>
           <th>Cantidad</th>
         </tr>
@@ -32,6 +33,7 @@
 
       <ng-template pTemplate="body" let-row>
         <tr>
+          <td>{{ row.location }}</td> 
           <td>{{ row.itemNumber }}</td>
           <td>{{ row.quantityOrdered }}</td>
         </tr>

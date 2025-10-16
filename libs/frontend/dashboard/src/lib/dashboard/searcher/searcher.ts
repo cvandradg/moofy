@@ -30,7 +30,9 @@ export class Searcher {
 
   readonly itemNumbers = computed<string[]>(() => {
     const nums = new Set((this.allItems() ?? []).map((i) => String(i.itemNumber ?? '')));
-    return Array.from(nums).filter(Boolean).sort((a, b) => a.localeCompare(b));
+    return Array.from(nums)
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
   });
 
   readonly filteredSuggestions = signal<string[]>([]);
@@ -38,10 +40,21 @@ export class Searcher {
   readonly itemsByRoute = computed<Record<string | number, Item[]>>(() => {
     const byRoute = this.purchaseOrderByRoutes() ?? {};
     const out: Record<string | number, Item[]> = {};
+
     for (const [routeKey, pos] of Object.entries(byRoute)) {
       out[routeKey] =
-        pos?.flatMap((po: any) => (po?.items ?? []).filter((x: any) => !String(x?.line ?? '').includes('Total'))) ?? [];
+        (pos as any[])?.flatMap((po: any) => {
+          const loc = String(po?.location ?? ''); // take location from the PO
+          return (po?.items ?? [])
+            .filter((x: any) => !String(x?.line ?? '').includes('Total'))
+            .map((x: any) => ({
+              itemNumber: String(x.itemNumber ?? ''),
+              quantityOrdered: Number(x.quantityOrdered ?? 0),
+              location: loc, // attach it per row
+            }));
+        }) ?? [];
     }
+
     return out;
   });
 
@@ -82,6 +95,6 @@ export class Searcher {
   }
 
   constructor() {
-    effect(() => this.filteredSuggestions.set(this.itemNumbers()));
+    effect(() => console.log('purchaseOrderByRoutes()', this.purchaseOrderByRoutes()));
   }
 }
