@@ -1,68 +1,87 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { CommonModule } from '@angular/common'; // ⬅️ add this
 import { FormsModule } from '@angular/forms';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
-import { AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { InputTextModule } from 'primeng/inputtext';
 
-type Item = {
-  itemNumber: string;
-  quantityOrdered: number;
-};
+type Item = { itemNumber: string; quantityOrdered: number };
 
 @Component({
   selector: 'moofy-upload-searcher',
   standalone: true,
-  imports: [FormsModule, TableModule, AutoCompleteModule, InputTextModule],
+  imports: [CommonModule, FormsModule, TableModule, AutoCompleteModule, InputTextModule], // ⬅️ include CommonModule
   templateUrl: './searcher.html',
   styleUrls: ['./searcher.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Searcher {
+  readonly sortedRoutes = input<(string | number)[]>([]);
   readonly purchaseOrders = input<any[]>([]);
+  readonly purchaseOrderByRoutes = input<Record<string | number, any[]>>({} as any);
 
-  readonly allItems = computed<Item[]>(() => {
-    return this.purchaseOrders().flatMap((po) => po.items.filter((x: any) => !x.line.includes('Total')));
-  });
+  readonly query = signal<string>('');
+
+  readonly allItems = computed<Item[]>(() =>
+    (this.purchaseOrders() ?? []).flatMap((po) =>
+      (po?.items ?? []).filter((x: any) => !String(x?.line ?? '').includes('Total'))
+    )
+  );
 
   readonly itemNumbers = computed<string[]>(() => {
-    const nums = new Set(this.allItems().map((i) => i.itemNumber));
-    return Array.from(nums).sort();
+    const nums = new Set((this.allItems() ?? []).map((i) => String(i.itemNumber ?? '')));
+    return Array.from(nums).filter(Boolean).sort((a, b) => a.localeCompare(b));
   });
 
   readonly filteredSuggestions = signal<string[]>([]);
 
-  readonly query = signal<string>('');
+  readonly itemsByRoute = computed<Record<string | number, Item[]>>(() => {
+    const byRoute = this.purchaseOrderByRoutes() ?? {};
+    const out: Record<string | number, Item[]> = {};
+    for (const [routeKey, pos] of Object.entries(byRoute)) {
+      out[routeKey] =
+        pos?.flatMap((po: any) => (po?.items ?? []).filter((x: any) => !String(x?.line ?? '').includes('Total'))) ?? [];
+    }
+    return out;
+  });
 
-  readonly visibleItems = computed<Item[]>(() => {
+  readonly filteredItemsByRoute = computed<Record<string | number, Item[]>>(() => {
     const q = this.query().trim().toLowerCase();
-    if (!q) return this.allItems();
-    return this.allItems().filter((i) => i.itemNumber.toLowerCase().includes(q));
+    const base = this.itemsByRoute();
+    if (!q) return base;
+
+    const out: Record<string | number, Item[]> = {};
+    for (const [routeKey, items] of Object.entries(base)) {
+      out[routeKey] = items.filter((i) =>
+        String(i?.itemNumber ?? '')
+          .toLowerCase()
+          .includes(q)
+      );
+    }
+    return out;
   });
 
   filterOptions(event: AutoCompleteCompleteEvent) {
-    const q = (event.query ?? '').toLowerCase().trim();
-    const options = this.itemNumbers().filter((num) => num.toLowerCase().includes(q));
-    this.filteredSuggestions.set(options);
+    const q = String(event?.query ?? '')
+      .toLowerCase()
+      .trim();
+    this.filteredSuggestions.set(this.itemNumbers().filter((num) => num.toLowerCase().includes(q)));
   }
 
   onSelect(event: AutoCompleteSelectEvent) {
-    this.query.set(String(event.value ?? ''));
+    this.query.set(String(event?.value ?? ''));
   }
 
-onModelChange(value: string | null) {
-  const v = (value ?? '').trim();
-  if (!v) {
-    this.query.set('');
-    this.filteredSuggestions.set(this.itemNumbers());
-  } else {
+  onModelChange(value: string | null) {
+    const v = String(value ?? '').trim();
     this.query.set(v);
+    const lower = v.toLowerCase();
+    this.filteredSuggestions.set(
+      v ? this.itemNumbers().filter((n) => n.toLowerCase().includes(lower)) : this.itemNumbers()
+    );
   }
-}
 
   constructor() {
-    effect(() => {
-      console.log('[Searcher] Items recibidos del padre:', this.allItems());
-    });
+    effect(() => this.filteredSuggestions.set(this.itemNumbers()));
   }
 }
