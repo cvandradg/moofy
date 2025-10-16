@@ -94,12 +94,71 @@ export class Searcher {
     );
   }
 
+  // inside class Searcher { ... }
+
+  // inside class Searcher { ... }
+
+  // add this helper once if you haven't already
+private escapeCsv(val: unknown): string {
+  const s = String(val ?? '');
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+// Make Excel treat certain numeric-looking values as text (keeps leading zeros)
+private excelText(val: unknown): string {
+  const s = String(val ?? '');
+  // If it's all digits and either starts with 0 or is very long, force text
+  if (/^\d+$/.test(s) && (s.startsWith('0') || s.length > 15)) {
+    // Leading apostrophe: Excel stores as text and shows the value without the apostrophe
+    return `'${s}`;
+    // Alternative (also works but creates a formula): return `="${s}"`;
+  }
+  return s;
+}
+
+exportCsv(): void {
+  const byRoute = this.filteredItemsByRoute(); // export what's visible
+  const routeOrder = (this.sortedRoutes()?.length ? this.sortedRoutes() : Object.keys(byRoute)) as (string|number)[];
+
+  const lines: string[] = [];
+  lines.push('sep=,'); // helps Spanish Excel use commas
+  lines.push(['Ruta', 'Supercenter', 'Codigo', 'Cantidad'].join(',')); // <- headers in Spanish
+
+  for (const route of routeOrder) {
+    const key = route == null ? '' : String(route);
+    const items = (byRoute as any)[route as any] ?? [];
+    for (const it of items as any[]) {
+      const row = [
+        this.escapeCsv(key),
+        this.escapeCsv(String(it?.location ?? '')),
+        this.escapeCsv(this.excelText(it?.itemNumber)), // keeps leading zeros
+        this.escapeCsv(String(it?.quantityOrdered ?? 0)),
+      ];
+      lines.push(row.join(','));
+    }
+  }
+
+  const csv = '\ufeff' + lines.join('\n'); // UTF-8 BOM
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const filename = `items_by_route_${new Date().toISOString().replace(/[:T]/g, '-').slice(0, 19)}.csv`;
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
   constructor() {
     effect(() => {
-      console.log('purchaseOrders()', this.purchaseOrders())
-      console.log('sortedRoutes()', this.sortedRoutes())
-      console.log('purchaseOrderByRoutes()', this.purchaseOrderByRoutes())
+      console.log('purchaseOrders()', this.purchaseOrders());
+      console.log('sortedRoutes()', this.sortedRoutes());
+      console.log('purchaseOrderByRoutes()', this.purchaseOrderByRoutes());
     });
   }
 }
-

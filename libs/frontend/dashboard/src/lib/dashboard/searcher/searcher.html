@@ -13,7 +13,7 @@
       [minLength]="0"
       placeholder="Escribe el código del producto"
     />
-    <button><fa-icon [icon]="['far', 'file-csv']" size="2x" /></button>
+    <button (click)="exportCsv()"><fa-icon [icon]="['far', 'file-csv']" size="2x" /></button>
   </div>
 
   @for (route of sortedRoutes(); track route) {
