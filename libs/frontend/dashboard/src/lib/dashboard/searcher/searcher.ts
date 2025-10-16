@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common'; // ⬅️ add this
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { AutoCompleteModule, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { InputTextModule } from 'primeng/inputtext';
+import { Fontawesome } from '@moofy-admin/shared';
 
 type Item = { itemNumber: string; quantityOrdered: number };
 
 @Component({
   selector: 'moofy-upload-searcher',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, AutoCompleteModule, InputTextModule], // ⬅️ include CommonModule
+  imports: [FormsModule, TableModule, AutoCompleteModule, InputTextModule, Fontawesome],
   templateUrl: './searcher.html',
   styleUrls: ['./searcher.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -95,6 +95,11 @@ export class Searcher {
   }
 
   constructor() {
-    effect(() => console.log('purchaseOrderByRoutes()', this.purchaseOrderByRoutes()));
+    effect(() => {
+      console.log('purchaseOrders()', this.purchaseOrders())
+      console.log('sortedRoutes()', this.sortedRoutes())
+      console.log('purchaseOrderByRoutes()', this.purchaseOrderByRoutes())
+    });
   }
 }
+

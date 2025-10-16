@@ -23,8 +23,9 @@ import {
   faEye as faEyeRegular,
   faFile as faFileRegular,
   faFolder as faFolderRegular,
-  faCalendar as faCalendarRegular,
+  faFileCsv as faFileCsvRegular,
   faChartBar as faChartBarRegular,
+  faCalendar as faCalendarRegular,
   faTrashCan as faTrashCanRegular,
   faNoteSticky as faNoteStickyRegular,
   faCircleCheck as faCircleCheckRegular,
@@ -36,7 +37,7 @@ import {
   exports: [FontAwesomeModule],
 })
 export class Fontawesome {
-  constructor(private library: FaIconLibrary) {
+  constructor(library: FaIconLibrary) {
     library?.addIcons(
       //Solid
       faPlusSolid,
@@ -58,12 +59,13 @@ export class Fontawesome {
       faEyeRegular,
       faFileRegular,
       faFolderRegular,
+      faFileCsvRegular,
       faCalendarRegular,
       faChartBarRegular,
       faTrashCanRegular,
       faNoteStickyRegular,
       faCircleCheckRegular,
-      faRectangleListRegular
+      faRectangleListRegular,
     );
   }
 }
