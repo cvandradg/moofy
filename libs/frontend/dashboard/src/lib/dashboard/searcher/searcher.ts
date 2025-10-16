@@ -21,12 +21,9 @@ type Item = {
 export class Searcher {
   readonly purchaseOrders = input<any[]>([]);
 
-readonly allItems = computed<Item[]>(() => {
-  return this.purchaseOrders()
-    .flatMap(po => po.items.filter((x: any) =>  !x.line.includes('Total')));
-});
-
-
+  readonly allItems = computed<Item[]>(() => {
+    return this.purchaseOrders().flatMap((po) => po.items.filter((x: any) => !x.line.includes('Total')));
+  });
 
   readonly itemNumbers = computed<string[]>(() => {
     const nums = new Set(this.allItems().map((i) => i.itemNumber));
@@ -35,10 +32,10 @@ readonly allItems = computed<Item[]>(() => {
 
   readonly filteredSuggestions = signal<string[]>([]);
 
-  query: string | null = null;
+  readonly query = signal<string>('');
 
   readonly visibleItems = computed<Item[]>(() => {
-    const q = (this.query ?? '').trim().toLowerCase();
+    const q = this.query().trim().toLowerCase();
     if (!q) return this.allItems();
     return this.allItems().filter((i) => i.itemNumber.toLowerCase().includes(q));
   });
@@ -50,15 +47,18 @@ readonly allItems = computed<Item[]>(() => {
   }
 
   onSelect(event: AutoCompleteSelectEvent) {
-    this.query = event.value;
+    this.query.set(String(event.value ?? ''));
   }
 
-  onModelChange(value: string | null) {
-    if (!value) {
-      this.query = null;
-      this.filteredSuggestions.set(this.itemNumbers());
-    }
+onModelChange(value: string | null) {
+  const v = (value ?? '').trim();
+  if (!v) {
+    this.query.set('');
+    this.filteredSuggestions.set(this.itemNumbers());
+  } else {
+    this.query.set(v);
   }
+}
 
   constructor() {
     effect(() => {

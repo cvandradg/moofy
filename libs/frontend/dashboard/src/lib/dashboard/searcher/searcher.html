@@ -3,7 +3,7 @@
     <label class="lbl" for="searchQuery">Buscar por código:</label>
     <p-autoComplete
       inputId="searchQuery"
-      [(ngModel)]="query"
+      [ngModel]="query()"
       [suggestions]="filteredSuggestions()"
       (completeMethod)="filterOptions($event)"
       (onSelect)="onSelect($event)"
