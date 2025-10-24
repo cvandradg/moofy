@@ -30,6 +30,10 @@ import { Fontawesome } from '../assets/fontawesome/fontawesome';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
 
+import { TableModule } from 'primeng/table';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { InputTextModule } from 'primeng/inputtext';
+
 export const MODULES = [
   PushPipe,
   FormsModule,
@@ -62,4 +66,7 @@ export const MODULES = [
   MatSlideToggleModule,
   MatAutocompleteModule,
   MatProgressSpinnerModule,
+    TableModule,
+  AutoCompleteModule,
+  InputTextModule,
 ];

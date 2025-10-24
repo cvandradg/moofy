@@ -41,7 +41,7 @@ export class OrdenesEntrantes {
 
   constructor() {
     effect(() => {
-      console.log('orders arranged:', this.groupedBy3h());
+      // console.log('orders arranged:', this.groupedBy3h());
     });
   }
 

@@ -1,0 +1,44 @@
+<section class="searcher">
+  <div class="searchbar">
+    <p-autoComplete
+      inputId="searchQuery"
+      [ngModel]="query()"
+      [suggestions]="filteredSuggestions()"
+      (completeMethod)="filterOptions($event)"
+      (onSelect)="onSelect($event)"
+      (ngModelChange)="onModelChange($event)"
+      [dropdown]="true"
+      [showClear]="true"
+      [forceSelection]="false"
+      [minLength]="0"
+      placeholder="Escribe el código del producto"
+    />
+    <button (click)="exportCsv()"><fa-icon [icon]="['far', 'file-csv']" size="2x" /></button>
+  </div>
+
+  @for (route of sortedRoutes(); track route) {
+  <div>Ruta {{ route }}</div>
+  <p-table
+    [value]="filteredItemsByRoute()[route] ?? []"
+    [scrollable]="true"
+    scrollHeight="380px"
+    [tableStyle]="{ 'min-width': '40rem', margin: '1rem auto' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Supercenter</th>
+        <th style="width: 12rem">Código</th>
+        <th>Cantidad</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.location }}</td>
+        <td>{{ row.itemNumber }}</td>
+        <td>{{ row.quantityOrdered }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  }
+</section>

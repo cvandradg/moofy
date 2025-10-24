@@ -1,0 +1,19 @@
+.searchbar {
+    margin: 0 0 1rem 0;
+}
+
+.searchbar {
+    display: flex;
+    gap: 1.5rem;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
