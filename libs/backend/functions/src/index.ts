@@ -30,11 +30,11 @@ const db = getFirestore();
 const storage = new Storage();
 const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
 const USERNAME = 'candradeg9182@gmail.com';
-const PASSWORD = 'PastryFactory202508';
+const PASSWORD = 'PastryFactory202510';
 const MAX_ATTEMPTS = 6;
 const MAILBOX_ID = '51619';
 const BOT_TOKEN =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NjA4MTYzOTksImlhdCI6MTc1NTYzMjM5OSwianRpIjoiMDY4YzUyYWUtNjE4NC00MzE0LWE3NDQtNjY1YWIzNmQ4NTEzIn0.q7zmqTYFiE9Um2IQKAdMGs93-LAF7K9SrWpSkjNn_vVjHGkky2owPqxuRR6zumXIgwjyx2AAQUJKH8AUwjldquh9m7C9J72XaM6Bkt9kDpQN10214iKOW0rLFT68VHbJMwkkMBDypNlbTvTOwpacdf0yeEbUqQhQoggdVH8d1lhk8gDwrVRETDu0Gqfw8sIWZff3I3x1an-4iXGOF0Ijawi2A3erRzWscvxgbeNpoffpICVpxvNqRyBOvmmHZFl1wkokyXN9qsMABE7Z6M90XRMr_ErTJxXfYQo7Q-3tgLiHVPLmqS73h9JMNgrfYRpDY8JrBuXIm6DebVGKlusN_g';
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NjY1MDgwNjMsImlhdCI6MTc2MTMyNDA2MywianRpIjoiOWQ1OWJhN2MtMGM2Ny00MTViLTk5YjctOTIwNTFjZWUxYjE4In0.LNmfghTebEr0mHFYgzJkPlzTJ6_OZThfNBoRO8JK_CLze6wQG6MMnRbh0OAA1jjnj3IC08jpn3ar3DO6dZNKetCk9zk9rrZAa2l-_nxZafhVY8xo03etlW0a_TNGhFy66uScjx_30tmW_oBjNBfZyZMmh6QK9jjbRVdkpAZPrzE3owkMAfXMaA_ssPZSymjFHM-2_wIkh1RoW0GBY6BOf_vHC60VcBwm2UZ_ffulouCZtzhK-E2mGXBBgILYjr--Oyo_TQPy92c-lRrVjAXamw8VsJ3M41fUIrHCD9eNsEUhwZ189FzO_vPDBtsitp3YtAUNvj70GyirYI69VE0QXw';
 
 const screenshotsDir = path.resolve('screenshots');
 function ensureScreenshotsDir() {
@@ -357,3 +357,22 @@ process.on('unhandledRejection', (e) => console.error('UNHANDLED REJECTION', e))
 process.on('uncaughtException', (e) => console.error('UNCAUGHT EXCEPTION', e));
 
 export default app;
+
+// TAG=$(date +%Y%m%d-%H%M%S)
+// gcloud builds submit \
+//   --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG
+
+// gcloud run jobs update moofy-scraper-job \
+//   --region us-central1 \
+//   --image gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG \
+//   --task-timeout=168h \
+//   --cpu=8 --memory=16Gi
+
+// # 4) Execute it
+// gcloud run jobs execute moofy-scraper-job --region us-central1 --wait
+
+
+
+// gcloud builds submit --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job
+// gcloud beta run jobs update moofy-scraper-job --region us-central1 --task-timeout=168h --cpu=8 --memory=16Gi
+// gcloud run jobs executions list --job moofy-scraper-job --region us-central1

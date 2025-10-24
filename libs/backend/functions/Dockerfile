@@ -35,3 +35,7 @@ RUN npm prune --production
 ENV PORT=8080
 EXPOSE 8080
 CMD ["node", "lib/index.js"]
+
+#$ gcloud builds submit --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job
+#$ gcloud beta run jobs update moofy-scraper-job --region us-central1 --task-timeout=168h --cpu=8 --memory=16Gi
+#$ gcloud run jobs executions list --job moofy-scraper-job --region us-central1
