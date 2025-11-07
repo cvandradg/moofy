@@ -67,6 +67,8 @@ export const moofyToWalmartRoutes = {
     { name: '953', location: 'PALI LA CUESTA' },
     { name: '966', location: 'MAXI UVITA' },
     { name: '1036', location: 'PALI GENERAL VIEJO' },
+    { name: '1037', location: 'PALI GOLFITO' },
+    { name: '1058', location: 'PALI CAJON' },
     { name: '1061', location: 'PALI CIUDAD CORTES' },
     { name: '3064', location: 'PALI SAN ISIDRO' },
     { name: '4003', location: 'PALI PALMAR NORTE' },
