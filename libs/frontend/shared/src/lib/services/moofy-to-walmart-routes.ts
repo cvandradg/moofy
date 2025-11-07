@@ -131,6 +131,7 @@ export const moofyToWalmartRoutes = {
     { name: '729', location: 'PALI MATINA' },
     { name: '909', location: 'PALI LIMONCITO' },
     { name: '994', location: 'PALI CORALES' },
+    { name: '1073', location: 'RIO BANANO' },
     { name: '3039', location: 'MXM LIMON' },
     { name: '3094', location: 'PALI LIMON' },
     { name: '3904', location: 'MAXI LIMON' },
