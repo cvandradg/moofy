@@ -29,12 +29,13 @@ const db = getFirestore();
 
 const storage = new Storage();
 const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
-const USERNAME = 'candradeg9182@gmail.com';
-const PASSWORD = 'PastryFactory202512';
+
 const MAX_ATTEMPTS = 6;
 const MAILBOX_ID = '51619';
+const USERNAME = 'candradeg9182@gmail.com';
+const PASSWORD = 'PastryFactory20260103';
 const BOT_TOKEN =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NzE5NjE1MzIsImlhdCI6MTc2Njc3NzUzMiwianRpIjoiYTU0MjI5YWUtODkwYy00NzBiLTlmYjQtMWM3OTI4OTI2NDJjIn0.lo2z0mSYcpEl2pwOGdUa2gBilWbqcizrvCrTuFJvJnQxK9d5BlVMmEs8wtj67t32nCPlxc6SUGDimZtlsXhyVMC1ekolpLRSDsNfh2dynsMK1CdkZXA_2AkwrIdGHed0iczyQr-hBz1qjR_J5tTFHo6YrIemDLlzOKfNXgxOAstLK9GEjISnMgpyZc1MvIRn6j3ZOTjOD4nckZyOKpx4mAIxivEqKN-wtwAQtdeLfSF844Z1iAsPoUnSe7t3-SM7gqy5NXYp4IN5IxA-E6t1UlpzdpAQJ9iGEF4Y2RWlJH0YnoWGMkSWk9nB5Rct4-ZEqpQ-AN15D1elWyQmfziceg';
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NzI2ODUwMzgsImlhdCI6MTc2NzUwMTAzOCwianRpIjoiMDRiMmZkNzItMDA1Ny00YTYwLWFhNTUtYjQzMGE5ZjVlYTJiIn0.TXP8S_blNb160qS-f1McTBK_tcuruXplI0lwk7m0CMDpwUakiHEAg9LmK7BBd-T33DgQfgn7F_lNeLOdnCWfYSl3CO__JgdQ8a5Sb4KslUNFGnK5LsyUEA7jzTZ7n8f4neQnF7SvqXEZmwjDKedr3x3abJbZGunzP9u8msc8K7pyfVS8tUqvLFxYVN8tB0zUAAU53sI-KhIHOf-kOmteDpTe_X8BkiB-mXKGmDvd8IUTXeDVHK4eM-6ODmnC9QEZiQcgnvmviJibFF4dIv9t53Dbv85yZUbQ1PGWRjRbYMgca-YPO8CjKVeqi7IMmikzGIVA7lf9-fuoRRlUVqG7WA';
 
 const screenshotsDir = path.resolve('screenshots');
 function ensureScreenshotsDir() {
@@ -359,18 +360,33 @@ process.on('uncaughtException', (e) => console.error('UNCAUGHT EXCEPTION', e));
 export default app;
 
 // TAG=$(date +%Y%m%d-%H%M%S)
-// gcloud builds submit \
-//   --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG
+// gcloud builds submit --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG
 
-// gcloud run jobs update moofy-scraper-job \
-//   --region us-central1 \
-//   --image gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG \
-//   --task-timeout=168h \
-//   --cpu=8 --memory=16Gi
+// gcloud run jobs update moofy-scraper-job --region us-central1 --image gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG --task-timeout=168h --cpu=8 --memory=16Gi
 
 // # 4) Execute it
 // gcloud run jobs execute moofy-scraper-job --region us-central1 --wait
 
-// gcloud builds submit --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job
+// gcloud builds submit --tag gcr.io/moofyvip-firebase/us-central1/moofy-scraper-job
 // gcloud beta run jobs update moofy-scraper-job --region us-central1 --task-timeout=168h --cpu=8 --memory=16Gi
 // gcloud run jobs executions list --job moofy-scraper-job --region us-central1
+
+/*
+PROJECT="moofy-firebase"
+REGION="us-central1"
+REPO="moofy-scraper"
+JOB="moofy-scraper-job"
+IMAGE_NAME="moofy-scraper-job"
+TAG="$(date +%Y%m%d-%H%M%S)"
+
+IMAGE="${REGION}-docker.pkg.dev/${PROJECT}/${REPO}/${IMAGE_NAME}:${TAG}"
+
+# 1) Build + push the new container image
+gcloud builds submit --project "$PROJECT" --tag "$IMAGE"
+
+# 2) Update the Cloud Run Job to use the new image
+gcloud run jobs update "$JOB" \
+  --project "$PROJECT" \
+  --region "$REGION" \
+  --image "$IMAGE"
+  */
