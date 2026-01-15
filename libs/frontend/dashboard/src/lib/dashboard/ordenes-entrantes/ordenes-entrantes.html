@@ -5,7 +5,7 @@
       <mat-panel-description>
         <div>
           <strong>{{ ` ${inboundOrders.length} ` }}</strong>
-          órdenes entrantes el día {{ spanishFormatter.format(inboundOrders[0].createdAtTs.toDate()) }}
+          órdenes entrantes el día {{ spanishFormatter.format(inboundOrders[0].createdAtTs.toDate()) }} {{fetchInboundDocuments.value()}}
         </div>
       </mat-panel-description>
     </mat-expansion-panel-header>
