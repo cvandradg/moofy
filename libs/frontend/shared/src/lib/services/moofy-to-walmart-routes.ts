@@ -310,7 +310,6 @@ export const moofyToWalmartRoutes = {
     { name: '3900', location: 'MP EL CRUCE' },
     { name: '3022', location: 'MP CENTRO COMERCIAL HATILLO' },
     { name: '718', location: 'MP ASERRI' },
-    { name: '1095', location: 'PALI MORAVIA' },
   ],
   23: [
     { name: '831', location: 'WM HEREDIA ESTE' },
@@ -348,6 +347,7 @@ export const moofyToWalmartRoutes = {
     { name: '4006', location: 'WM CARTAGO' },
     { name: '1046', location: 'WM SANTA ANA' },
     { name: '989', location: 'PALI SAN JUAN DE DIOS' },
+    { name: '1095', location: 'PALI MORAVIA' },
   ],
   24: [
     { name: '4315', location: 'WM TIBAS' },
