@@ -25,10 +25,7 @@ function parseDateSafe(str: string): Timestamp | null {
 }
 
 // --- Project config (avoid "wrong project" surprises, but DON'T crash locally) ---
-const projectId =
-  process.env.GOOGLE_CLOUD_PROJECT ||
-  process.env.GCLOUD_PROJECT ||
-  process.env.GCP_PROJECT_ID;
+const projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || process.env.GCP_PROJECT_ID;
 
 console.log('PROJECT ENV:', {
   GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
@@ -44,17 +41,15 @@ const storage = new Storage(projectId ? { projectId } : undefined);
 const EXISTS_READ_BATCH_SIZE = Number(process.env.EXISTS_READ_BATCH_SIZE || '500');
 const CONCURRENCY = Number(process.env.CONCURRENCY || '5');
 
-
-
 const MAX_ATTEMPTS = 6;
 const SCREENSHOT_BUCKET = 'purchase-orders-screenshots';
 const MAILBOX_ID = '51619';
 
 // creds (you said keep them for now)
 const USERNAME = 'candradeg9182@gmail.com';
-const PASSWORD = 'PastryFactory20260114';
+const PASSWORD = 'PastryFactory20260116';
 const BOT_TOKEN =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NzM2MzI4ODAsImlhdCI6MTc2ODQ0ODg4MCwianRpIjoiNTFlZDdmODYtM2MwYy00ZWNhLThhNTAtNGUzMjBkZTYwMmNmIn0.MDEdkyobG26sq_TuZ9cdqQthpqtLb78XXDIwI1uGfUxpbTQmjmrDbnNIDkdVg2kHk0NGpBehMaDEWUu9l6fRhlzj5fYixi21IZxAEkulxPNklTtz3VADoEpO1sFuCu6NJmYtDMqGbaQoAuMf6gupIEgcNlMHd7WHfiFLMO6FkVxx03eCEhCCDy-ZFuVnftKih7_BAZdWpPxKSV45-oEuJ5OFsEccEg9w16Em5sA0CnZwNXs-IFlAz4S20-T48p_kRuTY_K4sZBaq6dP6ho3FXGRW5hfois2WIe8bzz5mbcfvjAbrFUl3mI6mpJveZTH9NLjKgA5PjqRctBLqiO2X8A';
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NzM4NzUyMDQsImlhdCI6MTc2ODY5MTIwNCwianRpIjoiNTE2NDUzODEtZjYwYy00YzZkLWJhMjEtZGM2ZjQyMjllYWM1In0.SI9CxQlX-UhChabXy7Cp8swCsPKY30OcwXdaV8NJaVsJ35vy3KYdp-kJXl98nvUhAW3-M3LSEIg4NhdtxGQ4jn8yq6RKGeSCb_QifL7nVdStpwJuolrdpX3CsjZWuRgg8MPJLN9XjDrF11i_Sl6DjVOG_Iviop9Ol6ZMuoYsauDD9UAa5TfDGp57j1tnqYp5IcIUIWx56GVonf1XreL66r2Eph7LIJ2xHSajE19wiQczBlsl1xjLRfOfPD4roEBXvuln1gK0U0KfBfANoEXQppf6sDBYFwZ9EiE5KVT0OSUmr5SN9op1PTSgfV8mtZKapC80WS9k_QfjQVwLewrdvA';
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
@@ -580,17 +575,19 @@ async function scrapeAll(): Promise<void> {
 process.on('unhandledRejection', (e) => console.error('UNHANDLED REJECTION', e));
 process.on('uncaughtException', (e) => console.error('UNCAUGHT EXCEPTION', e));
 
+/*
 
-//gcloud config set project moofy-firebase
-// TAG=$(date +%Y%m%d-%H%M%S)
-// gcloud builds submit --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG
+gcloud config set project moofy-firebase
+TAG=$(date +%Y%m%d-%H%M%S)
+gcloud builds submit --tag gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG
 
-// gcloud run jobs update moofy-scraper-job \
-//   --region us-central1 \
-//   --image gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG \
-//   --task-timeout=168h \
-//   --cpu=8 --memory=16Gi
+gcloud run jobs update moofy-scraper-job \
+  --region us-central1 \
+  --image gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG \
+  --task-timeout=168h \
+  --cpu=8 --memory=16Gi
 
+  */
 // # 4) Execute it
 // gcloud run jobs execute moofy-scraper-job --region us-central1 --wait
 
