@@ -8,6 +8,8 @@ import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, DocumentReference, DocumentSnapshot, Timestamp } from 'firebase-admin/firestore';
 import fetch from 'node-fetch';
 
+export { ingestSms } from './ingestSms.js';
+
 function parseApiTimestamp(raw: string): Timestamp {
   const ms = Number(raw.match(/\/Date\((\d+)\)\//)?.[1]);
   if (isNaN(ms)) throw new Error(`Invalid API date format: ${raw}`);
@@ -84,73 +86,155 @@ interface PurchaseOrderDetails {
 }
 
 function cookieHeaderFrom(cookies: CookieParam[]): string {
-  return cookies.map((c) => `${c.name}=${c.value}`).join('; ');
+  // IMPORTANT: keep empty values (e.g., RLSESSION=) because they are part of the "pristine" set-cookie result.
+  return cookies.map((c) => `${c.name}=${c.value ?? ''}`).join('; ');
 }
 
-function sanitizeCookieForFirestore(c: CookieParam) {
-  return {
+function cloneCookies(cookies: CookieParam[]): CookieParam[] {
+  return cookies.map((c) => ({
     name: c.name,
-    value: c.value,
+    value: c.value ?? '',
     domain: c.domain || '.wal-mart.com',
     path: c.path || '/',
-    expires: (c as any).expires ?? null,
-    httpOnly: (c as any).httpOnly ?? null,
-    secure: (c as any).secure ?? null,
-    sameSite: (c as any).sameSite ?? null,
-  };
+  }));
 }
 
-function normalizeCookieParam(c: any): CookieParam {
-  return {
-    name: String(c?.name || ''),
-    value: String(c?.value || ''),
-    domain: String(c?.domain || '.wal-mart.com'),
-    path: String(c?.path || '/'),
-  };
+function parseSetCookieLineToCookieParam(line: string): CookieParam | null {
+  const first = String(line || '').split(';', 1)[0] || '';
+  const eq = first.indexOf('=');
+  if (eq <= 0) return null;
+
+  const name = first.slice(0, eq).trim();
+  const value = first.slice(eq + 1); // keep as-is (may contain '=')
+
+  if (!name) return null;
+  return { name, value, domain: '.wal-mart.com', path: '/' };
+}
+
+function ensureLangCookie(cookies: CookieParam[]): CookieParam[] {
+  const hasLang = cookies.some((c) => c.name === 'lang');
+  if (hasLang) return cookies;
+
+  // Append lang=en if missing (do not mutate input array)
+  return [...cookies, { name: 'lang', value: 'en', domain: '.wal-mart.com', path: '/' }];
+}
+
+function mergeCookiesByName(...lists: CookieParam[][]): CookieParam[] {
+  const map = new Map<string, CookieParam>();
+  for (const list of lists) {
+    for (const c of list) {
+      if (!c?.name) continue;
+      // preserve insertion order; overwrite value if repeated
+      map.set(c.name, {
+        name: c.name,
+        value: c.value ?? '',
+        domain: c.domain || '.wal-mart.com',
+        path: c.path || '/',
+      });
+    }
+  }
+  return Array.from(map.values());
 }
 
 // ------------------------------
-//  COOKIE PERSISTENCE (LATEST + HISTORY)
+//  COOKIE PERSISTENCE (STORE ONLY ONCE)
+//  - Always login each run to mint "fresh" cookies.
+//  - Store cookies in Firestore only if the doc does NOT exist.
+//  - For the rest of the calls, prefer stored cookies (validated).
+//  - Never overwrite the stored doc (so it remains "pristine").
 // ------------------------------
-const LATEST_COOKIES_DOC = db.collection('loginResults').doc('latest');
-const HISTORY_COOKIES_COL = db.collection('loginResultsHistory');
+const COOKIES_DOC = db.collection('cookies').doc('cookies');
 
-async function readLatestStoredCookies(): Promise<CookieParam[] | null> {
-  const snap = await LATEST_COOKIES_DOC.get();
+type StoredCookiesDoc = {
+  createdAt: Date;
+  createdBy: 'login';
+  cookieCount: number;
+  userAgent: string;
+  // Raw set-cookie headers exactly as received (pristine)
+  preSetCookieRaw: string[];
+  loginSetCookieRaw: string[];
+  // Parsed cookies (also stored for convenience)
+  cookies: Array<{ name: string; value: string; domain: string; path: string }>;
+};
+
+async function readStoredCookies(): Promise<CookieParam[] | null> {
+  const snap = await COOKIES_DOC.get();
   if (!snap.exists) return null;
 
-  const data = snap.data() as any;
-  const arr = Array.isArray(data?.cookies) ? data.cookies : [];
-  if (!arr.length) return null;
+  const data = snap.data() as Partial<StoredCookiesDoc> | undefined;
+  if (!data) return null;
 
-  const cookies = arr.map(normalizeCookieParam).filter((c: CookieParam) => c.name && c.value);
-  if (!cookies.length) return null;
-
-  return cookies;
-}
-
-async function storeLatestCookies(cookies: CookieParam[], meta: Record<string, any>) {
-  const safeCookies = cookies.map(sanitizeCookieForFirestore);
-
-  await LATEST_COOKIES_DOC.set(
-    {
-      updatedAt: new Date(),
-      cookieCount: safeCookies.length,
-      cookies: safeCookies,
-      ...meta,
-    },
-    { merge: true }
+  // Prefer raw (most pristine)
+  const raw = (Array.isArray(data.preSetCookieRaw) ? data.preSetCookieRaw : []).concat(
+    Array.isArray(data.loginSetCookieRaw) ? data.loginSetCookieRaw : []
   );
 
-  await HISTORY_COOKIES_COL.add({
-    createdAt: new Date(),
-    cookieCount: safeCookies.length,
-    ...meta,
-  });
+  if (raw.length) {
+    const parsed = raw.map(parseSetCookieLineToCookieParam).filter((c): c is CookieParam => !!c);
+
+    const merged = ensureLangCookie(mergeCookiesByName(parsed));
+    return merged.length ? merged : null;
+  }
+
+  // Fallback if raw not present
+  const arr = Array.isArray(data.cookies) ? data.cookies : [];
+  if (!arr.length) return null;
+
+  const cookies = arr
+    .map((c) => ({
+      name: String((c as any)?.name || ''),
+      value: String((c as any)?.value ?? ''), // keep empty string if any
+      domain: String((c as any)?.domain || '.wal-mart.com'),
+      path: String((c as any)?.path || '/'),
+    }))
+    .filter((c) => c.name);
+
+  const merged = ensureLangCookie(mergeCookiesByName(cookies));
+  return merged.length ? merged : null;
 }
 
-// Test cookies against an authenticated endpoint BEFORE we launch puppeteer work
-async function storedCookiesStillWork(cookies: CookieParam[]): Promise<boolean> {
+async function storeCookiesOnce(input: {
+  cookies: CookieParam[];
+  preSetCookieRaw: string[];
+  loginSetCookieRaw: string[];
+}) {
+  const payload: StoredCookiesDoc = {
+    createdAt: new Date(),
+    createdBy: 'login',
+    cookieCount: input.cookies.length,
+    userAgent: UA,
+    preSetCookieRaw: input.preSetCookieRaw,
+    loginSetCookieRaw: input.loginSetCookieRaw,
+    cookies: input.cookies.map((c) => ({
+      name: c.name,
+      value: c.value ?? '',
+      domain: c.domain || '.wal-mart.com',
+      path: c.path || '/',
+    })),
+  };
+
+  try {
+    // IMPORTANT: create() fails if doc already exists -> ensures "store only once"
+    await COOKIES_DOC.create(payload);
+    console.log(`✅ Stored cookies ONCE at cookies/cookies (count=${payload.cookieCount})`);
+  } catch (e: any) {
+    // Already exists -> do nothing (this is expected on subsequent runs)
+    const msg = String(e?.message || e);
+    if (msg.toLowerCase().includes('already exists')) {
+      console.log('ℹ️ cookies/cookies already exists. Not overwriting (as requested).');
+      return;
+    }
+    // Firestore sometimes uses numeric codes; still fail loudly if not an "exists" case.
+    if (String(e?.code) === '6') {
+      console.log('ℹ️ cookies/cookies already exists. Not overwriting (as requested).');
+      return;
+    }
+    throw e;
+  }
+}
+
+// Validate cookies against an authenticated endpoint
+async function cookiesStillWork(cookies: CookieParam[]): Promise<boolean> {
   try {
     const params = new URLSearchParams({
       documentNumber: '',
@@ -163,7 +247,7 @@ async function storedCookiesStillWork(cookies: CookieParam[]): Promise<boolean> 
       documentCountry: '',
       newSearch: 'true',
       pageNum: '0',
-      pageSize: '1', // keep it tiny; we just need auth validation
+      pageSize: '1',
       sortDataField: 'CreatedTimestamp',
       sortOrder: 'desc',
       skipWork: 'true',
@@ -192,16 +276,28 @@ async function storedCookiesStillWork(cookies: CookieParam[]): Promise<boolean> 
     const t = text.trim();
     if (!(t.startsWith('[') || t.startsWith('{'))) return false;
 
-    JSON.parse(t); // must parse
+    JSON.parse(t);
     return true;
   } catch {
     return false;
   }
 }
 
-// Login + extract cookies (this runs ONLY when stored cookies fail)
-async function loginAndGetCookies(): Promise<CookieParam[]> {
-  console.log('🔑 Performing login…');
+function diffCookieNames(a: CookieParam[], b: CookieParam[]) {
+  const A = new Set(a.map((c) => c.name));
+  const B = new Set(b.map((c) => c.name));
+  const onlyA = [...A].filter((x) => !B.has(x));
+  const onlyB = [...B].filter((x) => !A.has(x));
+  return { onlyA, onlyB };
+}
+
+// Login + extract cookies (ALWAYS runs every execution)
+async function loginAndGetCookiesAlways(): Promise<{
+  cookies: CookieParam[];
+  preSetCookieRaw: string[];
+  loginSetCookieRaw: string[];
+}> {
+  console.log('🔑 Performing login (always)…');
 
   // Preflight to mint any baseline cookies (lang, anti-bot, etc.)
   const pre = await fetch('https://retaillink.login.wal-mart.com/', {
@@ -212,9 +308,13 @@ async function loginAndGetCookies(): Promise<CookieParam[]> {
     },
   });
 
-  const preRaw = (pre.headers as any).raw?.()['set-cookie'] || [];
-  const preCookieHeader = preRaw.map((c: string) => c.split(';')[0]).join('; ');
-  const cookieHeader = [preCookieHeader, 'lang=en'].filter(Boolean).join('; ');
+  const preRaw: string[] = ((pre.headers as any).raw?.()['set-cookie'] || []) as string[];
+
+  const preCookies = preRaw.map(parseSetCookieLineToCookieParam).filter((c): c is CookieParam => !!c);
+
+  // Build cookie header for login request (keep these pristine too)
+  const preCookieHeader = preCookies.length ? cookieHeaderFrom(preCookies) : '';
+  const loginReqCookieHeader = [preCookieHeader, 'lang=en'].filter(Boolean).join('; ');
 
   const res = await fetch('https://retaillink.login.wal-mart.com/api/login', {
     method: 'POST',
@@ -224,7 +324,7 @@ async function loginAndGetCookies(): Promise<CookieParam[]> {
       Origin: 'https://retaillink.login.wal-mart.com',
       Referer: 'https://retaillink.login.wal-mart.com/',
       'User-Agent': UA,
-      cookie: cookieHeader,
+      cookie: loginReqCookieHeader,
       'x-bot-token': BOT_TOKEN,
     },
     body: JSON.stringify({
@@ -243,48 +343,76 @@ async function loginAndGetCookies(): Promise<CookieParam[]> {
     throw new Error(`Login failed: ${text}`);
   }
 
-  const raw = (res.headers as any).raw?.()['set-cookie'] || [];
-  const cookies: CookieParam[] = raw.map((str: string) => {
-    const [nv] = str.split(';');
-    const [name, value] = nv.split('=');
-    return { name, value, domain: '.wal-mart.com', path: '/' };
-  });
+  const loginRaw: string[] = ((res.headers as any).raw?.()['set-cookie'] || []) as string[];
 
-  console.log(`🍪 Login minted cookies: ${cookies.length}`);
+  const loginCookies = loginRaw.map(parseSetCookieLineToCookieParam).filter((c): c is CookieParam => !!c);
 
-  // Store as "last successful"
-  await storeLatestCookies(cookies, {
-    ok: true,
-    source: 'login',
-    scheduled: true,
-  });
+  // Merge pre + login; login wins on duplicates
+  const merged = ensureLangCookie(mergeCookiesByName(preCookies, loginCookies));
+  console.log(`🍪 Login minted cookies (merged): ${merged.length}`);
 
-  return cookies;
+  return {
+    cookies: merged,
+    preSetCookieRaw: preRaw,
+    loginSetCookieRaw: loginRaw,
+  };
 }
 
-// The behavior you asked for: use last successful stored cookies until they fail
-async function getWorkingCookies(): Promise<CookieParam[]> {
-  const stored = await readLatestStoredCookies();
+/**
+ * ✅ Your requested behavior:
+ * - Always perform login each run (to mint fresh cookies).
+ * - Store cookies to Firestore ONLY if cookies/cookies does not exist (never overwrite).
+ * - For all other calls in this run, use the STORED cookies if they validate.
+ * - If stored cookies fail validation, use the fresh login cookies for this run (but STILL do not overwrite stored).
+ */
+async function resolveCookiesForThisRun(): Promise<{
+  cookiesForWork: CookieParam[];
+  source: 'stored' | 'loginFreshFallback';
+}> {
+  // Always login (as requested)
+  const login = await loginAndGetCookiesAlways();
 
-  if (stored && stored.length) {
-    console.log(`🧠 Found stored cookies: ${stored.length}. Testing...`);
-    const ok = await storedCookiesStillWork(stored);
-
-    if (ok) {
-      console.log('✅ Stored cookies are valid. Using them.');
-      return stored;
-    }
-
-    console.log('⚠️ Stored cookies are NOT valid anymore. Will login and store fresh cookies.');
-  } else {
-    console.log('ℹ️ No stored cookies found. Will login and store cookies.');
+  // Ensure Firestore doc exists (store only once, never overwrite)
+  const stored = await readStoredCookies();
+  if (!stored) {
+    console.log('🧠 No stored cookies found at cookies/cookies. Storing ONCE…');
+    await storeCookiesOnce({
+      cookies: login.cookies,
+      preSetCookieRaw: login.preSetCookieRaw,
+      loginSetCookieRaw: login.loginSetCookieRaw,
+    });
+    // Use the now-canonical login cookies for this run
+    return { cookiesForWork: cloneCookies(login.cookies), source: 'stored' };
   }
 
-  return await loginAndGetCookies();
+  // Validate stored cookies before using them
+  console.log(`🧠 Found stored cookies: ${stored.length}. Validating...`);
+  const ok = await cookiesStillWork(stored);
+
+  // Optional sanity: compare cookie-name sets (helps detect "messed" storage)
+  const diff = diffCookieNames(stored, login.cookies);
+  if (diff.onlyA.length || diff.onlyB.length) {
+    console.warn('⚠️ Cookie name set differs between stored vs fresh login:', {
+      onlyInStored: diff.onlyA.slice(0, 20),
+      onlyInFreshLogin: diff.onlyB.slice(0, 20),
+    });
+  }
+
+  if (ok) {
+    console.log('✅ Stored cookies are valid. Using stored cookies for all calls.');
+    return { cookiesForWork: cloneCookies(stored), source: 'stored' };
+  }
+
+  console.warn(
+    '❌ Stored cookies are NOT valid. For safety, using FRESH login cookies for this run (but NOT overwriting stored doc).'
+  );
+  return { cookiesForWork: cloneCookies(login.cookies), source: 'loginFreshFallback' };
 }
 
 async function uploadScreenshot(localPath: string, destFilename: string) {
-  await storage.bucket(SCREENSHOT_BUCKET).upload(localPath, { destination: destFilename });
+  await storage.bucket(SCREENSHOT_BUCKET).upload(localPath, {
+    destination: destFilename,
+  });
   fs.unlinkSync(localPath);
 }
 
@@ -296,7 +424,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
     page.setDefaultNavigationTimeout(120_000);
     page.setDefaultTimeout(120_000);
 
-    await page.setCookie(...cookies);
+    await page.setCookie(...cloneCookies(cookies));
     await page.setExtraHTTPHeaders({ 'x-bot-token': BOT_TOKEN });
 
     const params = new URLSearchParams({
@@ -310,7 +438,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
       documentCountry: '',
       newSearch: 'true',
       pageNum: '0',
-      pageSize: '6000',
+      pageSize: '1000',
       sortDataField: 'CreatedTimestamp',
       sortOrder: 'desc',
       skipWork: 'true',
@@ -349,7 +477,7 @@ async function fetchOrderDetails(
     page.setDefaultNavigationTimeout(120_000);
     page.setDefaultTimeout(120_000);
 
-    await page.setCookie(...cookies);
+    await page.setCookie(...cloneCookies(cookies));
     await page.setExtraHTTPHeaders({ 'x-bot-token': BOT_TOKEN });
 
     const url = `https://retaillink2.wal-mart.com/Webedi2/inbound/purchaseorder/${MAILBOX_ID}/${docId}/${location}`;
@@ -359,7 +487,10 @@ async function fetchOrderDetails(
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       try {
-        const anchor = await page.waitForSelector('#poNumber', { visible: true, timeout: 30_000 });
+        const anchor = await page.waitForSelector('#poNumber', {
+          visible: true,
+          timeout: 30_000,
+        });
         if (!anchor) throw new Error('🛑 #poNumber never appeared');
 
         const box = await anchor.boundingBox();
@@ -454,10 +585,12 @@ async function fetchOrderDetails(
 }
 
 async function scrapeAll(): Promise<void> {
-  // ✅ This is the behavior you asked for:
-  // - use last successful cookies from Firestore
-  // - if they fail, login and store new "latest"
-  let cookies = await getWorkingCookies();
+  // ✅ New behavior per your request:
+  // - Always login at start (fresh cookies minted)
+  // - Store cookies only if cookies/cookies does NOT exist (never overwrite)
+  // - Use stored cookies for all puppeteer calls (if validated), otherwise fallback to fresh login cookies for this run
+  const { cookiesForWork, source } = await resolveCookiesForThisRun();
+  console.log(`🍪 Cookie source for this run: ${source}`);
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -468,14 +601,16 @@ async function scrapeAll(): Promise<void> {
   try {
     let inbound: InboundDoc[];
 
-    // Extra safety: if browser calls fail (cookies got invalidated between test and puppeteer),
-    // do one forced re-login and retry.
+    // Extra safety: if browser calls fail with the chosen cookie set,
+    // retry ONCE with a fresh login cookie set (still not overwriting stored doc).
     try {
-      inbound = await fetchInboundDocs(browser, cookies);
+      inbound = await fetchInboundDocs(browser, cookiesForWork);
     } catch (e) {
-      console.warn('⚠️ fetchInboundDocs failed with current cookies. Re-login + retry once.', e);
-      cookies = await loginAndGetCookies();
-      inbound = await fetchInboundDocs(browser, cookies);
+      console.warn('⚠️ fetchInboundDocs failed with primary cookies. Re-login + retry once.', e);
+      const fresh = await loginAndGetCookiesAlways();
+      inbound = await fetchInboundDocs(browser, fresh.cookies);
+      // Use fresh for the rest of this run to avoid partial auth issues
+      cookiesForWork.splice(0, cookiesForWork.length, ...cloneCookies(fresh.cookies));
     }
 
     if (inbound.length) {
@@ -522,7 +657,7 @@ async function scrapeAll(): Promise<void> {
     const detailPromises = toFetch.map((d) =>
       limit(async () => {
         try {
-          const detail = await fetchOrderDetails(browser, cookies, d.DocumentId, d.Location);
+          const detail = await fetchOrderDetails(browser, cookiesForWork, d.DocumentId, d.Location);
           remaining--;
           console.log(`✅ Fetched details for PO ${d.DocumentId}. ${remaining} remaining.`);
           return detail;
@@ -546,7 +681,10 @@ async function scrapeAll(): Promise<void> {
 
       for (const o of details) {
         const createdAtTs = createdTsMap.get(o.DocumentId);
-        const docData: PurchaseOrderDetails = { ...o, ...(createdAtTs ? { createdAtTs } : {}) };
+        const docData: PurchaseOrderDetails = {
+          ...o,
+          ...(createdAtTs ? { createdAtTs } : {}),
+        };
         writer.set(db.collection('purchaseOrderDetails2').doc(o.DocumentId.toString()), docData);
       }
 
@@ -587,7 +725,7 @@ gcloud run jobs update moofy-scraper-job \
   --task-timeout=168h \
   --cpu=8 --memory=16Gi
 
-  */
+*/
 // # 4) Execute it
 // gcloud run jobs execute moofy-scraper-job --region us-central1 --wait
 
