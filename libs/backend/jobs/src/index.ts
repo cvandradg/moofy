@@ -8,8 +8,6 @@ import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, DocumentReference, DocumentSnapshot, Timestamp } from 'firebase-admin/firestore';
 import fetch from 'node-fetch';
 
-export { ingestSms } from './ingestSms.js';
-
 function parseApiTimestamp(raw: string): Timestamp {
   const ms = Number(raw.match(/\/Date\((\d+)\)\//)?.[1]);
   if (isNaN(ms)) throw new Error(`Invalid API date format: ${raw}`);
@@ -49,9 +47,9 @@ const MAILBOX_ID = '51619';
 
 // creds (you said keep them for now)
 const USERNAME = 'candradeg9182@gmail.com';
-const PASSWORD = 'PastryFactory20260116';
+const PASSWORD = 'PastryFactory20260119';
 const BOT_TOKEN =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NzM4NzUyMDQsImlhdCI6MTc2ODY5MTIwNCwianRpIjoiNTE2NDUzODEtZjYwYy00YzZkLWJhMjEtZGM2ZjQyMjllYWM1In0.SI9CxQlX-UhChabXy7Cp8swCsPKY30OcwXdaV8NJaVsJ35vy3KYdp-kJXl98nvUhAW3-M3LSEIg4NhdtxGQ4jn8yq6RKGeSCb_QifL7nVdStpwJuolrdpX3CsjZWuRgg8MPJLN9XjDrF11i_Sl6DjVOG_Iviop9Ol6ZMuoYsauDD9UAa5TfDGp57j1tnqYp5IcIUIWx56GVonf1XreL66r2Eph7LIJ2xHSajE19wiQczBlsl1xjLRfOfPD4roEBXvuln1gK0U0KfBfANoEXQppf6sDBYFwZ9EiE5KVT0OSUmr5SN9op1PTSgfV8mtZKapC80WS9k_QfjQVwLewrdvA';
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJsb2dpbklkIjoiY2FuZHJhZGVnOTE4MkBnbWFpbC5jb20iLCJpc3MiOiJrcmFrZW4iLCJleHAiOjE3NzQwNTIzMDksImlhdCI6MTc2ODg2ODMwOSwianRpIjoiNzIxOTYzYmUtM2EzZS00MzRmLWJjOTctNzk1ODY4MzU3MGQ3In0.fdUTEYNrAwF_XdskyLSUXtjsTHwA5pzbkXzPVT3JAjLhUK77mc7RMqZ3O27yluFn567D8JfvcoyqTNrEbwjqKOBM-hKelZQdJLVUymIPAgS-lrqCm36Byf11c3j18LTAPuslnUCGETysa9fMwFi8jR-RynGkWVKLWMZN9E0iEQ1bCwnxVgLLn0D5RLwy7QKVcoyNC1gWFfhAWlE3G5sOpx_QkIffT_6YRc_GbuNp415iOKfRa3wMPbYj9QJmGE2FoTYseFHKfaVAWSaf8I7ECAM-zTjNOzDVYghVKI-6tqexPdRHdJdEDaHb44lUbMjz-dLr2j0qJU65Hosuvv-zTA';
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
@@ -438,7 +436,7 @@ async function fetchInboundDocs(browser: Browser, cookies: CookieParam[]): Promi
       documentCountry: '',
       newSearch: 'true',
       pageNum: '0',
-      pageSize: '1000',
+      pageSize: '6000',
       sortDataField: 'CreatedTimestamp',
       sortOrder: 'desc',
       skipWork: 'true',
@@ -724,6 +722,21 @@ gcloud run jobs update moofy-scraper-job \
   --image gcr.io/moofy-firebase/us-central1/moofy-scraper-job:$TAG \
   --task-timeout=168h \
   --cpu=8 --memory=16Gi
+
+    To run locally:
+  build first:
+
+  gcloud config set project moofy-firebase
+
+  docker build -t moofy-scraper-local .
+
+  docker run --rm -it \
+  -e GOOGLE_CLOUD_PROJECT="moofy-firebase" \
+  -e WM_USERNAME="candradeg9182@gmail.com" \
+  -e WM_PASSWORD="PastryFactory20260116" \
+  -v "//c/gcloud/application_default_credentials.json:/root/.config/gcloud/application_default_credentials.json:ro" \
+  moofy-scraper-local
+
 
 */
 // # 4) Execute it

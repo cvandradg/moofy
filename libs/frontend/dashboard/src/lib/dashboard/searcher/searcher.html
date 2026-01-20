@@ -19,7 +19,7 @@
   @for (route of sortedRoutes(); track route) {
   <div>Ruta {{ route }}</div>
   <p-table
-    [value]="filteredItemsByRoute()[route] ?? []"
+    [value]="filteredItemsByRoute()[route]"
     [scrollable]="true"
     scrollHeight="380px"
     [tableStyle]="{ 'min-width': '40rem', margin: '1rem auto' }"
