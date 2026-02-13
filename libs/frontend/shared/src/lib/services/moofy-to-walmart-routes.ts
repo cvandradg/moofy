@@ -14,7 +14,6 @@ export const moofyToWalmartRoutes = {
     { name: '778', location: 'MAXI MONTECILLOS' },
     { name: '939', location: 'MAXI ALAJUELA ESTE' },
     { name: '978', location: 'MAXI SAN PABLO' },
-    { name: '988', location: 'MAXI LAGUNILLA' },
     { name: '990', location: 'PALI SANTA ROSA' },
     { name: '1008', location: 'MAXI SAN RAFAEL HEREDIA' },
     { name: '1012', location: 'PALI MIRAFLORES' },
@@ -30,7 +29,6 @@ export const moofyToWalmartRoutes = {
     { name: '3063', location: 'PALI HEREDIA' },
     { name: '3084', location: 'PALI EL LLANO' },
     { name: '3089', location: 'PALI AURORA' },
-    { name: '3090', location: 'PALI BELEN' },
     { name: '3091', location: 'PALI BARVA' },
     { name: '3102', location: 'PALI UNICENTRO' },
     { name: '3112', location: 'MAXI PACIFICO' },
@@ -41,7 +39,6 @@ export const moofyToWalmartRoutes = {
     { name: '3145', location: 'PALI SAN RAFAEL HEREDIA' },
     { name: '3701', location: 'WM HEREDIA' },
     { name: '3901', location: 'MAXI ALAJUELA' },
-    { name: '4084', location: 'PALI SAN ISIDRO HEREDIA' },
     { name: '4118', location: 'PALI SAN PABLO' },
     { name: '4253', location: 'WM ALAJUELA' },
     { name: '4261', location: 'PALI SAN MIGUEL SANTO DOMINGO' },
@@ -253,6 +250,7 @@ export const moofyToWalmartRoutes = {
   20: [],
 
   22: [
+    { name: '988', location: 'MAXI LAGUNILLA' },
     { name: '3700', location: 'WM SAN SEBASTIAN' },
     { name: '3705', location: 'WM GUADALUPE' },
     { name: '3077', location: 'PALI TRES RIOS' },
@@ -312,6 +310,8 @@ export const moofyToWalmartRoutes = {
     { name: '718', location: 'MP ASERRI' },
   ],
   23: [
+    { name: '4084', location: 'PALI SAN ISIDRO HEREDIA' },
+    { name: '3090', location: 'PALI BELEN' },
     { name: '831', location: 'WM HEREDIA ESTE' },
     { name: '4005', location: 'MXM SANTO DOMINGO' },
     { name: '4505', location: 'MXM SAN ISIDRO' },
